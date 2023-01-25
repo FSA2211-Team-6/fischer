@@ -1,6 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
+import { ThunkAction } from "redux-thunk";
+import { AnyAction } from "redux";
 
 export interface comment {
   commentId: number;
@@ -23,7 +25,7 @@ export interface truthVotes {
   red: number;
 }
 
-export interface allPostsState {
+export interface post {
   postId: null | number;
   user: user;
   fact: String;
@@ -33,29 +35,53 @@ export interface allPostsState {
   comments: Array<comment>;
 }
 
+export interface allPostsState {
+  allPostsData: Array<post>;
+  status: "loading" | "idle";
+  error: string | null;
+}
+
 const initialState: allPostsState = {
-  postId: null,
-  user: {
-    userId: null,
-    userName: "",
-    firstName: "",
-    lastName: "",
-  },
-  fact: "",
-  articleURL: "",
-  host: "",
-  truthVotes: {
-    green: 0,
-    yellow: 0,
-    red: 0,
-  },
-  comments: [],
+  allPostsData: [],
+  status: "idle",
+  error: null,
 };
+
+export const fetchAllPosts = createAsyncThunk<post>(
+  "/api/posts",
+  async (): Promise<post> => {
+    try {
+      const response = await fetch("/api/posts");
+
+      const data: post = await response.json();
+      return data;
+    } catch (error) {
+      console.log("fetchAllPosts Error: ", error);
+      return error as post;
+    }
+  }
+);
 
 export const allPostsSlice = createSlice({
   name: "allPosts",
   initialState,
   reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchAllPosts.fulfilled),
+      (state, action) => {
+        state.allPostsData = action.payload;
+        state.status = "idle";
+      };
+    builder.addCase(fetchAllPosts.pending),
+      (state) => {
+        state.status = "loading";
+      };
+    builder.addCase(fetchAllPosts.rejected),
+      (state, action) => {
+        if (action.payload) state.error = action.payload.message;
+        state.status = "idle";
+      };
+  },
 });
 
 export const selectAllPosts = (state: RootState) => state.allPosts;
