@@ -25,7 +25,7 @@ const User = db.define("user", {
     type: Sequelize.STRING,
   },
   isExpert: {
-    type: Sequelize.ARRAY,
+    type: Sequelize.ARRAY(Sequelize.STRING),
     default: null,
   },
 });
