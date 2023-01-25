@@ -22,7 +22,5 @@ export default async function handler(
     stop: ["\n"],
   });
 
-  //   console.log(response);
-
   res.status(200).send(response.data);
 }

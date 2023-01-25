@@ -47,40 +47,42 @@ const initialState: allPostsState = {
   error: null,
 };
 
-export const fetchAllPosts = createAsyncThunk<post>(
-  "/api/posts",
-  async (): Promise<post> => {
-    try {
-      const response = await fetch("/api/posts");
+export const fetchAllPosts = createAsyncThunk("/api/posts", async () => {
+  try {
+    const response = await fetch("/api/posts");
 
-      const data: post = await response.json();
-      return data;
-    } catch (error) {
-      console.log("fetchAllPosts Error: ", error);
-      return error as post;
-    }
+    const data: post = await response.json();
+    console.log(data);
+    return data;
+  } catch (error: any) {
+    console.log("fetchAllPosts Error: ", error);
+    return error;
   }
-);
+});
 
 export const allPostsSlice = createSlice({
   name: "allPosts",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchAllPosts.fulfilled),
-      (state, action) => {
+    builder.addCase(
+      fetchAllPosts.fulfilled,
+      (state: any, action: PayloadAction<post>) => {
+        console.log(action.payload);
         state.allPostsData = action.payload;
         state.status = "idle";
-      };
-    builder.addCase(fetchAllPosts.pending),
-      (state) => {
-        state.status = "loading";
-      };
-    builder.addCase(fetchAllPosts.rejected),
-      (state, action) => {
+      }
+    );
+    builder.addCase(fetchAllPosts.pending, (state: any) => {
+      state.status = "loading";
+    });
+    builder.addCase(
+      fetchAllPosts.rejected,
+      (state: any, action: PayloadAction<any>) => {
         if (action.payload) state.error = action.payload.message;
         state.status = "idle";
-      };
+      }
+    );
   },
 });
 
