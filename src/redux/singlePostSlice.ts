@@ -25,7 +25,7 @@ const singlePostSlice = createSlice({
   },
 });
 
-export const singlePostState = (state) => {
+export const singlePostState = (state: any) => {
   return state.singlePost;
 };
 export default singlePostSlice.reducer;
