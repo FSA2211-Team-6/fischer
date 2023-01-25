@@ -21,6 +21,7 @@
     "eslint-config-next": "13.1.5",
     "jsonwebtoken": "^9.0.0",
     "next": "13.1.5",
+    "next-auth": "latest",
     "pg": "^8.8.0",
     "postgres": "^3.3.3",
     "react": "18.2.0",
