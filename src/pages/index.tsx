@@ -264,11 +264,9 @@ export default function Home() {
                   Most Interesting Pieces from 1/19-1/26
                 </span>
               </div>
-              <div className="grid grid-cols-1 gap-4 my-4 md:grid-cols-1 lg:grid-cols-1">
-                {/*Start of first post */}
-                <AllPosts />
-                {/*  End of posts */}
-              </div>
+              {/*Start of first post */}
+              <AllPosts />
+              {/*  End of posts */}
             </div>
           </div>
         </div>
