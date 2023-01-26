@@ -21,13 +21,13 @@ if (process.env.DATABASE_URL) {
 }
 
 // LOCALHOST CONNECTION STRING
-// const db = new Sequelize(
-//     process.env.DATABASE_URL || `postgres://localhost:5432/${databaseName}`
-// )
+const db = new Sequelize(
+  process.env.DATABASE_URL || `postgres://localhost:5432/${databaseName}`
+);
 
 // DEPLOYED CONNECTION STRING
-const db = new Sequelize(
-  "postgres://postgres:LyuCcFZoHWxWBv2ozAuV@db.uuskembvwjyhjhorlagq.supabase.co:6543/postgres"
-);
+// const db = new Sequelize(
+//   "postgres://postgres:LyuCcFZoHWxWBv2ozAuV@db.uuskembvwjyhjhorlagq.supabase.co:6543/postgres"
+// );
 
 module.exports = db;

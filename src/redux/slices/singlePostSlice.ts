@@ -1,14 +1,45 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-// import type {RootState} from "../store";
+import type { RootState } from "../store";
+
+export interface comment {
+  commentId: number;
+  userId: number;
+  postId: number;
+  comment: Text;
+  upvotes: number;
+}
+
+export interface user {
+  userId: null | number;
+  userName: String;
+  firstName: String;
+  lastName: String;
+}
+
+export interface truthVotes {
+  green: number;
+  yellow: number;
+  red: number;
+}
+
+export interface post {
+  postId: null | number;
+  user: user;
+  fact: String;
+  articleURL: String;
+  host: String;
+  truthVotes: truthVotes;
+  comments: Array<comment>;
+}
 
 export const fetchSinglePost = createAsyncThunk(
   "allPosts/fetchById",
   async (postID: number) => {
     try {
-      const response = await fetch(`PLACEHOLDER/allPosts/${postID}`);
+      const response = await fetch(`/api/posts/${postID}`);
       const data: object = await response.json();
       return data;
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     }
   }
