@@ -26,8 +26,6 @@ if (process.env.DATABASE_URL) {
 // )
 
 // DEPLOYED CONNECTION STRING
-const db = new Sequelize(
-  "postgres://postgres:LyuCcFZoHWxWBv2ozAuV@db.uuskembvwjyhjhorlagq.supabase.co:6543/postgres"
-);
+const db = new Sequelize(process.env.DATABASE_URL);
 
 module.exports = db;
