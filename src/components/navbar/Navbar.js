@@ -7,8 +7,8 @@ function Navbar() {
     <div>
       <nav className="shadow-sm fixed w-full z-10">
         <div className="w-full">
-          <div className="flex items-center h-20 w-full">
-            <div className="flex items items-center mx-20 justify-between w-full">
+          <div className="flex items-center h-14 w-full">
+            <div className="flex items items-center mx-12 justify-between w-full">
               <div className="flex jusity-center items-center flex-shrink-0">
                 <h1 className="font-bold text-xl cursor-pointer">FISCHER</h1>
               </div>
@@ -16,9 +16,15 @@ function Navbar() {
                 <div className="m1-10 flex items-baseline space-x-4">
                   <Link
                     className="cursor-pointer text-green-600 font-semibold px-3 py-2 text-sm hover:font-black"
+                    href="/askAI"
+                  >
+                    Ask AI
+                  </Link>
+                  <Link
+                    className="cursor-pointer hover:bg-green-600 text-black hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                     href="/"
                   >
-                    HOME
+                    Home
                   </Link>
                   <Link
                     className="cursor-pointer hover:bg-green-600 text-black hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -93,6 +99,24 @@ function Navbar() {
                 className="cursor-pointer hover:bg-green-600 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Home
+              </Link>
+              <Link
+                href="/search"
+                className="cursor-pointer hover:bg-green-600 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Search
+              </Link>
+              <Link
+                href="/login"
+                className="cursor-pointer hover:bg-green-600 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Log In
+              </Link>
+              <Link
+                href="/signup"
+                className="cursor-pointer hover:bg-green-600 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Sign Up
               </Link>
             </div>
           </div>
