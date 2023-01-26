@@ -5,8 +5,14 @@ export const LogInButton = () => {
   if (session) {
     return (
       <>
-        Signed in as {session.user.email}
-        <img src={session.user.image} width="50" height="60" /> <br />
+        <p>{session.user.name}</p>
+        <a href="#" className="relative block">
+          <img
+            alt="profil"
+            src={session.user.image}
+            className="mx-auto object-cover rounded-full h-10 w-10 "
+          />
+        </a>
         <button onClick={() => signOut()}>Sign out</button>
       </>
     );
