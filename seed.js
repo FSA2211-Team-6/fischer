@@ -21,6 +21,23 @@ async function seed() {
       }),
     ]);
 
+    const posts = await Promise.all([
+      Post.create({
+        fact: "deeeeeeeeeeeeeeeeeeeeeeeeeeeez",
+        redCount: 1,
+        yellowCount: 3,
+        greenCount: 5,
+        userId: 1,
+      }),
+      Post.create({
+        fact: "nuttttttttz",
+        redCount: 3,
+        yellowCount: 3,
+        greenCount: 10,
+        userId: 1,
+      }),
+    ]);
+
     return users;
   } catch (err) {
     console.error(err);
