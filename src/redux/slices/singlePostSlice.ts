@@ -32,31 +32,57 @@ export interface post {
   comments: Array<comment>;
 }
 
+export interface singlePostState {
+  singlePostData: object;
+  status: "loading" | "idle";
+  error: string | null;
+}
+
+const initialState: singlePostState = {
+  singlePostData: {},
+  status: "idle",
+  error: null,
+};
+
 export const fetchSinglePost = createAsyncThunk(
-  "allPosts/fetchById",
-  async (postID: number) => {
+  "/api/posts/fetchByPostId",
+  async (postId: number) => {
     try {
-      const response = await fetch(`/api/posts/${postID}`);
+      const response = await fetch(`/api/posts/${postId}`);
       const data: object = await response.json();
       return data;
     } catch (err: any) {
-      console.error(err);
+      console.error("fetchSinglePost err: ", err);
     }
   }
 );
 
 const singlePostSlice = createSlice({
   name: "singlePost",
-  initialState: {},
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchSinglePost.fulfilled, (state, action) => {
-      return action.payload;
+    builder.addCase(
+      fetchSinglePost.fulfilled,
+      (state: any, action: PayloadAction<any>) => {
+        state.singlePostData = action.payload;
+        state.status = "idle";
+      }
+    );
+    builder.addCase(fetchSinglePost.pending, (state: any) => {
+      state.status = "loading";
     });
+    builder.addCase(
+      fetchSinglePost.rejected,
+      (state: any, action: PayloadAction<any>) => {
+        if (action.payload) state.error = action.payload.message;
+        state.status = "idle";
+      }
+    );
   },
 });
 
-export const singlePostState = (state: any) => {
+export const singlePostState = (state: RootState) => {
   return state.singlePost;
 };
 export default singlePostSlice.reducer;
