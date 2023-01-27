@@ -266,6 +266,7 @@ export default function Home() {
               </div>
               {/*Start of first post */}
               <AllPosts />
+
               {/*  End of posts */}
             </div>
           </div>

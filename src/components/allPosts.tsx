@@ -1,30 +1,25 @@
-import Image from "next/image";
-import { useSession } from "next-auth/react";
-
 export default function AllPosts() {
-  const { data: session } = useSession();
-
   const text =
     "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
   return (
     <div className="grid grid-cols-1 gap-4 my-4 md:grid-cols-1 lg:grid-cols-1 relative w-full px-4 py-6 bg-white shadow-lg dark:bg-gray-700">
       {/* <div className="inline bg-purple-500 absolute w-max h-8 pt-1.5 pb-2 pr-5 pl-5 rounded-br-lg rounded-tl-lg text-sm">
-        cnn.com
-      </div> */}
+      cnn.com
+    </div> */}
       {/* <span className="flex items-center text-xl font-bold text-green-500">
-        <svg
-          width="20"
-          fill="currentColor"
-          height="20"
-          className="h-3"
-          viewBox="0 0 1792 1792"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
-        </svg>
-        34%
-      </span>
-      <span>Popularity</span> */}
+      <svg
+        width="20"
+        fill="currentColor"
+        height="20"
+        className="h-3"
+        viewBox="0 0 1792 1792"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
+      </svg>
+      34%
+    </span>
+    <span>Popularity</span> */}
       <div>
         <div className="bg-purple-500 text-sm w-max inline-flex font-semibold pl-4 pr-4 pt-2 pb-2 mr-12 rounded-full rounded-tl-none hover:bg-purple-400">
           <a href="http://www.cnn.com">cnn.com</a>
@@ -67,7 +62,7 @@ export default function AllPosts() {
             <p className="mb-4 font-bold text-lg  w-max pl-2 pr-2">
               AI Response
             </p>
-            <p className="relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2">
+            <div className="relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2">
               <div className="text-4xl font-serif absolute -top-3 -left-2">
                 <span>&#8220;</span>
               </div>
@@ -75,7 +70,7 @@ export default function AllPosts() {
               <div className="text-4xl font-serif absolute right-0 -bottom-5 pr-2">
                 <span>&#8221;</span>
               </div>
-            </p>
+            </div>
           </div>
         </section>
       </div>
