@@ -3,7 +3,6 @@ import { useAppSelector } from "@/redux/store";
 
 export default function AllPosts() {
   const posts = useAppSelector(selectAllPosts);
-  console.log(posts);
 
   const text =
     "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
@@ -17,11 +16,13 @@ export default function AllPosts() {
               className="grid grid-cols-1 gap-4 my-4 md:grid-cols-1 lg:grid-cols-1 relative w-full px-4 py-6 bg-white shadow-lg dark:bg-gray-700"
             >
               <div>
+                {/* Begin website indicator */}
                 <div className="bg-purple-500 text-sm w-max inline-flex font-semibold pl-4 pr-4 pt-2 pb-2 mr-12 rounded-full rounded-tl-none hover:bg-purple-400">
                   <a href={post.articleURL}>
                     {post.host.slice(post.host.indexOf(".") + 1)}
                   </a>
                 </div>
+                {/* End website indicator */}
 
                 {/* Begin post categories */}
                 <div className="inline-flex gap-2 w-max">
@@ -37,6 +38,7 @@ export default function AllPosts() {
                 </div>
                 {/* End post categories */}
 
+                {/* Post User Name */}
                 <div className="inline-flex gap-2 float-right items-center">
                   <p className="inline float-right text-xs">
                     {post.user.userName}
@@ -44,8 +46,10 @@ export default function AllPosts() {
                   <div className="mx-auto object-cover inline float-right rounded-full bg-white h-10 w-10 "></div>
                 </div>
               </div>
+              {/* Main Section of Card */}
               <div className="flex items-end space-x-2">
                 <section className="flex flex-col gap-y-5">
+                  {/* Assertion */}
                   <div className="border-l-2 border-orange-500 p-4">
                     <p className="font-bold text-lg mb-4 w-max pl-2 pr-2">
                       Assertion
@@ -60,6 +64,7 @@ export default function AllPosts() {
                       </div>
                     </div>
                   </div>
+                  {/* AI Response */}
                   <div className="border-l-2 border-yellow-500 p-4">
                     <p className="mb-4 font-bold text-lg  w-max pl-2 pr-2">
                       AI Response
@@ -76,6 +81,7 @@ export default function AllPosts() {
                   </div>
                 </section>
               </div>
+              {/* Comments */}
               <div className="flex items-center">
                 <div className="w-full">
                   <div className="text-sm hover:underline underline-offset-4 cursor-pointer">
@@ -84,6 +90,7 @@ export default function AllPosts() {
                       : `${post.comments.length} comments`}
                   </div>
                 </div>
+                {/* Voting Buttons */}
                 <div className="flex justify-end gap-4 align-middle w-full">
                   <button className="border flex justify-center border-green-700 rounded-full w-7 h-7 hover:bg-green-300 hover:text-gray-700">
                     +

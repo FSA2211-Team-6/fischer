@@ -9,8 +9,9 @@ import AllPosts from "@/components/allPosts";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setInitialPosts, addPost } from "@/redux/slices/allPostsSlice";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   //example query ... this should hit an API to retrieve the first 12 posts.
   // const dungeonList = await blizzAPI.query(
   //   "/data/wow/connected-realm/11/mythic-leaderboard/index?namespace=dynamic-us&locale=en_US"
@@ -65,9 +66,11 @@ export async function getStaticProps() {
       initialPosts,
     },
   };
-}
+};
 
-export default function Home({ initialPosts }: Array<post>) {
+export default function Home({
+  initialPosts,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
@@ -104,7 +107,6 @@ export default function Home({ initialPosts }: Array<post>) {
     });
 
     const data = await aiResponse.json();
-    console.log(data);
 
     const newPost = {
       postId: Math.floor(Math.random() * 1000),
