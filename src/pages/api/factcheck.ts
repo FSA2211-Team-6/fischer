@@ -13,7 +13,10 @@ export default async function handler(
   const openai = new OpenAIApi(configuration);
   const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt: "Where is the Valley of Kings?\nA:",
+    prompt:
+      "Provide context to the validity of the following statement as well as true or false: " +
+      req.body +
+      "\nA:",
     temperature: 0,
     max_tokens: 100,
     top_p: 1,
