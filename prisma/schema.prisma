@@ -1,0 +1,155 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LOCAL_DB")
+}
+
+
+model ExpertResponse {
+  id          Int    @id @default(autoincrement())
+  postId      Int
+  expertId    Int
+  content     String
+  compliance  Int      @default(0)
+  createdAt   DateTime @default(now())
+  upvotes     Int      @default(0)
+
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  expert      Expert   @relation(fields: [expertId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id              Int      @id @default(autoincrement())
+  postId          Int
+  fischerUserId   Int
+  content         String
+  compliance      Int         @default(0)
+  createdAt       DateTime    @default(now())
+  upvotes         Int         @default(0)
+
+  post        Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commenter   FischerUser @relation(fields: [fischerUserId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  websiteArticleId  Int
+  topicId           Int
+  fischerUserId     Int
+  createdAt         DateTime        @default(now())
+  assertion         String
+  id                Int             @id @default(autoincrement())
+  aiResponse        String
+  aiCompliance      Int             @default(0)
+  topicName         String
+
+  expertResponses   ExpertResponse[]
+  comments          Comment[]
+
+  websiteArticle    WebsiteArticle  @relation(fields: [websiteArticleId], references: [id])
+  topic             Topic           @relation(fields: [topicId], references: [id])
+  fischerUser       FischerUser     @relation(fields: [fischerUserId], references: [id])
+}
+
+model WebsiteArticle {
+  id          Int       @id @default(autoincrement())
+  websiteId   Int
+  articleURL  String    @unique
+
+  posts       Post[]
+
+  website     Website   @relation(fields: [websiteId], references: [id])
+}
+
+model Website {
+  id               Int       @id @default(autoincrement())
+  hostSite         String    @unique
+
+  websiteArticles  WebsiteArticle[]
+}
+
+model Expert {
+  topicId           Int
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime
+  id                Int    @id @default(autoincrement())
+  fischerUserId     Int
+
+  expertResponses   ExpertResponse[]
+
+  topic             Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  fischerUser       FischerUser   @relation(fields: [fischerUserId], references: [id], onDelete: Cascade)
+}
+
+model Topic {
+  name        String    @unique
+  id          Int       @id @default(autoincrement())
+
+  experts     Expert[]
+  posts       Post[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  fischerUser   FischerUser?
+
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model FischerUser {
+  id                Int    @id @default(autoincrement())
+  createdAt         DateTime  @default(now())
+  userId            String    @unique
+
+  user              User      @relation(fields: [userId], references: [id], onUpdate: Cascade)
+
+  comments          Comment[]
+  expertise         Expert[]
+  posts             Post[]
+}

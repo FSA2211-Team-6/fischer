@@ -1,4 +1,5 @@
 import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 
 export const LogInButton = () => {
   const { data: session } = useSession();
@@ -7,9 +8,12 @@ export const LogInButton = () => {
       <>
         <p>{session.user.name}</p>
         <a href="#" className="relative block">
-          <img
-            alt="profil"
+          <Image
+            loader={() => session.user.image}
+            alt="profile"
             src={session.user.image}
+            width={100}
+            height={100}
             className="mx-auto object-cover rounded-full h-10 w-10 "
           />
         </a>
