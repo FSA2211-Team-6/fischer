@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import allPostsReducer from "../redux/slices/allPosts";
+import allPostsReducer from "./slices/allPostsSlice";
 import singlePostReducer from "../redux/slices/singlePostSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
