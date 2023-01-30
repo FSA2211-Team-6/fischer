@@ -29,12 +29,21 @@ model Comment {
   postId          Int
   fischerUserId   Int
   content         String
-  compliance      Int         @default(0)
   createdAt       DateTime    @default(now())
   upvotes         Int         @default(0)
 
   post        Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
   commenter   FischerUser @relation(fields: [fischerUserId], references: [id], onDelete: Cascade)
+}
+
+model BadPost {
+  id                Int             @id @default(autoincrement())
+  assertion         String
+  response          String
+  createdAt         DateTime        @default(now())
+  websiteArticleId  Int
+
+  websiteArticle    WebsiteArticle  @relation(fields: [websiteArticleId], references [id])
 }
 
 model Post {
@@ -45,8 +54,9 @@ model Post {
   assertion         String
   id                Int             @id @default(autoincrement())
   aiResponse        String
-  aiCompliance      Int             @default(0)
   topicName         String
+  aiCompliance      Int             @default(0)
+  publicCompliance  Int             @default(0)
 
   expertResponses   ExpertResponse[]
   comments          Comment[]
@@ -62,6 +72,7 @@ model WebsiteArticle {
   articleURL  String    @unique
 
   posts       Post[]
+  badPosts    BadPost[]
 
   website     Website   @relation(fields: [websiteId], references: [id])
 }
@@ -77,7 +88,7 @@ model Expert {
   topicId           Int
   createdAt         DateTime  @default(now())
   updatedAt         DateTime
-  id                Int    @id @default(autoincrement())
+  id                Int       @id @default(autoincrement())
   fischerUserId     Int
 
   expertResponses   ExpertResponse[]
