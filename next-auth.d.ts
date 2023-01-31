@@ -1,3 +1,4 @@
+import { JsonWebTokenError, Jwt } from "jsonwebtoken";
 import NextAuth, { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -9,5 +10,6 @@ declare module "next-auth" {
       /** The user's postal address. */
       address: string;
     } & DefaultSession["user"];
+    accessToken;
   }
 }
