@@ -2,12 +2,16 @@
   "name": "fischer",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} server/db/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "npx prisma migrate dev"
+    "seed": "npx prisma migrate dev",
+    "reseed": "yarn prisma migrate reset"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.5",
