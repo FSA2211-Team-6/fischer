@@ -54,7 +54,7 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   fischerId     Int       @id @default(autoincrement())
-  userCompliances   userCompliance[]
+  UserCompliances   UserCompliance[]
 
   accounts      Account[]
   sessions      Session[]
@@ -87,7 +87,7 @@ model Post {
 
   expertResponses   ExpertResponse[]
   comments          Comment[]
-  userCompliances   userCompliance[]
+  UserCompliances   UserCompliance[]
 
   websiteArticle    WebsiteArticle  @relation(fields: [websiteArticleId], references: [id])
   topic             Topic           @relation(fields: [topicId], references: [id])
