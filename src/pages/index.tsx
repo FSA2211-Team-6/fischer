@@ -10,22 +10,21 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setInitialPosts, addPost } from "@/redux/slices/allPostsSlice";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
+import prisma from "../../server/db/prismadb";
 
 export const getStaticProps: GetStaticProps = async () => {
-  //example query ... this should hit an API to retrieve the first 12 posts.
-  // const dungeonList = await blizzAPI.query(
-  //   "/data/wow/connected-realm/11/mythic-leaderboard/index?namespace=dynamic-us&locale=en_US"
-  // );
+  const numResults = 4;
 
-  //this is going to hit the DB directly, get the first 12 posts
-  //passes the initial posts as props into the index page
-  //then it will need to dispatch an action once the page loads to add those posts to the redux store
-  //then the allPosts component renders page based on redux store
-  //!!! Does this defeat the purpose of server side data fetching? !!!//
-  //I would have to pass initialPosts as a prop to allPosts component to render immediately, but
-  //then later the component would actually need to reference the store as more posts get loaded when user scrolls.
-  //not sure how to do this cleanly without having 2 separate components to be used off of a ternary like:
-  // {initialRender ? <initialRenderPosts/> : <reduxStorePosts/>}
+  //need to add more stuff to query:  get hostname
+  const posts = await prisma.post.findMany({
+    take: numResults,
+    include: { websiteArticle: { include: { website: true } }, user: true },
+  });
+
+  const firstPosts = JSON.parse(JSON.stringify(posts));
+
+  //place cursor at last ID.
+  const myCursor = firstPosts[firstPosts.length - 1].id;
 
   const text =
     "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
@@ -64,12 +63,16 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       initialPosts,
+      firstPosts,
+      myCursor,
     },
   };
 };
 
 export default function Home({
   initialPosts,
+  firstPosts,
+  myCursor,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
@@ -413,7 +416,7 @@ export default function Home({
               </form>
 
               {/*Start of first post */}
-              <AllPosts />
+              <AllPosts firstPosts={firstPosts} />
 
               {/*  End of posts */}
             </div>
