@@ -20,18 +20,16 @@ async function seed() {
 
     const posts = await Promise.all([
       Post.create({
-        fact: "deeeeeeeeeeeeeeeeeeeeeeeeeeeez",
-        redCount: 1,
-        yellowCount: 3,
-        greenCount: 5,
-        userId: 1,
+        assertion: "deeeeeeeeeeeeeeeeeeeeeeeeeeeez",
+        aiResponse:
+          "True. aslkdjl laksdjlkasj laskdjlkajs asdlkjlk asldkjl alskdj asdlkjl asldkj asdlkjalksd aslkdj",
+        fischerUserId: 1,
       }),
       Post.create({
-        fact: "nuttttttttz",
-        redCount: 3,
-        yellowCount: 3,
-        greenCount: 10,
-        userId: 1,
+        assertion: "nuttttttttz",
+        aiResponse:
+          "False. aslkdjl laksdjlkasj laskdjlkajs asdlkjlk asldkjl alskdj asdlkjl asldkj asdlkjalksd aslkdj",
+        fischerUserId: 1,
       }),
     ]);
 

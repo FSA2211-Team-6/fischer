@@ -1,7 +1,8 @@
-import { fetchSinglePost } from "@/redux/slices/singlePostSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import React from "react";
+import { fetchSinglePost } from "../redux/slices/singlePostSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import { useRouter } from "next/router";
-import { singlePostState } from "@/redux/slices/singlePostSlice";
+import { singlePostState } from "../redux/slices/singlePostSlice";
 
 export default function SinglePost({ post }) {
   return (
