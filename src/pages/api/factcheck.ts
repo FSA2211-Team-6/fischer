@@ -12,13 +12,19 @@ export default async function handler(
   });
 
   //"Give me True/False, Subjective/Objective, and explanation in an array"
+  //"Provide general category of the following statement:"
+
   const openai = new OpenAIApi(configuration);
   const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt:
-      "Provide general category of the following statement: " +
-      req.body +
-      "\nA:",
+    prompt: [
+      "Give me True/False, Subjective/Objective, and explanation in an array " +
+        req.body +
+        "\nA:",
+      "Provide general category of the following statement:" +
+        req.body +
+        "\nA:",
+    ],
     temperature: 0,
     max_tokens: 100,
     top_p: 1,

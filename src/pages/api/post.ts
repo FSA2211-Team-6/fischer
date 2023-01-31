@@ -39,6 +39,28 @@ const checkTopic = async (topicName: string) => {
   }
 };
 
+const parseResponse = async (aiResponse: string) => {
+  const responseArray = aiResponse.replace("[", "").replace("]", "").split(",");
+
+  const aiTruthy = responseArray[0].trim();
+  const aiObjectivity = responseArray[1].trim();
+  const aiExplanation = responseArray[2].trim();
+
+  let compliance = 0;
+
+  if (aiTruthy === "True" && aiObjectivity === "Objective") {
+    compliance = 1;
+  }
+
+  if (aiTruthy === "False" && aiObjectivity === "Objective") {
+    compliance = -1;
+  }
+
+  const cleanResponse = aiExplanation.replace("Explanation: ", "");
+
+  return { compliance, cleanResponse };
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -46,7 +68,8 @@ export default async function handler(
   const post = req.body.post;
   const website = req.body.website;
 
-  const host = await checkHost(website.host);
+  const aiData = await parseResponse(post.aiResponse);
+  await checkHost(website.host);
   const article = await checkWebsiteArticle(website.article, website.host);
   const topic = await checkTopic(post.topic);
 
@@ -55,8 +78,8 @@ export default async function handler(
     topicId: topic.id,
     fischerUserId: post.userId,
     assertion: post.assertion,
-    aiResponse: post.aiResponse,
-    aiCompliance: 1,
+    aiResponse: aiData.cleanResponse,
+    aiCompliance: aiData.compliance,
     topicName: topic.name,
   };
 
