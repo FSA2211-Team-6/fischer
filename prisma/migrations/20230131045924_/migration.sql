@@ -24,7 +24,7 @@ CREATE TABLE "Comment" (
 );
 
 -- CreateTable
-CREATE TABLE "userCompliance" (
+CREATE TABLE "UserCompliance" (
     "postId" INTEGER NOT NULL,
     "compliance" INTEGER NOT NULL,
     "fischerId" INTEGER NOT NULL
@@ -142,7 +142,7 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "userCompliance_fischerId_postId_key" ON "userCompliance"("fischerId", "postId");
+CREATE UNIQUE INDEX "UserCompliance_fischerId_postId_key" ON "UserCompliance"("fischerId", "postId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
@@ -184,10 +184,10 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId"
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "userCompliance" ADD CONSTRAINT "userCompliance_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "UserCompliance" ADD CONSTRAINT "UserCompliance_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "userCompliance" ADD CONSTRAINT "userCompliance_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "UserCompliance" ADD CONSTRAINT "UserCompliance_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "BadPost" ADD CONSTRAINT "BadPost_websiteArticleId_fkey" FOREIGN KEY ("websiteArticleId") REFERENCES "WebsiteArticle"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
