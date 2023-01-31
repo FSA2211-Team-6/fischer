@@ -25,15 +25,42 @@ model ExpertResponse {
 }
 
 model Comment {
-  id              Int      @id @default(autoincrement())
+  id              Int         @id @default(autoincrement())
   postId          Int
-  fischerUserId   Int
+  fischerId       Int
   content         String
   createdAt       DateTime    @default(now())
   upvotes         Int         @default(0)
 
-  post        Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
-  commenter   FischerUser @relation(fields: [fischerUserId], references: [id], onDelete: Cascade)
+  post            Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commenter       User        @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
+}
+
+model UserCompliance {
+  postId          Int
+  compliance      Int
+  fischerId       Int
+
+  user            User      @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
+  post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  @@unique([fischerId, postId])
+}
+
+model User {
+  id            String    @default(cuid()) @unique
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  fischerId     Int       @id @default(autoincrement())
+  userCompliances   userCompliance[]
+
+  accounts      Account[]
+  sessions      Session[]
+  comments      Comment[]
+  expertise     Expert[]
+  posts         Post[]
 }
 
 model BadPost {
@@ -43,13 +70,13 @@ model BadPost {
   createdAt         DateTime        @default(now())
   websiteArticleId  Int
 
-  websiteArticle    WebsiteArticle  @relation(fields: [websiteArticleId], references [id])
+  websiteArticle    WebsiteArticle  @relation(fields: [websiteArticleId], references: [id])
 }
 
 model Post {
   websiteArticleId  Int
   topicId           Int
-  fischerUserId     Int
+  fischerId         Int
   createdAt         DateTime        @default(now())
   assertion         String
   id                Int             @id @default(autoincrement())
@@ -60,10 +87,11 @@ model Post {
 
   expertResponses   ExpertResponse[]
   comments          Comment[]
+  userCompliances   userCompliance[]
 
   websiteArticle    WebsiteArticle  @relation(fields: [websiteArticleId], references: [id])
   topic             Topic           @relation(fields: [topicId], references: [id])
-  fischerUser       FischerUser     @relation(fields: [fischerUserId], references: [id])
+  user              User            @relation(fields: [fischerId], references: [fischerId])
 }
 
 model WebsiteArticle {
@@ -89,12 +117,12 @@ model Expert {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime
   id                Int       @id @default(autoincrement())
-  fischerUserId     Int
+  fischerId         Int
 
   expertResponses   ExpertResponse[]
 
   topic             Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  fischerUser       FischerUser   @relation(fields: [fischerUserId], references: [id], onDelete: Cascade)
+  user              User          @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
 }
 
 model Topic {
@@ -139,28 +167,4 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  fischerUser   FischerUser?
-
-  accounts      Account[]
-  sessions      Session[]
-}
-
-model FischerUser {
-  id                Int    @id @default(autoincrement())
-  createdAt         DateTime  @default(now())
-  userId            String    @unique
-
-  user              User      @relation(fields: [userId], references: [id], onUpdate: Cascade)
-
-  comments          Comment[]
-  expertise         Expert[]
-  posts             Post[]
 }

@@ -16,30 +16,19 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  // callbacks: {
-  //   async jwt({ token, account }) {
-  //     // Persist the OAuth access_token to the token right after signin
-  //     if (account) {
-  //       token.accessToken = account.access_token;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token, user }) {
-  //     // Send properties to the client, like an access_token from a provider.
-  //     session.accessToken = token.accessToken;
-  //     return session;
-  //   },
-  // },
+  callbacks: {
+    async jwt({ token, account }) {
+      // Persist the OAuth access_token to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+    },
+    // async session({ session, token }) {
+    //   // Send properties to the client, like an access_token from a provider.
+    //   session.accessToken = token.accessToken;
+    //   return session;
+    // },
+  },
   secret: process.env.JWT_SECRET,
 });
-
-// adapter: SequelizeAdapter(db, {
-//   models: {
-//     User: db.define("users", {
-//       ...User,
-//       expertise: ARRAY(STRING),
-//     }),
-//     Session: db.define("sessions", Session),
-//     Account: db.define("accounts", Account),
-//     VerificationToken: db.define("verification_tokens", VerificationToken),
-//   },

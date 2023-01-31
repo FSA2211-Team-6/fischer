@@ -10,11 +10,13 @@ export default async function handler(
   const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
+
+  //"Give me True/False, Subjective/Objective, and explanation in an array"
   const openai = new OpenAIApi(configuration);
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt:
-      "Give me True/False, Subjective/Objective, and explanation in an array" +
+      "Provide general category of the following statement: " +
       req.body +
       "\nA:",
     temperature: 0,

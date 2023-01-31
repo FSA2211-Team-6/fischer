@@ -15,9 +15,8 @@ CREATE TABLE "ExpertResponse" (
 CREATE TABLE "Comment" (
     "id" SERIAL NOT NULL,
     "postId" INTEGER NOT NULL,
-    "fischerUserId" INTEGER NOT NULL,
+    "fischerId" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
-    "compliance" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "upvotes" INTEGER NOT NULL DEFAULT 0,
 
@@ -25,16 +24,48 @@ CREATE TABLE "Comment" (
 );
 
 -- CreateTable
+CREATE TABLE "userCompliance" (
+    "postId" INTEGER NOT NULL,
+    "compliance" INTEGER NOT NULL,
+    "fischerId" INTEGER NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "emailVerified" TIMESTAMP(3),
+    "image" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "fischerId" SERIAL NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("fischerId")
+);
+
+-- CreateTable
+CREATE TABLE "BadPost" (
+    "id" SERIAL NOT NULL,
+    "assertion" TEXT NOT NULL,
+    "response" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "websiteArticleId" INTEGER NOT NULL,
+
+    CONSTRAINT "BadPost_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Post" (
     "websiteArticleId" INTEGER NOT NULL,
     "topicId" INTEGER NOT NULL,
-    "fischerUserId" INTEGER NOT NULL,
+    "fischerId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "assertion" TEXT NOT NULL,
     "id" SERIAL NOT NULL,
     "aiResponse" TEXT NOT NULL,
-    "aiCompliance" INTEGER NOT NULL DEFAULT 0,
     "topicName" TEXT NOT NULL,
+    "aiCompliance" INTEGER NOT NULL DEFAULT 0,
+    "publicCompliance" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
@@ -62,7 +93,7 @@ CREATE TABLE "Expert" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "id" SERIAL NOT NULL,
-    "fischerUserId" INTEGER NOT NULL,
+    "fischerId" INTEGER NOT NULL,
 
     CONSTRAINT "Expert_pkey" PRIMARY KEY ("id")
 );
@@ -110,25 +141,14 @@ CREATE TABLE "VerificationToken" (
     "expires" TIMESTAMP(3) NOT NULL
 );
 
--- CreateTable
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "emailVerified" TIMESTAMP(3),
-    "image" TEXT,
+-- CreateIndex
+CREATE UNIQUE INDEX "userCompliance_fischerId_postId_key" ON "userCompliance"("fischerId", "postId");
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
+-- CreateIndex
+CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
--- CreateTable
-CREATE TABLE "FischerUser" (
-    "id" SERIAL NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" TEXT NOT NULL,
-
-    CONSTRAINT "FischerUser_pkey" PRIMARY KEY ("id")
-);
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "WebsiteArticle_articleURL_key" ON "WebsiteArticle"("articleURL");
@@ -151,12 +171,6 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "FischerUser_userId_key" ON "FischerUser"("userId");
-
 -- AddForeignKey
 ALTER TABLE "ExpertResponse" ADD CONSTRAINT "ExpertResponse_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -167,7 +181,16 @@ ALTER TABLE "ExpertResponse" ADD CONSTRAINT "ExpertResponse_expertId_fkey" FOREI
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_fischerUserId_fkey" FOREIGN KEY ("fischerUserId") REFERENCES "FischerUser"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "userCompliance" ADD CONSTRAINT "userCompliance_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "userCompliance" ADD CONSTRAINT "userCompliance_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BadPost" ADD CONSTRAINT "BadPost_websiteArticleId_fkey" FOREIGN KEY ("websiteArticleId") REFERENCES "WebsiteArticle"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_websiteArticleId_fkey" FOREIGN KEY ("websiteArticleId") REFERENCES "WebsiteArticle"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -176,7 +199,7 @@ ALTER TABLE "Post" ADD CONSTRAINT "Post_websiteArticleId_fkey" FOREIGN KEY ("web
 ALTER TABLE "Post" ADD CONSTRAINT "Post_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_fischerUserId_fkey" FOREIGN KEY ("fischerUserId") REFERENCES "FischerUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Post" ADD CONSTRAINT "Post_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "WebsiteArticle" ADD CONSTRAINT "WebsiteArticle_websiteId_fkey" FOREIGN KEY ("websiteId") REFERENCES "Website"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -185,13 +208,10 @@ ALTER TABLE "WebsiteArticle" ADD CONSTRAINT "WebsiteArticle_websiteId_fkey" FORE
 ALTER TABLE "Expert" ADD CONSTRAINT "Expert_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Expert" ADD CONSTRAINT "Expert_fischerUserId_fkey" FOREIGN KEY ("fischerUserId") REFERENCES "FischerUser"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Expert" ADD CONSTRAINT "Expert_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "FischerUser" ADD CONSTRAINT "FischerUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
