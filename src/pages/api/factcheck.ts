@@ -17,7 +17,7 @@ export default async function handler(
     model: "text-davinci-003",
     prompt:
       // "Provide context to the validity of the following statement as well as true or false: " +
-      "Give me True/False, Subjective/Objective, journalism category, and explanation of the following statement:" +
+      // "Give me True/False, Subjective/Objective, journalism category, and explanation of the following statement:" +
       "Provide general category of the following statement: " +
       req.body +
       "\nA:",
