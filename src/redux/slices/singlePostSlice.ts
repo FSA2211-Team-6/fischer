@@ -17,9 +17,9 @@ export interface user {
 }
 
 export interface truthVotes {
-  green: number;
-  yellow: number;
-  red: number;
+  greenCount: number;
+  yellowCount: number;
+  redCount: number;
 }
 
 export interface post {
@@ -33,13 +33,21 @@ export interface post {
 }
 
 export interface singlePostState {
-  singlePostData: object;
+  singlePostData: post;
   status: "loading" | "idle";
   error: string | null;
 }
 
 const initialState: singlePostState = {
-  singlePostData: {},
+  singlePostData: {
+    postId: null,
+    user: { userId: null, userName: "", firstName: "", lastName: "" },
+    fact: "",
+    articleURL: "",
+    host: "",
+    truthVotes: { greenCount: 0, yellowCount: 0, redCount: 0 },
+    comments: [],
+  },
   status: "idle",
   error: null,
 };
