@@ -43,11 +43,9 @@ export const allPostsSlice = createSlice({
   initialState,
   reducers: {
     setInitialPosts: (state: any, action: PayloadAction<object>) => {
-      console.log(action.payload);
       state.allPostsData = action.payload;
     },
     addPost: (state: any, action: PayloadAction<object>) => {
-      console.log(action.payload);
       state.allPostsData.push(action.payload);
     },
   },
@@ -56,7 +54,6 @@ export const allPostsSlice = createSlice({
     builder.addCase(
       fetchAllPosts.fulfilled,
       (state: any, action: PayloadAction<post>) => {
-        console.log(action.payload);
         state.allPostsData = action.payload;
         state.status = "idle";
       }

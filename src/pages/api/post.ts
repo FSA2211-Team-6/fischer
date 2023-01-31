@@ -76,7 +76,7 @@ export default async function handler(
   const addPost = {
     websiteArticleId: article.id,
     topicId: topic.id,
-    fischerUserId: post.userId,
+    fischerId: post.userId,
     assertion: post.assertion,
     aiResponse: aiData.cleanResponse,
     aiCompliance: aiData.compliance,
