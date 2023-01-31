@@ -27,6 +27,44 @@ declare global {
     truthVotes: truthVotes;
     comments: Array<comment>;
   }
+
+  interface website {
+    id: number;
+    hostSite: string;
+  }
+
+  interface websiteArticle {
+    articleURL: string;
+    id: number;
+    website: website;
+    websiteId: number;
+  }
+
+  interface firstPostUser {
+    createdAt: string;
+    email: string;
+    emailVerified: boolean | null;
+    fischerId: number;
+    id: number;
+    image: string | null;
+    name: string;
+  }
+
+  interface firstPosts {
+    aiCompliance: number;
+    aiResponse: string;
+    assertion: string;
+    createdAt: string;
+    fischerId: number;
+    id: number;
+    publicCompliance: number;
+    topicId: number;
+    topicName: string;
+    user: firstPostUser;
+    websiteArticle: websiteArticle;
+    websiteArticleId: number;
+    comments: Array<comment>;
+  }
   interface allPostsState {
     allPostsData: Array<post>;
     status: "loading" | "idle";

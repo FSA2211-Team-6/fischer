@@ -21,7 +21,7 @@ export const getStaticProps: GetStaticProps = async () => {
     include: { websiteArticle: { include: { website: true } }, user: true },
   });
 
-  const firstPosts = JSON.parse(JSON.stringify(posts));
+  const firstPosts: Array<firstPosts> = JSON.parse(JSON.stringify(posts));
 
   //place cursor at last ID.
   const myCursor = firstPosts[firstPosts.length - 1].id;

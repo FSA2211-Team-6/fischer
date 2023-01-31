@@ -1,7 +1,12 @@
 import { selectAllPosts } from "@/redux/slices/allPostsSlice";
 import { useAppSelector } from "@/redux/store";
+import React, { PropsWithChildren } from "react";
 
-export default function AllPosts({ firstPosts }) {
+interface Props {
+  firstPosts: firstPosts[];
+}
+
+const AllPosts: React.FC<Props> = ({ firstPosts }) => {
   const posts = useAppSelector(selectAllPosts);
   console.log(firstPosts);
 
@@ -49,14 +54,14 @@ export default function AllPosts({ firstPosts }) {
                     <p className="font-bold text-lg mb-4 w-max pl-2 pr-2">
                       Assertion
                     </p>
-                    <div className="h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative">
-                      <div className="text-4xl font-serif absolute -top-3 -left-2">
-                        <span>&#8220;</span>
-                      </div>
+                    <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative">
+                      <span className="text-4xl font-serif absolute -left-2 -top-2">
+                        &#8220;
+                      </span>
                       {post.assertion}
-                      <div className="text-4xl font-serif absolute right-0 -bottom-5 pr-2">
-                        <span className="">&#8221;</span>
-                      </div>
+                      <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
+                        &#8221;
+                      </span>
                     </div>
                   </div>
                   {/* AI Response */}
@@ -64,14 +69,14 @@ export default function AllPosts({ firstPosts }) {
                     <p className="mb-4 font-bold text-lg  w-max pl-2 pr-2">
                       AI Response
                     </p>
-                    <div className="relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2">
-                      <div className="text-4xl font-serif absolute -top-3 -left-2">
-                        <span>&#8220;</span>
-                      </div>
+                    <div className="w-full relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2">
+                      <span className="text-4xl font-serif absolute -left-2 -top-2">
+                        &#8220;
+                      </span>
                       {post.aiResponse}
-                      <div className="text-4xl font-serif absolute right-0 -bottom-5 pr-2">
-                        <span>&#8221;</span>
-                      </div>
+                      <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
+                        &#8221;
+                      </span>
                     </div>
                   </div>
                 </section>
@@ -79,11 +84,13 @@ export default function AllPosts({ firstPosts }) {
               {/* Comments */}
               <div className="flex items-center">
                 <div className="w-full">
-                  {/* <div className="text-sm hover:underline underline-offset-4 cursor-pointer">
-                    {post.comments.length === 1
-                      ? `${post.comments.length} comment`
-                      : `${post.comments.length} comments`}
-                  </div> */}
+                  <div className="text-sm hover:underline underline-offset-4 cursor-pointer">
+                    {post.comments
+                      ? post.comments.length === 1
+                        ? `${post.comments.length} comment`
+                        : `${post.comments} comments`
+                      : `0 comments`}
+                  </div>
                 </div>
                 {/* Voting Buttons */}
                 <div className="flex justify-end gap-4 align-middle w-full">
@@ -164,4 +171,6 @@ export default function AllPosts({ firstPosts }) {
         })}
     </div>
   );
-}
+};
+
+export default AllPosts;
