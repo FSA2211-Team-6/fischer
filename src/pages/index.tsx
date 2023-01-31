@@ -8,12 +8,16 @@ import { useAppSelector } from "@/redux/store";
 import AllPosts from "@/components/allPosts";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
-import { setInitialPosts, addPost } from "@/redux/slices/allPostsSlice";
+import allPostsSlice, {
+  setInitialPosts,
+  addPost,
+  selectAllPosts,
+} from "@/redux/slices/allPostsSlice";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import prisma from "../../server/db/prismadb";
 
 export const getStaticProps: GetStaticProps = async () => {
-  const numResults = 4;
+  const numResults = 2;
 
   //need to add more stuff to query:  get hostname
   const posts = await prisma.post.findMany({
@@ -78,32 +82,22 @@ export default function Home({
   const dispatch = useAppDispatch();
 
   const [userInput, setUserInput] = React.useState<string>("");
+  const [cursor, setCursor] = React.useState<number>(myCursor);
+
+  const morePosts = useAppSelector(selectAllPosts);
 
   useEffect(() => {
-    //once i have initalPosts, i want to send it to the store to be used on <allPosts />
+    window.addEventListener("scroll", handleInfiniteScroll);
+  });
 
-    dispatch(setInitialPosts(initialPosts));
-  }, [initialPosts, dispatch]);
+  useEffect(() => {
+    // dispatch(setInitialPosts(firstPosts));
+    setCursor(myCursor);
+  }, [dispatch, myCursor]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    //simulate adding a new post to the db
-    //for purposes right now, just add it straight to the store
-    //means i will need to create a new action that does this for now
 
-    //first i need to hit the API to get an AI repsonse, then use the returned value in
-    //the new post object that I will send to the store/db.
-    //how do i safely hit the API route on front end, can I just do an await fetch in handleSubmit?
-
-    //!!! REAL DATA FLOW !!!///
-    // 1.  User submits a string from a website
-    // 2.  extension hits API directly.  API sends back the openAI response
-    // 3.  extension then sends a complete post to the db
-    // 4.  web app knows db got updated, so updates store? which re-renders app
-    //??? we actually don't want to re-render the app when a new post comes in
-    //??? we just fetch posts as user requests more by scrolling or filtering
-
-    //go get the response with req.body as the user input
     const aiResponse = await fetch("/api/factcheck", {
       method: "POST",
       body: userInput,
@@ -141,6 +135,27 @@ export default function Home({
     };
 
     dispatch(addPost(newPost));
+  };
+
+  const handleRefresh = async (cursor: number) => {
+    const morePosts = await fetch(`/api/posts/request/${cursor}`);
+    const data = await morePosts.json();
+    console.log(data.newCursor);
+
+    data.posts.forEach((post) => {
+      dispatch(addPost(post));
+    });
+    setCursor(data.newCursor);
+  };
+
+  const handleInfiniteScroll = () => {
+    console.log("infinitescroll");
+    const endOfPage =
+      window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+    if (endOfPage) {
+      console.log("end of page");
+      handleRefresh(cursor);
+    }
   };
 
   return (
@@ -414,9 +429,18 @@ export default function Home({
                   Submit
                 </button>
               </form>
+              <button
+                onClick={() => {
+                  handleRefresh(cursor);
+                }}
+                className="bg-slate-500 w-max rounded-md p-2"
+              >
+                REFRESH
+              </button>
 
               {/*Start of first post */}
               <AllPosts firstPosts={firstPosts} />
+              <AllPosts firstPosts={morePosts} />
 
               {/*  End of posts */}
             </div>

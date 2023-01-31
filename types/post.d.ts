@@ -64,6 +64,11 @@ declare global {
     websiteArticle: websiteArticle;
     websiteArticleId: number;
     comments: Array<comment>;
+    expertResponses: Array<>;
+    expertCompliance: number | null;
+    publicCompliance: number | null;
+    truthiness: number | null;
+    userCompliances: Array<>;
   }
   interface allPostsState {
     allPostsData: Array<post>;
