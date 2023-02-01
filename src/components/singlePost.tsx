@@ -16,18 +16,20 @@ export default function SinglePost({ post }) {
           {/* Begin post categories */}
           <div className="inline-flex gap-2 w-max">
             <div className="bg-red-500 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
-              Politics
+              {post.singlePostData.topic ? post.singlePostData.topic.name : ""}
             </div>
-            <div className="bg-emerald-700 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
+            {/* <div className="bg-emerald-700 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
               Literature
             </div>
             <div className="bg-sky-700 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
               Science
-            </div>
+            </div> */}
           </div>
           {/* End post categories */}
           <div className="inline-flex gap-2 float-right items-center">
-            <p className="inline float-right text-xs">user</p>
+            <p className="inline float-right text-xs">
+              {post.singlePostData.user.name}
+            </p>
             <div className="mx-auto object-cover inline float-right rounded-full bg-white h-10 w-10 "></div>
           </div>
         </div>
@@ -41,7 +43,7 @@ export default function SinglePost({ post }) {
                 <div className="text-4xl font-serif absolute -top-3 -left-2">
                   <span>&#8220;</span>
                 </div>
-                {post.singlePostData.fact}
+                {post.singlePostData.assertion}
                 <div className="text-4xl font-serif absolute right-0 -bottom-5 pr-2">
                   <span className="">&#8221;</span>
                 </div>
@@ -55,7 +57,7 @@ export default function SinglePost({ post }) {
                 <div className="text-4xl font-serif absolute -top-3 -left-2">
                   <span>&#8220;</span>
                 </div>
-                {`${post.singlePostData.fact}`}
+                {`${post.singlePostData.aiResponse}`}
                 <div className="text-4xl font-serif absolute right-0 -bottom-5 pr-2">
                   <span>&#8221;</span>
                 </div>

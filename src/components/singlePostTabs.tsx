@@ -12,13 +12,13 @@ export default function Tabs() {
             className="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row"
             role="tablist"
           >
-            <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+            <li className="-mb-px mx-2 last:mr-0 flex-auto text-center ">
               <a
                 className={
                   "text-sm uppercase px-5 py-3 shadow-lg rounded block leading-normal " +
                   (openTab === 1
-                    ? "text-slate-700 underline bg-gray-200 font-bold"
-                    : "text-white  bg-gray-700")
+                    ? "text-white underline bg-gray-600 "
+                    : "text-white  bg-gray-700 hover:bg-gray-600")
                 }
                 onClick={(e) => {
                   e.preventDefault();
@@ -31,13 +31,13 @@ export default function Tabs() {
                 Experts
               </a>
             </li>
-            <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+            <li className="-mb-px last:mr-2 flex-auto text-center">
               <a
                 className={
                   "text-sm uppercase px-5 py-3 shadow-lg rounded block leading-normal " +
                   (openTab === 2
-                    ? "text-slate-700 underline bg-gray-200 font-bold"
-                    : "text-white  bg-gray-700")
+                    ? "text-white underline bg-gray-600 "
+                    : "text-white  bg-gray-700 hover:bg-gray-600")
                 }
                 onClick={(e) => {
                   e.preventDefault();

@@ -4,7 +4,7 @@ export default function Comments() {
     <>
       <section className="relative flex  justify-center  antialiased   min-w-screen">
         <div className="container px-0 mx-auto sm:px-5">
-          <div className="flex-col w-full py-4 mx-auto bg-white border-b-2 border-r-2 border-gray-200 sm:px-4 sm:py-4 md:px-4 sm:rounded-lg sm:shadow-sm mb-4">
+          <div className="flex-col w-full py-2 mx-auto bg-gray-800 border-b-2 border-r-2 border-gray-900 sm:px-4 sm:py-2 md:px-4 sm:rounded-lg sm:shadow-sm mb-4">
             <div className="flex flex-row">
               {/* USER IMG HERE */}
               <img
@@ -13,14 +13,14 @@ export default function Comments() {
                 src="https://ca.slack-edge.com/T024FPYBQ-U044LRSBS3F-8b230715abb7-512"
               />
               <div className="flex-col mt-1">
-                <div className="flex items-center flex-1 px-4 font-bold text-black leading-tight">
+                <div className="flex items-center flex-1 px-4 font-bold text-white leading-tight">
                   {/* USER NAME HERE */}
                   Eddie F
-                  <span className="ml-2 text-xs font-normal text-gray-500">
+                  <span className="ml-2 text-xs font-normal text-gray-400">
                     {/* COMMENT TIME HERE*/}2 weeks ago
                   </span>
                 </div>
-                <div className="flex-1 px-2 ml-2 text-sm font-medium leading-loose text-gray-600">
+                <div className="flex-1 px-2 ml-2 text-sm font-medium leading-2 text-gray-300">
                   {/* COMMENT HERE */}
                   {`This one is for the boys with the booming system
                     Top down, AC with the cooler system`}
@@ -28,7 +28,7 @@ export default function Comments() {
                 {/* UPVOTE BUTTON */}
                 <button className="inline-flex items-center px-1 pt-2 ml-1 flex-column">
                   <svg
-                    className="w-5 h-5 ml-2 text-gray-600 cursor-pointer hover:text-gray-700"
+                    className="w-5 h-5 ml-2 text-gray-400 cursor-pointer hover:fill-green-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -45,7 +45,7 @@ export default function Comments() {
                 {/* DOWNVOTE BUTTON */}
                 <button className="inline-flex items-center px-1 -ml-1 flex-column">
                   <svg
-                    className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-700"
+                    className="w-5 h-5 text-gray-400 cursor-pointer hover:fill-red-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -66,7 +66,7 @@ export default function Comments() {
 
           {/*  NEW TEST COMMENT*/}
 
-          <div className="flex-col w-full py-4 mx-auto bg-white border-b-2 border-r-2 border-gray-200 sm:px-4 sm:py-4 md:px-4 sm:rounded-lg sm:shadow-sm ">
+          <div className="flex-col w-full py-2 mx-auto bg-gray-800 border-b-2 border-r-2 border-gray-900 sm:px-4 sm:py-2 md:px-4 sm:rounded-lg sm:shadow-sm ">
             <div className="flex flex-row">
               {/* USER IMG HERE */}
               <img
@@ -75,14 +75,14 @@ export default function Comments() {
                 src="https://ca.slack-edge.com/T024FPYBQ-U044LRSBS3F-8b230715abb7-512"
               />
               <div className="flex-col mt-1">
-                <div className="flex items-center flex-1 px-4 font-bold text-black leading-tight">
+                <div className="flex items-center flex-1 px-4 font-bold text-white leading-tight">
                   {/* USER NAME HERE */}
                   Eddie F
-                  <span className="ml-2 text-xs font-normal text-gray-500">
+                  <span className="ml-2 text-xs font-normal text-gray-400">
                     {/* COMMENT TIME HERE*/}2 weeks ago
                   </span>
                 </div>
-                <div className="flex-1 px-2 ml-2 text-sm font-medium leading-loose text-gray-600">
+                <div className="flex-1 px-2 ml-2 text-sm font-medium leading-2 text-gray-300">
                   {/* COMMENT HERE */}
                   {`Boy, you got my heartbeat runnin' away Beating like a drum and
                   it's coming your way Can't you hear that Boom, badoom, boom,
@@ -91,7 +91,7 @@ export default function Comments() {
                 {/* UPVOTE BUTTON */}
                 <button className="inline-flex items-center px-1 pt-2 ml-1 flex-column">
                   <svg
-                    className="w-5 h-5 ml-2 text-gray-600 cursor-pointer hover:text-gray-700"
+                    className="w-5 h-5 ml-2 text-gray-400 cursor-pointer hover:fill-green-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -108,7 +108,7 @@ export default function Comments() {
                 {/* DOWNVOTE BUTTON */}
                 <button className="inline-flex items-center px-1 -ml-1 flex-column">
                   <svg
-                    className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-700"
+                    className="w-5 h-5 text-gray-400 cursor-pointer hover:fill-red-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
