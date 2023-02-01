@@ -68,11 +68,15 @@ export default async function handler(
   const post = req.body.post;
   const website = req.body.website;
 
+  //clean up the ai response, send back compliance, a cleanResponse
   const aiData = await parseResponse(post.aiResponse);
+
+  //perform checks to see if website/article/topic exist already, if not, create them.
   await checkHost(website.host);
   const article = await checkWebsiteArticle(website.article, website.host);
   const topic = await checkTopic(post.topic);
 
+  //build the object to send to db
   const addPost = {
     websiteArticleId: article.id,
     topicId: topic.id,

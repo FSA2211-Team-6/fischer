@@ -71,7 +71,8 @@ declare global {
     userCompliances: Array<>;
   }
   interface allPostsState {
-    allPostsData: Array<post>;
+    allPostsData: Array<firstPosts>;
+    cursor: number;
     status: "loading" | "idle";
     error: string | null;
   }

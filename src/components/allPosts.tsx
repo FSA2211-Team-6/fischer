@@ -1,21 +1,80 @@
-import { selectAllPosts } from "@/redux/slices/allPostsSlice";
-import { useAppSelector } from "@/redux/store";
-import React, { PropsWithChildren } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  RefObject,
+} from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import allPostsSlice, {
+  setInitialPosts,
+  addPost,
+  selectAllPosts,
+  updateCursor,
+  selectCursor,
+} from "@/redux/slices/allPostsSlice";
 
 interface Props {
   firstPosts: firstPosts[];
 }
 
-const AllPosts: React.FC<Props> = ({ firstPosts }) => {
+interface Scroll {
+  infiniteScroll: boolean;
+}
+
+const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
+  firstPosts,
+  infiniteScroll,
+}) => {
+  const dispatch = useAppDispatch();
+  const cursor = useAppSelector(selectCursor);
+
+  const [infiniteScrollState, setInfiniteScrollState] = React.useState<
+    boolean | undefined
+  >(infiniteScroll);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const observer = React.useRef<IntersectionObserver | null>(null);
+  const endOfScrollRef = React.useCallback<any>(
+    (node: HTMLElement) => {
+      const handleRefresh = async (cursor: number) => {
+        setLoading(true);
+        const morePosts = await fetch(`/api/posts/request/${cursor}`);
+        const data = await morePosts.json();
+
+        data.posts.forEach((post: firstPosts) => {
+          dispatch(addPost(post));
+        });
+        dispatch(updateCursor(data.newCursor));
+        console.log("cursor coming out", data.newCursor);
+        setLoading(false);
+      };
+
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          console.log("cursor going in", cursor);
+          handleRefresh(cursor);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [loading, cursor, dispatch]
+  );
+
   const posts = useAppSelector(selectAllPosts);
-  console.log(firstPosts);
+
+  console.log("cursor state", cursor);
 
   const text =
     "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
   return (
     <div>
-      {firstPosts.length > 0 &&
-        firstPosts.map((post) => {
+      {firstPosts!.length > 0 &&
+        firstPosts!.map((post, index) => {
           return (
             <div
               key={post.id}
@@ -166,6 +225,16 @@ const AllPosts: React.FC<Props> = ({ firstPosts }) => {
                   </div>
                 </div>
               </div>
+              {(firstPosts!.length === index + 1 &&
+                posts.length === 0 &&
+                infiniteScrollState === false) ||
+              (firstPosts!.length === index + 1 &&
+                posts.length > 0 &&
+                infiniteScrollState === true) ? (
+                <div className="" ref={endOfScrollRef}>
+                  last post
+                </div>
+              ) : null}
             </div>
           );
         })}

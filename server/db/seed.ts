@@ -21,8 +21,8 @@ const userData: Prisma.UserCreateInput[] = [
 ];
 
 const websiteData = [
-  { hostSite: "https://www.cnn.com/" },
-  { hostSite: "https://www.bbc.com/" },
+  { hostSite: "https://www.cnn.com" },
+  { hostSite: "https://www.bbc.com" },
 ];
 
 const websiteArticleData = [

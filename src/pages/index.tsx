@@ -12,6 +12,7 @@ import allPostsSlice, {
   setInitialPosts,
   addPost,
   selectAllPosts,
+  updateCursor,
 } from "@/redux/slices/allPostsSlice";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import prisma from "../../server/db/prismadb";
@@ -82,17 +83,10 @@ export default function Home({
   const dispatch = useAppDispatch();
 
   const [userInput, setUserInput] = React.useState<string>("");
-  const [cursor, setCursor] = React.useState<number>(myCursor);
-
   const morePosts = useAppSelector(selectAllPosts);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleInfiniteScroll);
-  });
-
-  useEffect(() => {
-    // dispatch(setInitialPosts(firstPosts));
-    setCursor(myCursor);
+    dispatch(updateCursor(myCursor));
   }, [dispatch, myCursor]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -135,27 +129,6 @@ export default function Home({
     };
 
     dispatch(addPost(newPost));
-  };
-
-  const handleRefresh = async (cursor: number) => {
-    const morePosts = await fetch(`/api/posts/request/${cursor}`);
-    const data = await morePosts.json();
-    console.log(data.newCursor);
-
-    data.posts.forEach((post) => {
-      dispatch(addPost(post));
-    });
-    setCursor(data.newCursor);
-  };
-
-  const handleInfiniteScroll = () => {
-    console.log("infinitescroll");
-    const endOfPage =
-      window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-    if (endOfPage) {
-      console.log("end of page");
-      handleRefresh(cursor);
-    }
   };
 
   return (
@@ -429,18 +402,10 @@ export default function Home({
                   Submit
                 </button>
               </form>
-              <button
-                onClick={() => {
-                  handleRefresh(cursor);
-                }}
-                className="bg-slate-500 w-max rounded-md p-2"
-              >
-                REFRESH
-              </button>
 
               {/*Start of first post */}
-              <AllPosts firstPosts={firstPosts} />
-              <AllPosts firstPosts={morePosts} />
+              <AllPosts firstPosts={firstPosts} infiniteScroll={false} />
+              <AllPosts firstPosts={morePosts} infiniteScroll={true} />
 
               {/*  End of posts */}
             </div>
