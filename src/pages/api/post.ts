@@ -42,10 +42,16 @@ const checkTopic = async (topicName: string) => {
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
-) {
-  const post = req.body.post;
-  const website = req.body.website;
-
+){
+try{
+  if(req.method !== 'POST'){
+    res.setHeader('Allow', 'POST');
+    return res.status(405);
+  }
+  const data = JSON.parse(req.body)
+  const post = data.post;
+  const website = data.website;
+  console.log(data)
   const host = await checkHost(website.host);
   const article = await checkWebsiteArticle(website.article, website.host);
   const topic = await checkTopic(post.topic);
@@ -59,8 +65,11 @@ export default async function handler(
     aiCompliance: 1,
     topicName: topic.name,
   };
-
+  
   const newPost = await prisma.post.create({ data: addPost });
 
   res.status(200).send(newPost);
+}catch(err){
+  res.send(err)
+}
 }
