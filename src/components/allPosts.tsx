@@ -13,6 +13,7 @@ import allPostsSlice, {
   updateCursor,
   selectCursor,
 } from "@/redux/slices/allPostsSlice";
+import Loading from "./loading";
 
 interface Props {
   firstPosts: firstPosts[];
@@ -34,11 +35,27 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   >(infiniteScroll);
   const [loading, setLoading] = React.useState<boolean>(false);
 
+  let throttleTimer;
+  // const throttleTime = 1000;
+
+  function throttle(callback, time) {
+    if (throttleTimer) {
+      console.log("throttling");
+      return;
+    }
+
+    throttleTimer = true;
+    setTimeout(() => {
+      callback();
+      throttleTimer = false;
+    }, time);
+  }
+
   const observer = React.useRef<IntersectionObserver | null>(null);
   const endOfScrollRef = React.useCallback<any>(
     (node: HTMLElement) => {
       const handleRefresh = async (cursor: number) => {
-        setLoading(true);
+        // setTimeout(() => {}, 5000);
         const morePosts = await fetch(`/api/posts/request/${cursor}`);
         const data = await morePosts.json();
 
@@ -46,17 +63,18 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
           dispatch(addPost(post));
         });
         dispatch(updateCursor(data.newCursor));
-        console.log("cursor coming out", data.newCursor);
         setLoading(false);
       };
 
-      if (loading) return;
       if (observer.current) observer.current.disconnect();
 
       observer.current = new IntersectionObserver((entries) => {
+        setLoading(true);
+
         if (entries[0].isIntersecting) {
-          console.log("cursor going in", cursor);
-          handleRefresh(cursor);
+          throttle(() => {
+            handleRefresh(cursor);
+          }, 1000);
         }
       });
 
@@ -66,8 +84,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   );
 
   const posts = useAppSelector(selectAllPosts);
-
-  console.log("cursor state", cursor);
 
   const text =
     "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
@@ -225,19 +241,20 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                   </div>
                 </div>
               </div>
+              {/* This is the blank div element at end of current posts, 
+              reaching this element will attempt to fetch more posts */}
               {(firstPosts!.length === index + 1 &&
                 posts.length === 0 &&
                 infiniteScrollState === false) ||
               (firstPosts!.length === index + 1 &&
                 posts.length > 0 &&
                 infiniteScrollState === true) ? (
-                <div className="" ref={endOfScrollRef}>
-                  last post
-                </div>
+                <div ref={endOfScrollRef}></div>
               ) : null}
             </div>
           );
         })}
+      {loading ? <Loading /> : null}
     </div>
   );
 };

@@ -31,43 +31,8 @@ export const getStaticProps: GetStaticProps = async () => {
   //place cursor at last ID.
   const myCursor = firstPosts[firstPosts.length - 1].id;
 
-  const text =
-    "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
-
-  const initialPosts: Array<post> = [
-    {
-      postId: 1,
-      user: {
-        userId: 1,
-        userName: "dmcenroe",
-        firstName: "Derek",
-        lastName: "McEnroe",
-      },
-      fact: text,
-      aiResponse: text,
-      articleURL:
-        "https://www.cnn.com/travel/article/italy-florence-tourist-arrested-ponte-vecchio/index.html",
-      host: "https://www.cnn.com",
-      truthVotes: {
-        green: 17,
-        yellow: 4,
-        red: 12,
-      },
-      comments: [
-        {
-          commentId: 1,
-          userId: 1,
-          postId: 1,
-          comment: "cool post",
-          upvotes: 24,
-        },
-      ],
-    },
-  ];
-
   return {
     props: {
-      initialPosts,
       firstPosts,
       myCursor,
     },
@@ -75,7 +40,6 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 export default function Home({
-  initialPosts,
   firstPosts,
   myCursor,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -88,48 +52,6 @@ export default function Home({
   useEffect(() => {
     dispatch(updateCursor(myCursor));
   }, [dispatch, myCursor]);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const aiResponse = await fetch("/api/factcheck", {
-      method: "POST",
-      body: userInput,
-    });
-
-    const data = await aiResponse.json();
-
-    const newPost = {
-      postId: Math.floor(Math.random() * 1000),
-      user: {
-        userId: 1,
-        userName: "dmcenroe",
-        firstName: "Derek",
-        lastName: "McEnroe",
-      },
-      fact: userInput,
-      aiResponse: data.choices[0].text,
-      articleURL:
-        "https://www.cnn.com/travel/article/italy-florence-tourist-arrested-ponte-vecchio/index.html",
-      host: "https://www.cnn.com",
-      truthVotes: {
-        green: 17,
-        yellow: 4,
-        red: 12,
-      },
-      comments: [
-        {
-          commentId: 1,
-          userId: 1,
-          postId: 1,
-          comment: "cool post",
-          upvotes: 24,
-        },
-      ],
-    };
-
-    dispatch(addPost(newPost));
-  };
 
   return (
     <>
@@ -385,23 +307,6 @@ export default function Home({
                   Most Interesting Pieces from 1/19-1/26
                 </span>
               </div>
-              <form
-                onSubmit={(event) => {
-                  handleSubmit(event);
-                }}
-                className="mt-4 flex flex-col items-center"
-              >
-                <textarea
-                  id="textArea"
-                  onChange={(event) => {
-                    setUserInput(event.target.value);
-                  }}
-                  className="h-24 w-11/12 mb-2"
-                ></textarea>
-                <button className="bg-slate-500 w-max rounded-md p-2">
-                  Submit
-                </button>
-              </form>
 
               {/*Start of first post */}
               <AllPosts firstPosts={firstPosts} infiniteScroll={false} />
