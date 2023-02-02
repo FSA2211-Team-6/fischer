@@ -8,137 +8,50 @@ import { useAppSelector } from "@/redux/store";
 import AllPosts from "@/components/allPosts";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
-import { setInitialPosts, addPost } from "@/redux/slices/allPostsSlice";
+import allPostsSlice, {
+  setInitialPosts,
+  addPost,
+  selectAllPosts,
+  updateCursor,
+} from "@/redux/slices/allPostsSlice";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
+import prisma from "../../server/db/prismadb";
 
 export const getStaticProps: GetStaticProps = async () => {
-  //example query ... this should hit an API to retrieve the first 12 posts.
-  // const dungeonList = await blizzAPI.query(
-  //   "/data/wow/connected-realm/11/mythic-leaderboard/index?namespace=dynamic-us&locale=en_US"
-  // );
+  const numResults = 2;
 
-  //this is going to hit the DB directly, get the first 12 posts
-  //passes the initial posts as props into the index page
-  //then it will need to dispatch an action once the page loads to add those posts to the redux store
-  //then the allPosts component renders page based on redux store
-  //!!! Does this defeat the purpose of server side data fetching? !!!//
-  //I would have to pass initialPosts as a prop to allPosts component to render immediately, but
-  //then later the component would actually need to reference the store as more posts get loaded when user scrolls.
-  //not sure how to do this cleanly without having 2 separate components to be used off of a ternary like:
-  // {initialRender ? <initialRenderPosts/> : <reduxStorePosts/>}
+  //need to add more stuff to query:  get hostname
+  const posts = await prisma.post.findMany({
+    take: numResults,
+    include: { websiteArticle: { include: { website: true } }, user: true },
+  });
 
-  const text =
-    "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
+  const firstPosts: Array<firstPosts> = JSON.parse(JSON.stringify(posts));
 
-  const initialPosts: Array<post> = [
-    {
-      postId: 1,
-      user: {
-        userId: 1,
-        userName: "dmcenroe",
-        firstName: "Derek",
-        lastName: "McEnroe",
-      },
-      fact: text,
-      aiResponse: text,
-      articleURL:
-        "https://www.cnn.com/travel/article/italy-florence-tourist-arrested-ponte-vecchio/index.html",
-      host: "https://www.cnn.com",
-      truthVotes: {
-        green: 17,
-        yellow: 4,
-        red: 12,
-      },
-      comments: [
-        {
-          commentId: 1,
-          userId: 1,
-          postId: 1,
-          comment: "cool post",
-          upvotes: 24,
-        },
-      ],
-    },
-  ];
+  //place cursor at last ID.
+  const myCursor = firstPosts[firstPosts.length - 1].id;
 
   return {
     props: {
-      initialPosts,
+      firstPosts,
+      myCursor,
     },
   };
 };
 
 export default function Home({
-  initialPosts,
+  firstPosts,
+  myCursor,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
   const [userInput, setUserInput] = React.useState<string>("");
+  const morePosts = useAppSelector(selectAllPosts);
 
   useEffect(() => {
-    //once i have initalPosts, i want to send it to the store to be used on <allPosts />
-
-    dispatch(setInitialPosts(initialPosts));
-  }, [initialPosts, dispatch]);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    //simulate adding a new post to the db
-    //for purposes right now, just add it straight to the store
-    //means i will need to create a new action that does this for now
-
-    //first i need to hit the API to get an AI repsonse, then use the returned value in
-    //the new post object that I will send to the store/db.
-    //how do i safely hit the API route on front end, can I just do an await fetch in handleSubmit?
-
-    //!!! REAL DATA FLOW !!!///
-    // 1.  User submits a string from a website
-    // 2.  extension hits API directly.  API sends back the openAI response
-    // 3.  extension then sends a complete post to the db
-    // 4.  web app knows db got updated, so updates store? which re-renders app
-    //??? we actually don't want to re-render the app when a new post comes in
-    //??? we just fetch posts as user requests more by scrolling or filtering
-
-    //go get the response with req.body as the user input
-    const aiResponse = await fetch("/api/factcheck", {
-      method: "POST",
-      body: userInput,
-    });
-
-    const data = await aiResponse.json();
-
-    const newPost = {
-      postId: Math.floor(Math.random() * 1000),
-      user: {
-        userId: 1,
-        userName: "dmcenroe",
-        firstName: "Derek",
-        lastName: "McEnroe",
-      },
-      fact: userInput,
-      aiResponse: data.choices[0].text,
-      articleURL:
-        "https://www.cnn.com/travel/article/italy-florence-tourist-arrested-ponte-vecchio/index.html",
-      host: "https://www.cnn.com",
-      truthVotes: {
-        green: 17,
-        yellow: 4,
-        red: 12,
-      },
-      comments: [
-        {
-          commentId: 1,
-          userId: 1,
-          postId: 1,
-          comment: "cool post",
-          upvotes: 24,
-        },
-      ],
-    };
-
-    dispatch(addPost(newPost));
-  };
+    dispatch(updateCursor(myCursor));
+  }, [dispatch, myCursor]);
 
   return (
     <>
@@ -394,26 +307,10 @@ export default function Home({
                   Most Interesting Pieces from 1/19-1/26
                 </span>
               </div>
-              <form
-                onSubmit={(event) => {
-                  handleSubmit(event);
-                }}
-                className="mt-4 flex flex-col items-center"
-              >
-                <textarea
-                  id="textArea"
-                  onChange={(event) => {
-                    setUserInput(event.target.value);
-                  }}
-                  className="h-24 w-11/12 mb-2"
-                ></textarea>
-                <button className="bg-slate-500 w-max rounded-md p-2">
-                  Submit
-                </button>
-              </form>
 
               {/*Start of first post */}
-              <AllPosts />
+              <AllPosts firstPosts={firstPosts} infiniteScroll={false} />
+              <AllPosts firstPosts={morePosts} infiniteScroll={true} />
 
               {/*  End of posts */}
             </div>

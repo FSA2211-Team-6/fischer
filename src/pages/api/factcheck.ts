@@ -12,6 +12,8 @@ export default async function handler(
   });
 
   //"Give me True/False, Subjective/Objective, and explanation in an array"
+  //"Provide general category of the following statement:"
+
   const openai = new OpenAIApi(configuration);
   const response = await openai.createCompletion({
     model: "text-davinci-003",
