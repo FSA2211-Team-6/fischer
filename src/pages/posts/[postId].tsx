@@ -6,6 +6,7 @@ import { singlePostState } from "@/redux/slices/singlePostSlice";
 import { useEffect } from "react";
 import SinglePost from "@/components/singlePost";
 import Tabs from "@/components/singlePostTabs";
+import CommentBox from "@/components/commentBox";
 
 export default function SinglePostPage() {
   const router = useRouter();
@@ -24,18 +25,17 @@ export default function SinglePostPage() {
     <>
       <main className="relative h-screen overflow-auto bg-gray-100 dark:bg-gray-800">
         <div className="flex flex-col justify-center px-14 pt-10 pb-4">
-          <div className="flex flex-col  w-full max-w-7xl h-18"></div>
+          {/* <div className="flex flex-col  w-full max-w-7xl h-18"></div> */}
           <div>
             <SinglePost post={post} />
           </div>
         </div>
         {/* tabs  */}
         <div className="flex flex-col mb-4 justify-center px-14">
-          <div className="w-full max-w-7xl bg-gray-700  ">
-            <div className="flex flex-col  w-full max-w-7xl h-18">
-              <div>
-                <Tabs />
-              </div>
+          <div className="w-full bg-gray-700  ">
+            <div>
+              <CommentBox />
+              <Tabs />
             </div>
           </div>
         </div>
