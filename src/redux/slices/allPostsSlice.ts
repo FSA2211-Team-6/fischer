@@ -34,6 +34,7 @@ export const fetchInitialPosts = createAsyncThunk(
 
 const initialState: allPostsState = {
   allPostsData: [],
+  cursor: 0,
   status: "idle",
   error: null,
 };
@@ -47,6 +48,9 @@ export const allPostsSlice = createSlice({
     },
     addPost: (state: any, action: PayloadAction<object>) => {
       state.allPostsData.push(action.payload);
+    },
+    updateCursor: (state: any, action: PayloadAction<number>) => {
+      state.cursor = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -90,6 +94,7 @@ export const allPostsSlice = createSlice({
 });
 
 export const selectAllPosts = (state: RootState) => state.allPosts.allPostsData;
-export const { setInitialPosts, addPost } = allPostsSlice.actions;
+export const selectCursor = (state: RootState) => state.allPosts.cursor;
+export const { setInitialPosts, addPost, updateCursor } = allPostsSlice.actions;
 
 export default allPostsSlice.reducer;

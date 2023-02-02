@@ -1,25 +1,106 @@
-import { selectAllPosts } from "@/redux/slices/allPostsSlice";
-import { useAppSelector } from "@/redux/store";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  RefObject,
+} from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import allPostsSlice, {
+  setInitialPosts,
+  addPost,
+  selectAllPosts,
+  updateCursor,
+  selectCursor,
+} from "@/redux/slices/allPostsSlice";
+import Loading from "./loading";
 
-export default function AllPosts() {
+interface Props {
+  firstPosts: firstPosts[];
+}
+
+interface Scroll {
+  infiniteScroll: boolean;
+}
+
+const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
+  firstPosts,
+  infiniteScroll,
+}) => {
+  const dispatch = useAppDispatch();
+  const cursor = useAppSelector(selectCursor);
+
+  const [infiniteScrollState, setInfiniteScrollState] = React.useState<
+    boolean | undefined
+  >(infiniteScroll);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  let throttleTimer: boolean;
+
+  function throttle(callback: Function, time: number) {
+    if (throttleTimer) {
+      console.log("throttling");
+      return;
+    }
+    throttleTimer = true;
+    setTimeout(() => {
+      callback();
+      throttleTimer = false;
+    }, time);
+  }
+
+  const observer = React.useRef<IntersectionObserver | null>(null);
+  const endOfScrollRef = React.useCallback<any>(
+    (node: HTMLElement) => {
+      const handleRefresh = async (cursor: number) => {
+        // setTimeout(() => {}, 5000);
+        const morePosts = await fetch(`/api/posts/request/${cursor}`);
+        const data = await morePosts.json();
+
+        data.posts.forEach((post: firstPosts) => {
+          dispatch(addPost(post));
+        });
+        dispatch(updateCursor(data.newCursor));
+        setLoading(false);
+      };
+
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        setLoading(true);
+
+        if (entries[0].isIntersecting) {
+          throttle(() => {
+            handleRefresh(cursor);
+          }, 1000);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [loading, cursor, dispatch]
+  );
+
   const posts = useAppSelector(selectAllPosts);
 
   const text =
     "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
   return (
     <div>
-      {posts.length > 0 &&
-        posts.map((post) => {
+      {firstPosts!.length > 0 &&
+        firstPosts!.map((post, index) => {
           return (
             <div
-              key={post.postId}
+              key={post.id}
               className="grid grid-cols-1 gap-4 my-4 md:grid-cols-1 lg:grid-cols-1 relative w-full px-4 py-6 bg-white shadow-lg dark:bg-gray-700"
             >
               <div>
                 {/* Begin website indicator */}
                 <div className="bg-purple-500 text-sm w-max inline-flex font-semibold pl-4 pr-4 pt-2 pb-2 mr-12 rounded-full rounded-tl-none hover:bg-purple-400">
-                  <a href={post.articleURL}>
-                    {post.host.slice(post.host.indexOf(".") + 1)}
+                  <a href={post.websiteArticle.articleURL}>
+                    {post.websiteArticle.website.hostSite.slice(
+                      post.websiteArticle.website.hostSite.indexOf(".") + 1
+                    )}
                   </a>
                 </div>
                 {/* End website indicator */}
@@ -27,22 +108,14 @@ export default function AllPosts() {
                 {/* Begin post categories */}
                 <div className="inline-flex gap-2 w-max">
                   <div className="bg-red-500 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
-                    Politics
-                  </div>
-                  <div className="bg-emerald-700 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
-                    Literature
-                  </div>
-                  <div className="bg-sky-700 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
-                    Science
+                    {post.topicName}
                   </div>
                 </div>
                 {/* End post categories */}
 
                 {/* Post User Name */}
                 <div className="inline-flex gap-2 float-right items-center">
-                  <p className="inline float-right text-xs">
-                    {post.user.userName}
-                  </p>
+                  <p className="inline float-right text-xs">{post.user.name}</p>
                   <div className="mx-auto object-cover inline float-right rounded-full bg-white h-10 w-10 "></div>
                 </div>
               </div>
@@ -54,14 +127,14 @@ export default function AllPosts() {
                     <p className="font-bold text-lg mb-4 w-max pl-2 pr-2">
                       Assertion
                     </p>
-                    <div className="h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative">
-                      <div className="text-4xl font-serif absolute -top-3 -left-2">
-                        <span>&#8220;</span>
-                      </div>
-                      {post.fact}
-                      <div className="text-4xl font-serif absolute right-0 -bottom-5 pr-2">
-                        <span className="">&#8221;</span>
-                      </div>
+                    <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative">
+                      <span className="text-4xl font-serif absolute -left-2 -top-2">
+                        &#8220;
+                      </span>
+                      {post.assertion}
+                      <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
+                        &#8221;
+                      </span>
                     </div>
                   </div>
                   {/* AI Response */}
@@ -69,14 +142,14 @@ export default function AllPosts() {
                     <p className="mb-4 font-bold text-lg  w-max pl-2 pr-2">
                       AI Response
                     </p>
-                    <div className="relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2">
-                      <div className="text-4xl font-serif absolute -top-3 -left-2">
-                        <span>&#8220;</span>
-                      </div>
+                    <div className="w-full relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2">
+                      <span className="text-4xl font-serif absolute -left-2 -top-2">
+                        &#8220;
+                      </span>
                       {post.aiResponse}
-                      <div className="text-4xl font-serif absolute right-0 -bottom-5 pr-2">
-                        <span>&#8221;</span>
-                      </div>
+                      <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
+                        &#8221;
+                      </span>
                     </div>
                   </div>
                 </section>
@@ -85,9 +158,11 @@ export default function AllPosts() {
               <div className="flex items-center">
                 <div className="w-full">
                   <div className="text-sm hover:underline underline-offset-4 cursor-pointer">
-                    {post.comments.length === 1
-                      ? `${post.comments.length} comment`
-                      : `${post.comments.length} comments`}
+                    {post.comments
+                      ? post.comments.length === 1
+                        ? `${post.comments.length} comment`
+                        : `${post.comments} comments`
+                      : `0 comments`}
                   </div>
                 </div>
                 {/* Voting Buttons */}
@@ -108,7 +183,7 @@ export default function AllPosts() {
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Truthiness</p>
                   <div className="flex items-end text-xs">
-                    {post.truthVotes.green}
+                    {/* {post.truthVotes.green} */}
                     <span className="flex items-center">
                       <svg
                         width="20"
@@ -127,7 +202,7 @@ export default function AllPosts() {
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Interest</p>
                   <div className="flex items-end text-xs">
-                    {post.truthVotes.yellow}
+                    {/* {post.truthVotes.yellow} */}
                     <span className="flex items-center">
                       <svg
                         width="20"
@@ -147,7 +222,7 @@ export default function AllPosts() {
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Divisiveness</p>
                   <div className="flex items-end text-xs">
-                    {post.truthVotes.red}
+                    {/* {post.truthVotes.red} */}
                     <span className="flex items-center">
                       <svg
                         width="20"
@@ -164,9 +239,22 @@ export default function AllPosts() {
                   </div>
                 </div>
               </div>
+              {/* This is the blank div element at end of current posts, 
+              reaching this element will attempt to fetch more posts */}
+              {(firstPosts!.length === index + 1 &&
+                posts.length === 0 &&
+                infiniteScrollState === false) ||
+              (firstPosts!.length === index + 1 &&
+                posts.length > 0 &&
+                infiniteScrollState === true) ? (
+                <div ref={endOfScrollRef}></div>
+              ) : null}
             </div>
           );
         })}
+      {loading ? <Loading /> : null}
     </div>
   );
-}
+};
+
+export default AllPosts;

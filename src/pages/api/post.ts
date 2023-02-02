@@ -39,37 +39,64 @@ const checkTopic = async (topicName: string) => {
   }
 };
 
+const parseResponse = async (aiResponse: string) => {
+  const responseArray = aiResponse.replace("[", "").replace("]", "").split(",");
+
+  const aiTruthy = responseArray[0].trim();
+  const aiObjectivity = responseArray[1].trim();
+  const aiExplanation = responseArray[2].trim();
+
+  let compliance = 0;
+
+  if (aiTruthy === "True" && aiObjectivity === "Objective") {
+    compliance = 1;
+  }
+
+  if (aiTruthy === "False" && aiObjectivity === "Objective") {
+    compliance = -1;
+  }
+
+  const cleanResponse = aiExplanation.replace("Explanation: ", "");
+
+  return { compliance, cleanResponse };
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
-){
-try{
-  if(req.method !== 'POST'){
-    res.setHeader('Allow', 'POST');
-    return res.status(405);
+) {
+  try {
+    if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
+      return res.status(405);
+    }
+    const data = JSON.parse(req.body);
+    const post = data.post;
+    const website = data.website;
+
+    //clean up the ai response, send back compliance, a cleanResponse
+    const aiData = await parseResponse(post.aiResponse);
+
+    //perform checks to see if website/article/topic exist already, if not, create them.
+    await checkHost(website.host);
+    const article = await checkWebsiteArticle(website.article, website.host);
+    const topic = await checkTopic(post.topic);
+
+    //build the object to send to db
+    const addPost = {
+      websiteArticleId: article.id,
+      topicId: topic.id,
+      fischerId: post.userId,
+      assertion: post.assertion,
+      aiResponse: aiData.cleanResponse,
+      aiCompliance: aiData.compliance,
+      topicName: topic.name,
+    };
+
+    const newPost = await prisma.post.create({ data: addPost });
+
+    res.status(200).send(newPost);
+  } catch (err) {
+    res.send(err);
   }
-  const data = JSON.parse(req.body)
-  const post = data.post;
-  const website = data.website;
-  console.log(data)
-  const host = await checkHost(website.host);
-  const article = await checkWebsiteArticle(website.article, website.host);
-  const topic = await checkTopic(post.topic);
-
-  const addPost = {
-    websiteArticleId: article.id,
-    topicId: topic.id,
-    fischerId: post.userId,
-    assertion: post.assertion,
-    aiResponse: post.aiResponse,
-    aiCompliance: 1,
-    topicName: topic.name,
-  };
-  
-  const newPost = await prisma.post.create({ data: addPost });
-
-  res.status(200).send(newPost);
-}catch(err){
-  res.send(err)
-}
 }
