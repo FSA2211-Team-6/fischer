@@ -123,7 +123,8 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
               <div className="flex items-end space-x-2">
                 <section className="flex flex-col gap-y-5">
                   {/* Assertion */}
-                  <div className="border-l-2 border-orange-500 p-4">
+
+                  <div className="border-l-2 border-orange-500 p-4 relative group">
                     <p className="font-bold text-lg mb-4 w-max pl-2 pr-2">
                       Assertion
                     </p>
@@ -135,6 +136,19 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                       <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
                         &#8221;
                       </span>
+                    </div>
+                    <div className="flex items-center w-full h-full absolute top-0 right-0 rounded-r-md invisible group-hover:visible cursor-pointer">
+                      <div className="flex justify-center gap-4 align-middle w-full opacity-100 p-12">
+                        <button className="flex justify-center items-center bg-emerald-600  rounded-full w-full h-12 hover:bg-emerald-500">
+                          True
+                        </button>
+                        <button className="flex justify-center items-center bg-amber-400  rounded-full w-full h-12 hover:bg-amber-300">
+                          Subjective
+                        </button>
+                        <button className="flex justify-center items-center bg-red-500  rounded-full w-full h-12 hover:bg-red-400">
+                          False
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {/* AI Response */}
@@ -164,18 +178,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                         : `${post.comments} comments`
                       : `0 comments`}
                   </div>
-                </div>
-                {/* Voting Buttons */}
-                <div className="flex justify-end gap-4 align-middle w-full">
-                  <button className="border flex justify-center border-green-700 rounded-full w-7 h-7 hover:bg-green-300 hover:text-gray-700">
-                    +
-                  </button>
-                  <button className="border flex justify-center border-yellow-500 rounded-full w-7 h-7 hover:bg-yellow-300 hover:text-gray-700">
-                    ?
-                  </button>
-                  <button className="border flex justify-center border-red-400 rounded-full w-7 h-7 hover:bg-red-400 hover:text-gray-700">
-                    -
-                  </button>
                 </div>
               </div>
               {/* Begin Post Stats */}

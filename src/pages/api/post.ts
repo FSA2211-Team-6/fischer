@@ -66,7 +66,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const data = JSON.parse(req.body);
-  console.log(data);
   const post = data.post;
   const website = data.website;
 
