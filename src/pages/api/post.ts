@@ -65,30 +65,38 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body);
-  const post = req.body.post;
-  const website = req.body.website;
+  try {
+    if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
+      return res.status(405);
+    }
+    const data = JSON.parse(req.body);
+    const post = data.post;
+    const website = data.website;
 
-  //clean up the ai response, send back compliance, a cleanResponse
-  const aiData = await parseResponse(post.aiResponse);
+    //clean up the ai response, send back compliance, a cleanResponse
+    const aiData = await parseResponse(post.aiResponse);
 
-  //perform checks to see if website/article/topic exist already, if not, create them.
-  await checkHost(website.host);
-  const article = await checkWebsiteArticle(website.article, website.host);
-  const topic = await checkTopic(post.topic);
+    //perform checks to see if website/article/topic exist already, if not, create them.
+    await checkHost(website.host);
+    const article = await checkWebsiteArticle(website.article, website.host);
+    const topic = await checkTopic(post.topic);
 
-  //build the object to send to db
-  const addPost = {
-    websiteArticleId: article.id,
-    topicId: topic.id,
-    fischerId: post.userId,
-    assertion: post.assertion,
-    aiResponse: aiData.cleanResponse,
-    aiCompliance: aiData.compliance,
-    topicName: topic.name,
-  };
+    //build the object to send to db
+    const addPost = {
+      websiteArticleId: article.id,
+      topicId: topic.id,
+      fischerId: post.userId,
+      assertion: post.assertion,
+      aiResponse: aiData.cleanResponse,
+      aiCompliance: aiData.compliance,
+      topicName: topic.name,
+    };
 
-  const newPost = await prisma.post.create({ data: addPost });
+    const newPost = await prisma.post.create({ data: addPost });
 
-  res.status(200).send(newPost);
+    res.status(200).send(newPost);
+  } catch (err) {
+    res.send(err);
+  }
 }
