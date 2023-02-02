@@ -22,9 +22,10 @@ import Stats from "@/components/stats";
 import Filters from "@/components/filters";
 
 export const getStaticProps: GetStaticProps = async () => {
+  //the number of posts we want on initial load
   const numResults = 2;
 
-  //need to add more stuff to query:  get hostname
+  //query to get intitial posts
   const posts = await prisma.post.findMany({
     take: numResults,
     include: { websiteArticle: { include: { website: true } }, user: true },
@@ -50,9 +51,11 @@ export default function Home({
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
-  const [userInput, setUserInput] = React.useState<string>("");
+  //this gets the new posts that were requested by infinite scroll in <AllPosts>
+  //posts are added to the redux store, then retrieved here, and pushed back into the <AllPosts> component to re-render.
   const morePosts = useAppSelector(selectAllPosts);
 
+  //this saves the cursor in redux store so we know which posts need to be retrived next in the infinite scroll.
   useEffect(() => {
     dispatch(updateCursor(myCursor));
   }, [dispatch, myCursor]);
