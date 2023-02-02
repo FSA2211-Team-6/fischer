@@ -35,15 +35,13 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   >(infiniteScroll);
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  let throttleTimer;
-  // const throttleTime = 1000;
+  let throttleTimer: boolean;
 
-  function throttle(callback, time) {
+  function throttle(callback: Function, time: number) {
     if (throttleTimer) {
       console.log("throttling");
       return;
     }
-
     throttleTimer = true;
     setTimeout(() => {
       callback();
