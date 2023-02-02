@@ -15,12 +15,12 @@ export default async function handler(
   const openai = new OpenAIApi(configuration);
   const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt:
-      // "Provide context to the validity of the following statement as well as true or false: " +
-      // "Give me True/False, Subjective/Objective, journalism category, and explanation of the following statement:" +
-      "Provide general category of the following statement: " +
-      req.body +
-      "\nA:",
+    prompt: ["Give me True/False, Subjective/Objective, and explanation in an array " +
+    req.body +
+    "\nA:",
+    "Provide general category of the following statement:" + 
+    req.body +
+    "\nA:"], 
     temperature: 0,
     max_tokens: 100,
     top_p: 1,
