@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { use, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   addPost,
@@ -8,7 +8,6 @@ import {
 } from "@/redux/slices/allPostsSlice";
 import Loading from "./loading";
 import { useSession } from "next-auth/react";
-import prisma from "../../../server/db/prismadb";
 
 interface Props {
   firstPosts: firstPosts[];
@@ -28,23 +27,28 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   //state
   const [loading, setLoading] = React.useState<boolean>(false);
   const [userId, setUserId] = React.useState<number | null>(null);
-  const [userCompliance, setUserCompliance] = React.useState<any>(null);
+  const [userCompliance, setUserCompliance] = React.useState<Array<object>>([]);
+  const [votemAnimation, setVoteAnimation] = React.useState<boolean>(false);
+  const [postClicked, setPostClicked] = React.useState<number | null>(null);
 
   useEffect(() => {
-    //if a session exists, get the userId
-    if (session) {
-      const fetchUserId = async () => {
-        const data = await fetch(`/api/user/session/${session?.user.email}`);
-        const user = await data.json();
+    //if a session exists, set the userId
 
-        setUserId(user.fischerId);
-      };
-      fetchUserId();
+    if (session) {
+      setUserId(session.user.fischerId);
     }
   }, [session]);
 
   useEffect(() => {
+    //get the users vote history so we can hide the vote button if they have already voted
+    const fetchUserCompliance = async () => {
+      const data = await fetch(`/api/usercompliance/${userId}`);
+      const complianceData = await data.json();
+      setUserCompliance(complianceData);
+    };
+
     if (userId) {
+      fetchUserCompliance();
     }
   }, [userId]);
 
@@ -122,19 +126,33 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
       body: JSON.stringify(userComplicance),
     });
     const data = await response.json();
-    console.log(data);
+
+    setVoteAnimation(true);
+    setPostClicked(postId);
   };
 
   const handleTrueVote = (postId: number) => {
     submitVote(1, postId);
+    setUserCompliance([
+      ...userCompliance,
+      ...[{ postId, fischerId: userId, compliance: 1 }],
+    ]);
   };
 
   const handleSubjVote = (postId: number) => {
     submitVote(0, postId);
+    setUserCompliance([
+      ...userCompliance,
+      ...[{ postId, fischerId: userId, compliance: 0 }],
+    ]);
   };
 
   const handleFalseVote = (postId: number) => {
     submitVote(-1, postId);
+    setUserCompliance([
+      ...userCompliance,
+      ...[{ postId, fischerId: userId, compliance: -1 }],
+    ]);
   };
 
   return (
@@ -181,56 +199,82 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                         Assertion
                       </p>
                       {/* start voting buttons */}
-                      <div className="flex justify-beginning gap-1 items-center">
-                        <button
-                          onClick={() => {
-                            handleTrueVote(post.id);
-                          }}
-                          className="flex group justify-center items-center relative"
-                        >
-                          <span
-                            className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                      {userCompliance.find((x) => x.postId === post.id) ? (
+                        <div className="flex items-center">
+                          <div className="group relative flex items-center">
+                            <span className="material-symbols-outlined hover:cursor-pointer">
+                              beenhere
+                            </span>
+                            <span
+                              className="group-hover:opacity-100  transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
                                       -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
-                          >
-                            Assertion is true
-                          </span>
-                          <span className="material-symbols-outlined text-emerald-600 hover:text-emerald-400">
-                            verified_user
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleSubjVote(post.id);
-                          }}
-                          className="flex group justify-center items-center relative"
-                        >
+                            >
+                              You&#39;ve already voted.
+                            </span>
+                          </div>
                           <span
-                            className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
-                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            className={`${
+                              votemAnimation && post.id === postClicked
+                                ? "animate-fade"
+                                : "opacity-0"
+                            } opacity-0 text-xs ml-2`}
+                            onAnimationEnd={() => setVoteAnimation(false)}
                           >
-                            Assertion is Subjective
+                            Thank you for voting. Your feedback matters.
                           </span>
-                          <span className="material-symbols-outlined text-amber-400 hover:text-amber-300">
-                            gpp_maybe
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleFalseVote(post.id);
-                          }}
-                          className="flex group justify-center items-center relative"
-                        >
-                          <span
-                            className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
-                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                        </div>
+                      ) : (
+                        <div className="flex justify-beginning gap-1 items-center">
+                          <button
+                            onClick={() => {
+                              handleTrueVote(post.id);
+                            }}
+                            className="flex group justify-center items-center relative"
                           >
-                            Assertion is False
-                          </span>
-                          <span className="material-symbols-outlined text-red-400 hover:text-red-300">
-                            gpp_bad
-                          </span>{" "}
-                        </button>
-                      </div>
+                            <span
+                              className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            >
+                              Assertion is true
+                            </span>
+                            <span className="material-symbols-outlined text-emerald-600 hover:text-emerald-400">
+                              verified_user
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleSubjVote(post.id);
+                            }}
+                            className="flex group justify-center items-center relative"
+                          >
+                            <span
+                              className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            >
+                              Assertion is Subjective
+                            </span>
+                            <span className="material-symbols-outlined text-amber-400 hover:text-amber-300">
+                              gpp_maybe
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleFalseVote(post.id);
+                            }}
+                            className="flex group justify-center items-center relative"
+                          >
+                            <span
+                              className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            >
+                              Assertion is False
+                            </span>
+                            <span className="material-symbols-outlined text-red-400 hover:text-red-300">
+                              gpp_bad
+                            </span>{" "}
+                          </button>
+                        </div>
+                      )}
                       {/* end voting buttons */}
                     </div>
                     <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative">
