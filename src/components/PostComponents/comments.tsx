@@ -1,5 +1,20 @@
 import React from "react";
-export default function Comments() {
+import { fetchCommentsFromPost } from "@/redux/slices/commentSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { commentState } from "@/redux/slices/commentSlice";
+import { useEffect } from "react";
+
+export default function Comments({ post }: any) {
+  post
+    ? post.singlePostData.comments.map((ele: any) =>
+        console.log("comment content printed: ", ele.content)
+      )
+    : "";
+  if (post.singlePostData.comments.length !== 0) {
+    const commentData: Array<any> = post.singlePostData.comments;
+    console.log("commentData HERE:  ", commentData);
+  }
+
   return (
     <>
       <section className="relative flex  justify-center  antialiased   min-w-screen">
@@ -22,8 +37,10 @@ export default function Comments() {
                 </div>
                 <div className="flex-1 px-2 ml-2 text-sm font-medium leading-2 text-gray-300">
                   {/* COMMENT HERE */}
-                  {`This one is for the boys with the booming system
-                    Top down, AC with the cooler system`}
+                  {/* {`This one is for the boys with the booming system
+                    Top down, AC with the cooler system`} */}
+                  {/* {post.singlePostData.comments[0]} */}
+                  {/* {test.map((ele) => ele)} */}
                 </div>
                 {/* UPVOTE BUTTON */}
                 <button className="inline-flex items-center px-1 pt-2 ml-1 flex-column">

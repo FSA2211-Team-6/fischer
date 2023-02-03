@@ -2,7 +2,7 @@ import React from "react";
 import Experts from "./experts";
 import Comments from "./comments";
 
-export default function Tabs() {
+export default function Tabs({ post, com }: any) {
   const [openTab, setOpenTab] = React.useState(1);
   return (
     <>
@@ -64,7 +64,7 @@ export default function Tabs() {
                   className={openTab === 2 ? "block" : "hidden"}
                   id="comments"
                 >
-                  <Comments />
+                  <Comments post={post} />
                 </div>
               </div>
             </div>

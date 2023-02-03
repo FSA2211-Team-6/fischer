@@ -4,9 +4,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useRouter } from "next/router";
 import { singlePostState } from "@/redux/slices/singlePostSlice";
 import { useEffect } from "react";
-import CommentBox from "@/components/commentBox";
+import CommentBox from "@/components/PostComponents/commentBox";
 import SinglePost from "@/components/PostComponents/singlePost";
 import Tabs from "@/components/PostComponents/singlePostTabs";
+import { fetchCommentsFromPost } from "@/redux/slices/commentSlice";
 
 export default function SinglePostPage() {
   const router = useRouter();
@@ -14,12 +15,20 @@ export default function SinglePostPage() {
   const dispatch = useAppDispatch();
 
   const post: singlePostState = useAppSelector(singlePostState);
+
   useEffect(() => {
     const fetchData = async () => {
       postId ? await dispatch(fetchSinglePost(+postId)) : "";
     };
     fetchData();
   }, [dispatch, postId]);
+
+  // useEffect(() => {
+  //   const fetchCommmentData = async () => {
+  //     postId ? await dispatch(fetchCommentsFromPost(+postId)) : "";
+  //   };
+  //   fetchData();
+  // }, [dispatch, postId]);
 
   return (
     <>
@@ -35,7 +44,7 @@ export default function SinglePostPage() {
           <div className="w-full bg-gray-700  ">
             <div>
               <CommentBox post={post} />
-              <Tabs />
+              <Tabs post={post} />
             </div>
           </div>
         </div>
