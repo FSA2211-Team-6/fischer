@@ -75,7 +75,7 @@ export default async function handler(
   //perform checks to see if website/article/topic exist already, if not, create them.
   await checkHost(website.host);
   const article = await checkWebsiteArticle(website.article, website.host);
-  const topic = await checkTopic(post.topic);
+  const topic = await checkTopic(post.topic.trim());
 
   //build the object to send to db
   const addPost = {
