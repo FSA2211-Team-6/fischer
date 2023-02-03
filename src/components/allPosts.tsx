@@ -1,13 +1,6 @@
-import React, {
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-  RefObject,
-} from "react";
+import React from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import allPostsSlice, {
-  setInitialPosts,
+import {
   addPost,
   selectAllPosts,
   updateCursor,
@@ -22,19 +15,23 @@ interface Props {
 interface Scroll {
   infiniteScroll: boolean;
 }
-
+//THE ALL POSTS COMPONENT
 const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   firstPosts,
   infiniteScroll,
 }) => {
   const dispatch = useAppDispatch();
+
+  //gets the cursor from redux so we know what posts to fetch on infinite scroll
   const cursor = useAppSelector(selectCursor);
 
+  //we use this to know where to put the empty div that will trigger the endless scroll
   const [infiniteScrollState, setInfiniteScrollState] = React.useState<
     boolean | undefined
   >(infiniteScroll);
   const [loading, setLoading] = React.useState<boolean>(false);
 
+  //trottle function prevents a user from scrolling super fast and spamming get requests too quickly
   let throttleTimer: boolean;
 
   function throttle(callback: Function, time: number) {
@@ -49,17 +46,19 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     }, time);
   }
 
+  //observer and endOfScrollRef are what triggers the infinite scroll request
   const observer = React.useRef<IntersectionObserver | null>(null);
   const endOfScrollRef = React.useCallback<any>(
     (node: HTMLElement) => {
+      //handleRefresh requests more posts from the db
       const handleRefresh = async (cursor: number) => {
-        // setTimeout(() => {}, 5000);
         const morePosts = await fetch(`/api/posts/request/${cursor}`);
         const data = await morePosts.json();
 
         data.posts.forEach((post: firstPosts) => {
           dispatch(addPost(post));
         });
+        //setting the new cursor
         dispatch(updateCursor(data.newCursor));
         setLoading(false);
       };
@@ -72,7 +71,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
         if (entries[0].isIntersecting) {
           throttle(() => {
             handleRefresh(cursor);
-          }, 1000);
+          }, 600);
         }
       });
 
@@ -81,10 +80,11 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     [loading, cursor, dispatch]
   );
 
+  //we use this only to check if it exists, if it doesnt exist I know the infinite scroll div needs
+  //to be at the end of the initial post version of <AllPosts>.  If it is > 0, it needs to be in the
+  //infinite scroll version of <AllPosts>.
   const posts = useAppSelector(selectAllPosts);
 
-  const text =
-    "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.";
   return (
     <div>
       {firstPosts!.length > 0 &&
@@ -123,7 +123,8 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
               <div className="flex items-end space-x-2">
                 <section className="flex flex-col gap-y-5">
                   {/* Assertion */}
-                  <div className="border-l-2 border-orange-500 p-4">
+
+                  <div className="border-l-2 border-orange-500 p-4 relative group">
                     <p className="font-bold text-lg mb-4 w-max pl-2 pr-2">
                       Assertion
                     </p>
@@ -135,6 +136,19 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                       <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
                         &#8221;
                       </span>
+                    </div>
+                    <div className="flex items-center w-full h-full absolute top-0 right-0 rounded-r-md invisible group-hover:visible cursor-pointer">
+                      <div className="flex justify-center gap-4 align-middle w-full opacity-100 p-12">
+                        <button className="flex justify-center items-center bg-emerald-600  rounded-full w-full h-12 hover:bg-emerald-500">
+                          True
+                        </button>
+                        <button className="flex justify-center items-center bg-amber-400  rounded-full w-full h-12 hover:bg-amber-300">
+                          Subjective
+                        </button>
+                        <button className="flex justify-center items-center bg-red-500  rounded-full w-full h-12 hover:bg-red-400">
+                          False
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {/* AI Response */}
@@ -164,18 +178,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                         : `${post.comments} comments`
                       : `0 comments`}
                   </div>
-                </div>
-                {/* Voting Buttons */}
-                <div className="flex justify-end gap-4 align-middle w-full">
-                  <button className="border flex justify-center border-green-700 rounded-full w-7 h-7 hover:bg-green-300 hover:text-gray-700">
-                    +
-                  </button>
-                  <button className="border flex justify-center border-yellow-500 rounded-full w-7 h-7 hover:bg-yellow-300 hover:text-gray-700">
-                    ?
-                  </button>
-                  <button className="border flex justify-center border-red-400 rounded-full w-7 h-7 hover:bg-red-400 hover:text-gray-700">
-                    -
-                  </button>
                 </div>
               </div>
               {/* Begin Post Stats */}
