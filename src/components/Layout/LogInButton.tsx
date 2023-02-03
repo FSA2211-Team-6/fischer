@@ -32,7 +32,6 @@ export const LogInButton = () => {
               <span className="sr-only">Open user menu</span>
               <Image
                 className="w-8 h-8 rounded-full"
-                loader={() => session.user.image}
                 alt="profile"
                 src={session.user.image}
                 width={100}
