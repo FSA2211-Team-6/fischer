@@ -2,7 +2,8 @@ import NextAuth from "next-auth/next";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "../../../../server/db/prismadb";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -24,12 +25,14 @@ export default NextAuth({
       }
       return token;
     },
-    // async session({ session, token, user }) {
-    //   // Send properties to the client, like an access_token from a provider.
-    //   // session.accessToken = token.accessToken;
-    //   session.user.isAdmin = user.isAdmin;
-    //   return session;
-    // },
+    async session({ session, token, user }) {
+      // Send properties to the client, like an access_token from a provider.
+      // session.accessToken = token.accessToken;
+      if (user && user.fischerId) {
+        session.user.fischerId = user.fischerId;
+      }
+      return session;
+    },
   },
   secret: process.env.JWT_SECRET,
 });
