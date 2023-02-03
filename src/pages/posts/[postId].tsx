@@ -4,9 +4,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useRouter } from "next/router";
 import { singlePostState } from "@/redux/slices/singlePostSlice";
 import { useEffect } from "react";
-import SinglePost from "@/components/singlePost";
-import Tabs from "@/components/singlePostTabs";
 import CommentBox from "@/components/commentBox";
+import SinglePost from "@/components/PostComponents/singlePost";
+import Tabs from "@/components/PostComponents/singlePostTabs";
 
 export default function SinglePostPage() {
   const router = useRouter();

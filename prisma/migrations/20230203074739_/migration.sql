@@ -39,6 +39,9 @@ CREATE TABLE "User" (
     "image" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "fischerId" SERIAL NOT NULL,
+    "currentTokens" INTEGER NOT NULL DEFAULT 1,
+    "maxTokens" INTEGER NOT NULL DEFAULT 1,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("fischerId")
 );
@@ -63,9 +66,9 @@ CREATE TABLE "Post" (
     "assertion" TEXT NOT NULL,
     "id" SERIAL NOT NULL,
     "aiResponse" TEXT NOT NULL,
-    "topicName" TEXT NOT NULL,
     "aiCompliance" INTEGER NOT NULL DEFAULT 0,
     "publicCompliance" INTEGER NOT NULL DEFAULT 0,
+    "topicName" TEXT NOT NULL,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );

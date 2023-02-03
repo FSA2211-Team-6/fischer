@@ -16,7 +16,7 @@ export default async function handler(
     include: { websiteArticle: { include: { website: true } }, user: true },
   });
 
-  const posts: Array<firstPosts> = JSON.parse(JSON.stringify(results));
+  const posts = results;
 
   const newCursor = Number(myCursor) + 2;
 
