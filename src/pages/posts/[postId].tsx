@@ -34,7 +34,7 @@ export default function SinglePostPage() {
         <div className="flex flex-col mb-4 justify-center px-14">
           <div className="w-full bg-gray-700  ">
             <div>
-              <CommentBox />
+              <CommentBox post={post} />
               <Tabs />
             </div>
           </div>

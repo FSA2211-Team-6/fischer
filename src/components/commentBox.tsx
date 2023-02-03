@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
-export default function CommentBox() {
+
+export default function CommentBox({ post }: any) {
   const [comment, setComment] = useState<string>("");
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -8,11 +9,20 @@ export default function CommentBox() {
     setComment(commentValue);
   };
 
+  const commentData: object = {
+    postId: post.singlePostData.id,
+    fischerId: 1,
+    content: comment,
+  };
+
   const handleCommentSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    console.log(comment);
+    const response = await fetch("http://localhost:3000/api/comment", {
+      method: "POST",
+      body: JSON.stringify(commentData),
+    });
   };
   return (
     <div className="flex justify-center ">

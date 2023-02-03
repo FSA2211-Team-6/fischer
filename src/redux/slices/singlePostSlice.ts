@@ -59,7 +59,6 @@ export const fetchSinglePost = createAsyncThunk(
     try {
       const response = await fetch(`/api/posts/${postId}`);
       const data: object = await response.json();
-      console.log("data looks like this: ", data);
       return data;
     } catch (err: any) {
       console.error("fetchSinglePost err: ", err);
