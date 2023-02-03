@@ -5,6 +5,7 @@ import type { Session } from "next-auth";
 
 import { store } from "../redux/store";
 import { Provider } from "react-redux";
+import { Layout } from "@/components/Layout";
 
 // Use of the <SessionProvider> is mandatory to allow components that call
 // `useSession()` anywhere in your application to access the `session` object.
@@ -15,7 +16,9 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <Provider store={store}>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </Provider>
     </SessionProvider>
   );

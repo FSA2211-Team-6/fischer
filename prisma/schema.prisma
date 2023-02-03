@@ -47,20 +47,23 @@ model UserCompliance {
 }
 
 model User {
-  id            String    @default(cuid()) @unique
-  name          String
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  fischerId     Int       @id @default(autoincrement())
-  userCompliances   UserCompliance[]
+  id                String    @default(cuid()) @unique
+  name              String
+  email             String    @unique
+  emailVerified     DateTime?
+  image             String?
+  createdAt         DateTime  @default(now())
+  fischerId         Int       @id @default(autoincrement())
+  currentTokens     Int       @default(1)
+  maxTokens         Int       @default(1)
+  isAdmin           Boolean   @default(false)
 
-  accounts      Account[]
-  sessions      Session[]
-  comments      Comment[]
-  expertise     Expert[]
-  posts         Post[]
+  userCompliances   UserCompliance[]
+  accounts          Account[]
+  sessions          Session[]
+  comments          Comment[]
+  expertise         Expert[]
+  posts             Post[]
 }
 
 model BadPost {
@@ -81,9 +84,9 @@ model Post {
   assertion         String
   id                Int             @id @default(autoincrement())
   aiResponse        String
-  topicName         String
   aiCompliance      Int             @default(0)
   publicCompliance  Int             @default(0)
+  topicName         String
 
   expertResponses   ExpertResponse[]
   comments          Comment[]
