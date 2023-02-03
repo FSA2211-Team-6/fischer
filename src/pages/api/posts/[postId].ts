@@ -10,7 +10,12 @@ export default async function handler(
   if (postId) {
     const data = await prisma.post.findUnique({
       where: { id: +postId },
-      include: { user: true, topic: true },
+      include: {
+        user: true,
+        topic: true,
+        comments: true,
+        expertResponses: true,
+      },
     });
     res.status(200).send(data);
   }

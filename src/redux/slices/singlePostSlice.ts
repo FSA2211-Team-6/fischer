@@ -3,10 +3,11 @@ import type { RootState } from "../store";
 
 export interface comment {
   commentId: number;
-  userId: number;
   postId: number;
-  comment: Text;
+  fischerId: number;
+  content: string;
   upvotes: number;
+  createdAt: Date;
 }
 
 export interface user {
@@ -58,6 +59,7 @@ export const fetchSinglePost = createAsyncThunk(
     try {
       const response = await fetch(`/api/posts/${postId}`);
       const data: object = await response.json();
+      console.log("data looks like this: ", data);
       return data;
     } catch (err: any) {
       console.error("fetchSinglePost err: ", err);
