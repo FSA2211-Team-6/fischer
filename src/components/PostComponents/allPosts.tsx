@@ -25,17 +25,28 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
 
+  //state
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [userId, setUserId] = React.useState<number | null>(null);
+  const [userCompliance, setUserCompliance] = React.useState<any>(null);
+
   useEffect(() => {
     //if a session exists, get the userId
     if (session) {
       const fetchUserId = async () => {
         const data = await fetch(`/api/user/session/${session?.user.email}`);
         const user = await data.json();
+
         setUserId(user.fischerId);
       };
       fetchUserId();
     }
   }, [session]);
+
+  useEffect(() => {
+    if (userId) {
+    }
+  }, [userId]);
 
   //gets the cursor from redux so we know what posts to fetch on infinite scroll
   const cursor = useAppSelector(selectCursor);
@@ -44,10 +55,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   const [infiniteScrollState, setInfiniteScrollState] = React.useState<
     boolean | undefined
   >(infiniteScroll);
-
-  //state
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [userId, setUserId] = React.useState<number>(0);
 
   //observer and endOfScrollRef are what triggers the infinite scroll request
   const observer = React.useRef<IntersectionObserver | null>(null);
@@ -122,9 +129,13 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     submitVote(1, postId);
   };
 
-  const handleSubjVote = () => {};
+  const handleSubjVote = (postId: number) => {
+    submitVote(0, postId);
+  };
 
-  const handleFalseVote = () => {};
+  const handleFalseVote = (postId: number) => {
+    submitVote(-1, postId);
+  };
 
   return (
     <div>
