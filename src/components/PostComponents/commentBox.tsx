@@ -19,10 +19,13 @@ export default function CommentBox({ post }: any) {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    const response = await fetch("http://localhost:3000/api/comment", {
-      method: "POST",
-      body: JSON.stringify(commentData),
-    });
+    const response = await fetch(
+      `http://localhost:3000/api/posts/${post.singlePostData.id}/comments`,
+      {
+        method: "POST",
+        body: JSON.stringify(commentData),
+      }
+    );
   };
   return (
     <div className="flex justify-center ">

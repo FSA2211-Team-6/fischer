@@ -2,7 +2,7 @@ import React from "react";
 import Experts from "./experts";
 import Comments from "./comments";
 
-export default function Tabs({ post, com }: any) {
+export default function Tabs({ post }: any) {
   const [openTab, setOpenTab] = React.useState(1);
   return (
     <>

@@ -8,26 +8,29 @@ import CommentBox from "@/components/PostComponents/commentBox";
 import SinglePost from "@/components/PostComponents/singlePost";
 import Tabs from "@/components/PostComponents/singlePostTabs";
 import { fetchCommentsFromPost } from "@/redux/slices/commentSlice";
+import { selectComments } from "@/redux/slices/commentSlice";
 
 export default function SinglePostPage() {
+  const dispatch = useAppDispatch();
   const router = useRouter();
   let postId = router.query["postId"] || "";
-  const dispatch = useAppDispatch();
 
   const post: singlePostState = useAppSelector(singlePostState);
-
   useEffect(() => {
-    const fetchData = async () => {
-      postId ? await dispatch(fetchSinglePost(+postId)) : "";
+    const fetchData = () => {
+      postId ? dispatch(fetchSinglePost(+postId)) : "";
     };
     fetchData();
   }, [dispatch, postId]);
 
+  //   const comments: any = useAppSelector(selectComments);
+  //   console.log("comments from state: ", comments);
+
   // useEffect(() => {
-  //   const fetchCommmentData = async () => {
-  //     postId ? await dispatch(fetchCommentsFromPost(+postId)) : "";
+  //   const fetchCommmentData = () => {
+  //     dispatch(fetchCommentsFromPost(+postId));
   //   };
-  //   fetchData();
+  //   fetchCommmentData();
   // }, [dispatch, postId]);
 
   return (

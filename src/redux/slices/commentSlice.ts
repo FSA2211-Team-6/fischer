@@ -10,7 +10,7 @@ export interface comment {
 }
 
 export interface commentState {
-  commentData: Array<comment>;
+  commentData: Array<any>;
   status: "loading" | "idle";
   error: string | null;
 }
@@ -25,11 +25,10 @@ export const fetchCommentsFromPost = createAsyncThunk(
   "/api/posts/fetchByPostId",
   async (postId: number) => {
     try {
-      const response = await fetch(`/api/posts/${postId}`);
-      const data = await response.json();
-      const comments: Array<comment> = data.comments;
-      console.log("data from fetchThunk: ", data);
-      return comments;
+      const response = await fetch(`/api/posts/${postId}/comments`);
+      const data: Array<comment> = await response.json();
+      console.log("comment data from fetchThunk: ", data);
+      return data;
     } catch (err: any) {
       console.error("fetchCommentsFromPost err: ", err);
     }
@@ -65,7 +64,7 @@ export const commentsSlice = createSlice({
   },
 });
 
-export const commentsState = (state: RootState) => {
+export const selectComments = (state: RootState) => {
   return state.comments.commentData;
 };
 export const addComment = commentsSlice.actions;

@@ -21,7 +21,7 @@ export default function SinglePost({ post }: any) {
         {/* End post categories */}
         <div className="inline-flex gap-2 float-right items-center">
           <p className="inline float-right text-xs">
-            {post.singlePostData.user.name}
+            {post.singlePostData.user ? post.singlePostData.user.name : ""}
           </p>
           <div className="mx-auto object-cover inline float-right rounded-full bg-white h-10 w-10 "></div>
         </div>

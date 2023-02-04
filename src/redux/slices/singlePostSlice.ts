@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 
 export interface comment {
-  commentId: number;
   postId: number;
   fischerId: number;
   content: string;
@@ -59,6 +58,7 @@ export const fetchSinglePost = createAsyncThunk(
     try {
       const response = await fetch(`/api/posts/${postId}`);
       const data: object = await response.json();
+      console.log("singlepPostData from fetchThunk: ", data);
       return data;
     } catch (err: any) {
       console.error("fetchSinglePost err: ", err);
