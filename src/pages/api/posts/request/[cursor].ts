@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../../../server/db/prismadb";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
