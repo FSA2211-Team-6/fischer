@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   addPost,
@@ -7,6 +7,7 @@ import {
   selectCursor,
 } from "@/redux/slices/allPostsSlice";
 import Loading from "./loading";
+import { useSession } from "next-auth/react";
 
 interface Props {
   firstPosts: firstPosts[];
@@ -21,6 +22,35 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   infiniteScroll,
 }) => {
   const dispatch = useAppDispatch();
+  const { data: session } = useSession();
+
+  //state
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [userId, setUserId] = React.useState<number | null>(null);
+  const [userCompliance, setUserCompliance] = React.useState<Array<object>>([]);
+  const [votemAnimation, setVoteAnimation] = React.useState<boolean>(false);
+  const [postClicked, setPostClicked] = React.useState<number | null>(null);
+
+  useEffect(() => {
+    //if a session exists, set the userId
+
+    if (session) {
+      setUserId(session.user.fischerId);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    //get the users vote history so we can hide the vote button if they have already voted
+    const fetchUserCompliance = async () => {
+      const data = await fetch(`/api/usercompliance/${userId}`);
+      const complianceData = await data.json();
+      setUserCompliance(complianceData);
+    };
+
+    if (userId) {
+      fetchUserCompliance();
+    }
+  }, [userId]);
 
   //gets the cursor from redux so we know what posts to fetch on infinite scroll
   const cursor = useAppSelector(selectCursor);
@@ -29,27 +59,26 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   const [infiniteScrollState, setInfiniteScrollState] = React.useState<
     boolean | undefined
   >(infiniteScroll);
-  const [loading, setLoading] = React.useState<boolean>(false);
-
-  //trottle function prevents a user from scrolling super fast and spamming get requests too quickly
-  let throttleTimer: boolean;
-
-  function throttle(callback: Function, time: number) {
-    if (throttleTimer) {
-      console.log("throttling");
-      return;
-    }
-    throttleTimer = true;
-    setTimeout(() => {
-      callback();
-      throttleTimer = false;
-    }, time);
-  }
 
   //observer and endOfScrollRef are what triggers the infinite scroll request
   const observer = React.useRef<IntersectionObserver | null>(null);
   const endOfScrollRef = React.useCallback<any>(
     (node: HTMLElement) => {
+      //trottle function prevents a user from scrolling super fast and spamming get requests too quickly
+      let throttleTimer: boolean;
+
+      function throttle(callback: Function, time: number) {
+        if (throttleTimer) {
+          console.log("throttling");
+          return;
+        }
+        throttleTimer = true;
+        setTimeout(() => {
+          callback();
+          throttleTimer = false;
+        }, time);
+      }
+
       //handleRefresh requests more posts from the db
       const handleRefresh = async (cursor: number) => {
         const morePosts = await fetch(`/api/posts/request/${cursor}`);
@@ -77,13 +106,54 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
 
       if (node) observer.current.observe(node);
     },
-    [loading, cursor, dispatch]
+    [cursor, dispatch]
   );
 
   //we use this only to check if it exists, if it doesnt exist I know the infinite scroll div needs
   //to be at the end of the initial post version of <AllPosts>.  If it is > 0, it needs to be in the
   //infinite scroll version of <AllPosts>.
   const posts = useAppSelector(selectAllPosts);
+
+  const submitVote = async (compliance: number, postId: number) => {
+    const userComplicance = {
+      fischerId: userId,
+      postId: postId,
+      compliance: compliance,
+    };
+
+    const response = await fetch("/api/usercompliance", {
+      method: "POST",
+      body: JSON.stringify(userComplicance),
+    });
+    const data = await response.json();
+
+    setVoteAnimation(true);
+    setPostClicked(postId);
+  };
+
+  const handleTrueVote = (postId: number) => {
+    submitVote(1, postId);
+    setUserCompliance([
+      ...userCompliance,
+      ...[{ postId, fischerId: userId, compliance: 1 }],
+    ]);
+  };
+
+  const handleSubjVote = (postId: number) => {
+    submitVote(0, postId);
+    setUserCompliance([
+      ...userCompliance,
+      ...[{ postId, fischerId: userId, compliance: 0 }],
+    ]);
+  };
+
+  const handleFalseVote = (postId: number) => {
+    submitVote(-1, postId);
+    setUserCompliance([
+      ...userCompliance,
+      ...[{ postId, fischerId: userId, compliance: -1 }],
+    ]);
+  };
 
   return (
     <div>
@@ -123,11 +193,94 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
               <div className="flex items-end space-x-2">
                 <section className="flex flex-col gap-y-5">
                   {/* Assertion */}
-
-                  <div className="border-l-2 border-orange-500 p-4 relative group">
-                    <p className="font-bold text-lg mb-4 w-max pl-2 pr-2">
-                      Assertion
-                    </p>
+                  <div className="border-l-2 border-orange-500 p-4">
+                    <div className="flex h-max mb-4">
+                      <p className="font-bold text-lg w-max pl-2 pr-2.5">
+                        Assertion
+                      </p>
+                      {/* start voting buttons */}
+                      {userId ? (
+                        <div>
+                          {userCompliance.find((x) => x.postId === post.id) ? (
+                            <div className="flex items-center">
+                              <div className="group relative flex items-center">
+                                <span className="material-symbols-outlined hover:cursor-pointer">
+                                  beenhere
+                                </span>
+                                <span
+                                  className="group-hover:opacity-100  transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                                >
+                                  You&#39;ve already voted.
+                                </span>
+                              </div>
+                              <span
+                                className={`${
+                                  votemAnimation && post.id === postClicked
+                                    ? "animate-fade"
+                                    : "opacity-0"
+                                } opacity-0 text-xs ml-2`}
+                                onAnimationEnd={() => setVoteAnimation(false)}
+                              >
+                                Thank you for voting. Your feedback matters.
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex justify-beginning gap-1 items-center">
+                              <button
+                                onClick={() => {
+                                  handleTrueVote(post.id);
+                                }}
+                                className="flex group justify-center items-center relative"
+                              >
+                                <span
+                                  className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                                >
+                                  Assertion is true
+                                </span>
+                                <span className="material-symbols-outlined text-emerald-600 hover:text-emerald-400">
+                                  verified_user
+                                </span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleSubjVote(post.id);
+                                }}
+                                className="flex group justify-center items-center relative"
+                              >
+                                <span
+                                  className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                                >
+                                  Assertion is Subjective
+                                </span>
+                                <span className="material-symbols-outlined text-amber-400 hover:text-amber-300">
+                                  gpp_maybe
+                                </span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleFalseVote(post.id);
+                                }}
+                                className="flex group justify-center items-center relative"
+                              >
+                                <span
+                                  className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                                >
+                                  Assertion is False
+                                </span>
+                                <span className="material-symbols-outlined text-red-400 hover:text-red-300">
+                                  gpp_bad
+                                </span>{" "}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
+                      {/* end voting buttons */}
+                    </div>
                     <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative">
                       <span className="text-4xl font-serif absolute -left-2 -top-2">
                         &#8220;
@@ -136,19 +289,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                       <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
                         &#8221;
                       </span>
-                    </div>
-                    <div className="flex items-center w-full h-full absolute top-0 right-0 rounded-r-md invisible group-hover:visible cursor-pointer">
-                      <div className="flex justify-center gap-4 align-middle w-full opacity-100 p-12">
-                        <button className="flex justify-center items-center bg-emerald-600  rounded-full w-full h-12 hover:bg-emerald-500">
-                          True
-                        </button>
-                        <button className="flex justify-center items-center bg-amber-400  rounded-full w-full h-12 hover:bg-amber-300">
-                          Subjective
-                        </button>
-                        <button className="flex justify-center items-center bg-red-500  rounded-full w-full h-12 hover:bg-red-400">
-                          False
-                        </button>
-                      </div>
                     </div>
                   </div>
                   {/* AI Response */}

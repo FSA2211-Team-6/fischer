@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../server/db/prismadb";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 const checkHost = async (hostName: string) => {
   const host = await prisma.website.findUnique({
@@ -75,7 +76,7 @@ export default async function handler(
   //perform checks to see if website/article/topic exist already, if not, create them.
   await checkHost(website.host);
   const article = await checkWebsiteArticle(website.article, website.host);
-  const topic = await checkTopic(post.topic);
+  const topic = await checkTopic(post.topic.trim());
 
   //build the object to send to db
   const addPost = {

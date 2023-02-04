@@ -6,6 +6,7 @@ import { selectAllPosts, updateCursor } from "@/redux/slices/allPostsSlice";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import prisma from "../../../server/db/prismadb";
 import Filters from "@/components/PostComponents/filters";
+import { getSession } from "next-auth/react";
 
 export const getStaticProps: GetStaticProps = async () => {
   //the number of posts we want on initial load
