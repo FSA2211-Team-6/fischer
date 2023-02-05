@@ -1,17 +1,25 @@
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
-export default function CommentBox({ post }: any) {
+export default function CommentBox({ post, user }: any) {
   const [comment, setComment] = useState<string>("");
+  const [userId, setUserId] = useState<number | null>(null);
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const commentValue = event.target.value;
     setComment(commentValue);
   };
 
+  useEffect(() => {
+    if (user) {
+      setUserId(user.fischerId);
+    }
+  }, [user]);
+
   const commentData: object = {
     postId: post.singlePostData.id,
-    fischerId: 1,
+    fischerId: userId,
     content: comment,
   };
 

@@ -7,10 +7,11 @@ import { useEffect } from "react";
 import CommentBox from "@/components/PostComponents/commentBox";
 import SinglePost from "@/components/PostComponents/singlePost";
 import Tabs from "@/components/PostComponents/singlePostTabs";
-import { fetchCommentsFromPost } from "@/redux/slices/commentSlice";
-import { selectComments } from "@/redux/slices/commentSlice";
+import { useSession } from "next-auth/react";
 
 export default function SinglePostPage() {
+  const [user, setUser] = React.useState<object | null>(null);
+  const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const router = useRouter();
   let postId = router.query["postId"] || "";
@@ -23,15 +24,11 @@ export default function SinglePostPage() {
     fetchData();
   }, [dispatch, postId]);
 
-  //   const comments: any = useAppSelector(selectComments);
-  //   console.log("comments from state: ", comments);
-
-  // useEffect(() => {
-  //   const fetchCommmentData = () => {
-  //     dispatch(fetchCommentsFromPost(+postId));
-  //   };
-  //   fetchCommmentData();
-  // }, [dispatch, postId]);
+  useEffect(() => {
+    if (session) {
+      setUser(session.user);
+    }
+  }, [session]);
 
   return (
     <>
@@ -46,7 +43,7 @@ export default function SinglePostPage() {
         <div className="flex flex-col mb-4 justify-center px-14">
           <div className="w-full bg-gray-700  ">
             <div>
-              <CommentBox post={post} />
+              <CommentBox post={post} user={user} />
               <Tabs post={post} />
             </div>
           </div>

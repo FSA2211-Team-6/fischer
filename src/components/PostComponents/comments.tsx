@@ -1,5 +1,6 @@
 import React from "react";
 import useSWR from "swr";
+import Image from "next/image";
 
 export default function Comments({ post }: any) {
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -25,24 +26,24 @@ export default function Comments({ post }: any) {
             <div className="flex-col w-full py-2 mx-auto bg-gray-800 border-b-2 border-r-2 border-gray-900 sm:px-4 sm:py-2 md:px-4 sm:rounded-lg sm:shadow-sm ">
               <div className="flex flex-row">
                 {/* USER IMG HERE */}
-                <img
+                <Image
                   className="object-cover w-12 h-12 border-2 border-gray-300 rounded-full"
-                  alt="eddie's avatar"
-                  src="https://ca.slack-edge.com/T024FPYBQ-U044LRSBS3F-8b230715abb7-512"
+                  alt="avatar"
+                  src={ele.commenter.image}
+                  width={100}
+                  height={100}
                 />
                 <div className="flex-col mt-1">
                   <div className="flex items-center flex-1 px-4 font-bold text-white leading-tight">
                     {/* USER NAME HERE */}
                     {ele.commenter.name}
                     <span className="ml-2 text-xs font-normal text-gray-400">
-                      {/* COMMENT TIME HERE*/}2 weeks ago
+                      {/* COMMENT TIME HERE*/}
+                      {new Date(ele.createdAt).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex-1 px-2 ml-2 text-sm font-medium leading-2 text-gray-300">
                     {/* COMMENT HERE */}
-                    {/* {`Boy, you got my heartbeat runnin' away Beating like a drum and
-                  it's coming your way Can't you hear that Boom, badoom, boom,
-                  boom, badoom, boom, bass?`} */}
                     {ele.content}
                   </div>
                   {/* UPVOTE BUTTON */}
