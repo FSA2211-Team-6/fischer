@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../../../server/db/prismadb";
+import prisma from "@/db/prismadb";
 
 const CommentsApi = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
