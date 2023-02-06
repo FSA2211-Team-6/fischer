@@ -1,8 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import { ThunkAction } from "redux-thunk";
-import { AnyAction } from "redux";
 
 export const fetchAllPosts = createAsyncThunk("/api/posts", async () => {
   try {
