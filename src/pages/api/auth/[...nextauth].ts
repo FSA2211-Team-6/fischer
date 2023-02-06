@@ -2,8 +2,7 @@ import NextAuth from "next-auth/next";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "@/db/prismadb";
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -28,8 +27,8 @@ export default NextAuth({
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token from a provider.
       // session.accessToken = token.accessToken;
-      if (user && user.fischerId) {
-        session.user.fischerId = user.fischerId;
+      if (user) {
+        session.user = user;
       }
       return session;
     },

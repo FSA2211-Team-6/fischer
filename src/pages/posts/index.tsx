@@ -1,12 +1,11 @@
 import { useAppSelector } from "@/redux/store";
-import AllPosts from "@/components/PostComponents/allPosts";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { selectAllPosts, updateCursor } from "@/redux/slices/allPostsSlice";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
-import prisma from "../../../server/db/prismadb";
+import AllPosts from "@/components/PostComponents/allPosts";
 import Filters from "@/components/PostComponents/filters";
-import { getSession } from "next-auth/react";
+import prisma from "@/db/prismadb";
 
 export const getStaticProps: GetStaticProps = async () => {
   //the number of posts we want on initial load
@@ -36,7 +35,6 @@ export default function Posts({
   myCursor,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const dispatch = useAppDispatch();
-
   //this gets the new posts that were requested by infinite scroll in <AllPosts>
   //posts are added to the redux store, then retrieved here, and pushed back into the <AllPosts> component to re-render.
   const morePosts = useAppSelector(selectAllPosts);

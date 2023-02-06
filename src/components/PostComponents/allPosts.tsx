@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   addPost,
