@@ -9,12 +9,10 @@ export default function Experts() {
           <div className="flex-col w-full py-2 mx-auto bg-gray-800 border-b-2 border-r-2 border-gray-900 sm:px-4 sm:py-2 md:px-4 sm:rounded-lg sm:shadow-sm mb-4">
             <div className="flex flex-row">
               {/* USER IMG HERE */}
-              <Image
+              <img
                 className="object-cover w-12 h-12 border-2 border-gray-300 rounded-full"
                 alt="eddie's avatar"
                 src="https://ca.slack-edge.com/T024FPYBQ-U044LRSBS3F-8b230715abb7-512"
-                width={100}
-                height={100}
               />
               <div className="flex-col mt-1">
                 <div className="flex items-center flex-1 px-4 font-bold text-white leading-tight">

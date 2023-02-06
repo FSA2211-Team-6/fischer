@@ -1,10 +1,13 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { mutate } from "swr";
 
 export default function CommentBox({ post, user }: any) {
   const [comment, setComment] = useState<string>("");
   const [userId, setUserId] = useState<number | null>(null);
+  const fetcher = (url: string, obj: object) =>
+    fetch(url, obj).then((res) => res.json());
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const commentValue = event.target.value;
@@ -27,14 +30,19 @@ export default function CommentBox({ post, user }: any) {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    const response = await fetch(
+    const response = await fetcher(
       `http://localhost:3000/api/posts/${post.singlePostData.id}/comments`,
       {
         method: "POST",
         body: JSON.stringify(commentData),
       }
     );
+    mutate(
+      `http://localhost:3000/api/posts/${post.singlePostData.id}/comments`
+    );
+    setComment("");
   };
+
   return (
     <div className="flex justify-center ">
       <div className=" max-w-3xl w-full outline-1 outline-slate-400">
@@ -46,6 +54,7 @@ export default function CommentBox({ post, user }: any) {
         >
           <textarea
             id="textArea"
+            value={comment}
             onChange={(event) => {
               onChange(event);
             }}
