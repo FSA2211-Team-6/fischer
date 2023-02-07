@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -51,7 +52,7 @@ model User {
   name              String
   email             String    @unique
   emailVerified     DateTime?
-  image             String?
+  image             String    @default("/images/user.jpeg")
   createdAt         DateTime  @default(now())
   fischerId         Int       @id @default(autoincrement())
   currentTokens     Int       @default(1)

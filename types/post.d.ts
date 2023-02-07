@@ -7,10 +7,16 @@ declare global {
     upvotes: number;
   }
   interface user {
-    userId: null | number;
-    userName: String;
-    firstName: String;
-    lastName: String;
+    id: string;
+    email: string;
+    name: string;
+    createdAt: Date;
+    fischerId: number;
+    image: string;
+    isAdmin: Boolean;
+    currentTokens: number;
+    maxTokens: number;
+    expertise: any[];
   }
   interface truthVotes {
     green: number;
