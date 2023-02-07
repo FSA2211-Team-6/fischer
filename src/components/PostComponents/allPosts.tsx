@@ -202,7 +202,13 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
 
                 {/* Post User Name */}
                 <div className="inline-flex gap-2 float-right items-center">
-                  <p className="inline float-right text-xs">{post.user.name}</p>
+                  {post.user ? (
+                    <p className="inline float-right text-xs">
+                      {post.user.name}
+                    </p>
+                  ) : (
+                    <p className="inline float-right text-xs">deleted user</p>
+                  )}
                   <div className="mx-auto object-cover inline float-right rounded-full bg-white h-10 w-10 "></div>
                 </div>
               </div>
