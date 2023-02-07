@@ -125,7 +125,7 @@ export default function ListHeader() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-                Export
+                Search
               </a>
             </div>
           </div>

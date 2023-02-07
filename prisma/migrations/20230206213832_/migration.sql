@@ -36,7 +36,7 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "emailVerified" TIMESTAMP(3),
-    "image" TEXT,
+    "image" TEXT NOT NULL DEFAULT '/images/user.jpeg',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "fischerId" SERIAL NOT NULL,
     "currentTokens" INTEGER NOT NULL DEFAULT 1,
