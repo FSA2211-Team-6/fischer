@@ -78,6 +78,8 @@ declare global {
   }
   interface allPostsState {
     allPostsData: Array<firstPosts>;
+    filteredPosts: Array<firstPosts>;
+    searchData: object;
     cursor: number;
     status: "loading" | "idle";
     error: string | null;

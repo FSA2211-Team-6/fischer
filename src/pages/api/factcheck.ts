@@ -18,7 +18,7 @@ export default async function handler(
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: [
-      "Give me True/False, Subjective/Objective, and explanation in an array " +
+      "Give me True/False, Subjective/Objective, and explanation in an array: " +
         req.body +
         "\nA:",
       "Provide general category of the following statement:" +
