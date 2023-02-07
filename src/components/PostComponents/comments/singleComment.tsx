@@ -1,8 +1,80 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function SingleComment({ comment }: any) {
   const [upvotes, setUpvotes] = useState(comment.upvotes);
+
+  const [userId, setUserId] = React.useState<number | null>(null);
+  const [userVote, setUserVote] = useState<1 | -1 | 0>(0);
+
+  const { data: session } = useSession();
+  useEffect(() => {
+    if (session) {
+      setUserId(session.user.fischerId);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    const fetchUserCommentVote = async () => {
+      const data = await fetch(`/api/usercommentvote/${userId}`);
+      const voteData = await data.json();
+    };
+    if (userId) {
+      fetchUserCommentVote();
+    }
+  }, [userId]);
+
+  const sendVoteToDB = async (compliance: number, commentId: number) => {
+    const userCommentVote = {
+      fischerId: userId,
+      commentId: commentId,
+      compliance: compliance,
+    };
+    const response = await fetch(`/api/usercommentvote/${userId}`, {
+      method: "POST",
+      body: JSON.stringify(userCommentVote),
+    });
+    const data = await response.json();
+  };
+
+  const updateVotesDB = async();
+
+  const handleUpvotes = async (commentId: number) => {
+    if (userVote === 1) {
+      setUpvotes(upvotes - 1);
+      setUserVote(0);
+      // send server stuff
+    } else if (userVote === -1) {
+      setUpvotes(upvotes + 2);
+      setUserVote(1);
+      // send server stuff
+    } else if (userVote === 0) {
+      setUpvotes(upvotes + 1);
+      setUserVote(1);
+      sendVoteToDB(1, commentId);
+      // send server stuff
+    }
+  };
+
+  const handleDownvotes = async (commentId: number) => {
+    if (userVote === -1) {
+      setUpvotes(upvotes + 1);
+      setUserVote(0);
+      // send server stuff
+    } else if (userVote === 1) {
+      setUpvotes(upvotes - 2);
+      setUserVote(-1);
+      // send server stuff
+    } else if (userVote === 0) {
+      setUpvotes(upvotes - 1);
+      setUserVote(-1);
+      // send server stuff
+    }
+  };
+
+  console.log("uservoted", userVote);
 
   return (
     <section className="relative flex  justify-center  antialiased   min-w-screen">
@@ -31,10 +103,13 @@ export default function SingleComment({ comment }: any) {
                 {comment.content}
               </div>
               {/* UPVOTE BUTTON */}
-              <button className="inline-flex items-center px-1 pt-2 ml-1 flex-column">
+              <button
+                onClick={(e: any) => handleUpvotes(comment.id)}
+                className="inline-flex items-center px-1 pt-2 ml-1 flex-column"
+              >
                 <svg
                   className="w-5 h-5 ml-2 text-gray-400 cursor-pointer hover:fill-green-200"
-                  fill="none"
+                  fill={userVote === 1 ? "green" : "none"}
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
@@ -52,11 +127,14 @@ export default function SingleComment({ comment }: any) {
                 {upvotes}
               </div>
               {/* DOWNVOTE BUTTON */}
-              <button className="inline-flex items-center px-1 ml-1 flex-column">
+              <button
+                onClick={(e: any) => handleDownvotes(comment.id)}
+                className="inline-flex items-center px-1 ml-1 flex-column"
+              >
                 <svg
                   className="w-5 h-5 text-gray-400 cursor-pointer hover:fill-red-300"
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
+                  fill={userVote === -1 ? "red" : "none"}
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
