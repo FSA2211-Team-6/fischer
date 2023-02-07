@@ -13,7 +13,12 @@ export default async function handler(
     cursor: {
       id: Number(myCursor),
     },
-    include: { websiteArticle: { include: { website: true } }, user: true },
+    include: {
+      websiteArticle: { include: { website: true } },
+      user: true,
+      userCompliances: true,
+      expertResponses: true,
+    },
   });
 
   const posts = results;

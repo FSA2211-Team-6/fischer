@@ -16,7 +16,12 @@ export default async function handler(
       id: Number(myCursor),
     },
     where: { assertion: { contains: searchString, mode: "insensitive" } },
-    include: { websiteArticle: { include: { website: true } }, user: true },
+    include: {
+      websiteArticle: { include: { website: true } },
+      user: true,
+      userCompliances: true,
+      expertResponses: true,
+    },
   });
 
   const searchResults: Array<firstPosts> = JSON.parse(JSON.stringify(results));

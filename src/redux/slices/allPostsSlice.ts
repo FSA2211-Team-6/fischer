@@ -22,6 +22,7 @@ export const fetchInitialPosts = createAsyncThunk(
     );
 
     const data = await response.json();
+    console.log("thunk!!!!!!", data);
     return data;
   }
 );

@@ -11,7 +11,12 @@ export default async function handler(
   //query to get intitial posts
   const posts = await prisma.post.findMany({
     take: Number(numResults),
-    include: { websiteArticle: { include: { website: true } }, user: true },
+    include: {
+      websiteArticle: { include: { website: true } },
+      user: true,
+      userCompliances: true,
+      expertResponses: true,
+    },
   });
 
   const firstPosts: Array<firstPosts> = JSON.parse(JSON.stringify(posts));

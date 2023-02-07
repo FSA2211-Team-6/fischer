@@ -172,6 +172,60 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     ]);
   };
 
+  const getTruthiness = (post) => {
+    //Truthiness is the average of:
+    // Average User Compliance
+    // Average Expert Compliance
+    // AI Compliance
+
+    // Display as a percentage to indicate truthiness
+    // 16% to 100% = green
+    // -15% to +15% = yellow
+    // -16% to -100% = red
+
+    const aiAverage = post.aiCompliance;
+    let expertAverage = null;
+    let userAverage = null;
+
+    //get the average expert compliance
+    if (post.expertResponses.length > 0) {
+      expertAverage =
+        post.expertCompliances
+          .map((vote) => {
+            return vote.compliance;
+          })
+          .reduce((a, b) => {
+            return a + b;
+          }) / post.expertCompliances.length;
+    }
+    //get the average user compliance
+    if (post.userCompliances.length > 0) {
+      userAverage =
+        post.userCompliances
+          .map((vote) => {
+            return vote.compliance;
+          })
+          .reduce((a, b) => {
+            return a + b;
+          }) / post.userCompliances.length;
+    }
+
+    //filter out the nulls so average will be accurate
+    const allAverages = [userAverage, expertAverage, aiAverage].filter(
+      (category) => {
+        return category !== null;
+      }
+    );
+
+    //average the available values together, and return the % value
+    const averageTruthiness =
+      allAverages.reduce((a, b) => {
+        return a + b;
+      }) / allAverages.length;
+
+    return `${averageTruthiness * 100}%`;
+  };
+
   return (
     <div>
       {filteredPosts!.length > 0 &&
@@ -348,7 +402,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Truthiness</p>
                   <div className="flex items-end text-xs">
-                    {/* {post.truthVotes.green} */}
+                    <div>{getTruthiness(post)}</div>
                     <span className="flex items-center">
                       <svg
                         width="20"
@@ -404,16 +458,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                   </div>
                 </div>
               </div>
-              {/* This is the blank div element at end of current posts, 
-              reaching this element will attempt to fetch more posts */}
-              {/* {(firstPosts!.length === index + 1 &&
-                posts.length === 0 &&
-                infiniteScrollState === false) ||
-              (firstPosts!.length === index + 1 &&
-                posts.length > 0 &&
-                infiniteScrollState === true) ? (
-                <div ref={endOfScrollRef}></div>
-              ) : null} */}
             </div>
           );
         })}

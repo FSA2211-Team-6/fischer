@@ -77,8 +77,8 @@ declare global {
     userCompliances: Array<>;
   }
   interface allPostsState {
-    allPostsData: Array<firstPosts>;
-    filteredPosts: Array<firstPosts>;
+    allPostsData: Array<any>;
+    filteredPosts: Array<any>;
     searchData: object;
     cursor: number;
     status: "loading" | "idle";
