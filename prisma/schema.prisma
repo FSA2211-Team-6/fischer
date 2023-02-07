@@ -78,9 +78,9 @@ model BadPost {
 }
 
 model Post {
-  websiteArticleId  Int
+  websiteArticleId  Int?
   topicId           Int
-  fischerId         Int
+  fischerId         Int?
   createdAt         DateTime        @default(now())
   assertion         String
   id                Int             @id @default(autoincrement())
@@ -93,9 +93,9 @@ model Post {
   comments          Comment[]
   userCompliances   UserCompliance[]
 
-  websiteArticle    WebsiteArticle  @relation(fields: [websiteArticleId], references: [id])
+  websiteArticle    WebsiteArticle?  @relation(fields: [websiteArticleId], references: [id])
   topic             Topic           @relation(fields: [topicId], references: [id])
-  user              User            @relation(fields: [fischerId], references: [fischerId])
+  user              User?            @relation(fields: [fischerId], references: [fischerId])
 }
 
 model WebsiteArticle {
