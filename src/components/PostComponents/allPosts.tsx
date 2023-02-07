@@ -408,10 +408,10 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                 infiniteScrollState === true) ? (
                 <div ref={endOfScrollRef}></div>
               ) : null} */}
-              <div ref={endOfScrollRef}></div>
             </div>
           );
         })}
+      <div ref={endOfScrollRef}></div>
       {loading ? <Loading /> : null}
     </div>
   );
