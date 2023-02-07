@@ -18,7 +18,7 @@ export const fetchInitialPosts = createAsyncThunk(
   "/api/posts/initialposts",
   async (numPosts) => {
     const response = await fetch(
-      `http://localhost:3001/api/posts/initialposts/${numPosts}`
+      `http://localhost:3000/api/posts/initialposts/${numPosts}`
     );
 
     const data = await response.json();
