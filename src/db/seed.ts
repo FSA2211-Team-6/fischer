@@ -18,6 +18,66 @@ const userData: Prisma.UserCreateInput[] = [
     name: "Derek",
     email: "derek@gmail.com",
   },
+  {
+    name: "John",
+    email: "john@gmail.com",
+  },
+  {
+    name: "Alex",
+    email: "alex@gmail.com",
+  },
+  {
+    name: "Mud",
+    email: "mud@gmail.com",
+  },
+  {
+    name: "Core",
+    email: "core@gmail.com",
+  },
+  {
+    name: "Face",
+    email: "face@gmail.com",
+  },
+  {
+    name: "lip",
+    email: "lip@gmail.com",
+  },
+  {
+    name: "cackle",
+    email: "cackle@gmail.com",
+  },
+  {
+    name: "nemo",
+    email: "nemo@gmail.com",
+  },
+  {
+    name: "Julius Caeser",
+    email: "juliusCaeser@gmail.com",
+  },
+  {
+    name: "Genghis Khan",
+    email: "genghisKhan@gmail.com",
+  },
+  {
+    name: "Bobby Fischer",
+    email: "bFischer@gmail.com",
+  },
+  {
+    name: "wilfredo leon",
+    email: "wilfredoleon@gmail.com",
+  },
+  {
+    name: "mouse",
+    email: "mouse@gmail.com",
+  },
+  {
+    name: "car",
+    email: "car@gmail.com",
+  },
+  {
+    name: "cow",
+    email: "cow@gmail.com",
+  },
 ];
 
 const websiteData = [

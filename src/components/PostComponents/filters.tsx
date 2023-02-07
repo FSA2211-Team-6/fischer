@@ -1,3 +1,5 @@
+import PostSearch from "../SharedComponents/postSearch";
+
 const Filters = () => {
   return (
     <>
@@ -32,6 +34,7 @@ const Filters = () => {
       <h2 className="text-gray-400 text-md">
         Here&#x27;s the figgity fax of the week!
       </h2>
+      <PostSearch />
     </>
   );
 };
