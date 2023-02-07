@@ -27,7 +27,6 @@ export const fetchCommentsFromPost = createAsyncThunk(
     try {
       const response = await fetch(`/api/posts/${postId}/comments`);
       const data: Array<comment> = await response.json();
-      console.log("comment data from fetchThunk: ", data);
       return data;
     } catch (err: any) {
       console.error("fetchCommentsFromPost err: ", err);

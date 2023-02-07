@@ -11,25 +11,36 @@ export default async function UserCommentVoteApi(
       const userCommentVote = await prisma.userCommentVote.findMany({
         where: { fischerId: Number(fischerId) },
       });
-      res.status(200).send(userCommentVote);
+      return res.status(200).send(userCommentVote);
 
     case "POST":
       const createData = JSON.parse(req.body);
-      const createdCommentVote = await prisma.userCommentVote.create({
-        data: createData,
-      });
-      res.status(200).send(createdCommentVote);
+      try {
+        const createdCommentVote = await prisma.userCommentVote.create({
+          data: createData,
+        });
+        return res.status(200).send(createdCommentVote);
+      } catch (err) {
+        console.log(err);
+        return res.status(403).send({ err: "Error adding vote" });
+      }
 
     case "PUT":
       const data = JSON.parse(req.body);
-      const updatedCommentVote = await prisma.userCommentVote.updateMany({
-        where: {
-          fischerId: Number(fischerId),
-        },
-        data: {
-          compliance: data.compliance,
-        },
-      });
-      res.status(200).send(updatedCommentVote);
+      try {
+        const updatedCommentVote = await prisma.userCommentVote.updateMany({
+          where: {
+            fischerId: data.fischerId,
+            commentId: data.commentId,
+          },
+          data: {
+            compliance: data.compliance,
+          },
+        });
+        return res.status(200).send(updatedCommentVote);
+      } catch (err) {
+        console.log(err);
+        return res.status(403).send({ err: "Error changing upvote/downvote" });
+      }
   }
 }

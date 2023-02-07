@@ -4,10 +4,11 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
 export default function SingleComment({ comment }: any) {
-  const [upvotes, setUpvotes] = useState(comment.upvotes);
+  const [upvotes, setUpvotes] = useState(0);
 
   const [userId, setUserId] = React.useState<number | null>(null);
   const [userVote, setUserVote] = useState<1 | -1 | 0>(0);
+  const [userVoteArray, setUserVoteArray] = React.useState<Array<object>>([]);
 
   const { data: session } = useSession();
   useEffect(() => {
@@ -20,11 +21,36 @@ export default function SingleComment({ comment }: any) {
     const fetchUserCommentVote = async () => {
       const data = await fetch(`/api/usercommentvote/${userId}`);
       const voteData = await data.json();
+      setUserVoteArray(voteData);
     };
     if (userId) {
       fetchUserCommentVote();
     }
   }, [userId]);
+
+  useEffect(() => {
+    const userCommentVote: any = userVoteArray.find(
+      (ele: any) => ele.commentId === comment.id
+    );
+    if (userCommentVote) {
+      setUserVote(userCommentVote.compliance);
+    }
+  }, [userVoteArray, comment.id]);
+
+  const updateCommentUpvotes = async (
+    upvotesIncrement: number,
+    commentId: number
+  ) => {
+    const commentData = {
+      upvotes: comment.upvotes + upvotesIncrement,
+      commentId: comment.id,
+    };
+    const putResponse = await fetch(`/api/comments/${commentId}`, {
+      method: "PUT",
+      body: JSON.stringify(commentData),
+    });
+    const data = await putResponse.json();
+  };
 
   const sendVoteToDB = async (compliance: number, commentId: number) => {
     const userCommentVote = {
@@ -32,29 +58,38 @@ export default function SingleComment({ comment }: any) {
       commentId: commentId,
       compliance: compliance,
     };
-    const response = await fetch(`/api/usercommentvote/${userId}`, {
-      method: "POST",
-      body: JSON.stringify(userCommentVote),
-    });
-    const data = await response.json();
+    //check to see if user has voted on comment. create/update vote
+    if (userVoteArray.find((ele: any) => ele.commentId === comment.id)) {
+      const putResponse = await fetch(`/api/usercommentvote/${userId}`, {
+        method: "PUT",
+        body: JSON.stringify(userCommentVote),
+      });
+      const data = await putResponse.json();
+    } else {
+      const postResponse = await fetch(`/api/usercommentvote/${userId}`, {
+        method: "POST",
+        body: JSON.stringify(userCommentVote),
+      });
+      const createData = await postResponse.json();
+    }
   };
-
-  const updateVotesDB = async();
 
   const handleUpvotes = async (commentId: number) => {
     if (userVote === 1) {
       setUpvotes(upvotes - 1);
       setUserVote(0);
-      // send server stuff
+      await sendVoteToDB(0, commentId);
+      await updateCommentUpvotes(-1, commentId);
     } else if (userVote === -1) {
       setUpvotes(upvotes + 2);
       setUserVote(1);
-      // send server stuff
+      await sendVoteToDB(1, commentId);
+      await updateCommentUpvotes(2, commentId);
     } else if (userVote === 0) {
       setUpvotes(upvotes + 1);
       setUserVote(1);
-      sendVoteToDB(1, commentId);
-      // send server stuff
+      await sendVoteToDB(1, commentId);
+      await updateCommentUpvotes(1, commentId);
     }
   };
 
@@ -62,26 +97,27 @@ export default function SingleComment({ comment }: any) {
     if (userVote === -1) {
       setUpvotes(upvotes + 1);
       setUserVote(0);
-      // send server stuff
+      await sendVoteToDB(0, commentId);
+      await updateCommentUpvotes(1, commentId);
     } else if (userVote === 1) {
       setUpvotes(upvotes - 2);
       setUserVote(-1);
-      // send server stuff
+      await sendVoteToDB(-1, commentId);
+      await updateCommentUpvotes(-2, commentId);
     } else if (userVote === 0) {
       setUpvotes(upvotes - 1);
       setUserVote(-1);
-      // send server stuff
+      await sendVoteToDB(-1, commentId);
+      await updateCommentUpvotes(-1, commentId);
     }
   };
-
-  console.log("uservoted", userVote);
 
   return (
     <section className="relative flex  justify-center  antialiased   min-w-screen">
       <div className="container px-0 mx-auto sm:px-5 pb-4">
         <div className="flex-col w-full py-2 mx-auto bg-gray-800 border-b-2 border-r-2 border-gray-900 sm:px-4 sm:py-2 md:px-4 sm:rounded-lg sm:shadow-sm ">
           <div className="flex flex-row">
-            {/* USER IMG HERE */}
+            {/* COMMENTER IMG HERE */}
             <Image
               className="object-cover w-12 h-12 border-2 border-gray-300 rounded-full"
               alt="avatar"
@@ -91,7 +127,7 @@ export default function SingleComment({ comment }: any) {
             />
             <div className="flex-col mt-1">
               <div className="flex items-center flex-1 px-4 font-bold text-white leading-tight">
-                {/* USER NAME HERE */}
+                {/* COMMENTER NAME HERE */}
                 {comment.commenter.name}
                 <span className="ml-2 text-xs font-normal text-gray-400">
                   {/* COMMENT TIME HERE*/}
@@ -124,7 +160,7 @@ export default function SingleComment({ comment }: any) {
               </button>
               <div className="text-sm inline-flex items-center ml-1 flex-column">
                 {/* upVotes HERE */}
-                {upvotes}
+                {comment.upvotes + upvotes}
               </div>
               {/* DOWNVOTE BUTTON */}
               <button
