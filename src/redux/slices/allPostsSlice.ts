@@ -47,7 +47,6 @@ export const fetchMoreSearchResults = createAsyncThunk(
     );
 
     const data = await response.json();
-    console.log("MORE DATA", data);
     return { data };
   }
 );

@@ -19,6 +19,14 @@ export default function ListHeader() {
     }
   };
 
+  const handleClear = () => {
+    dispatch(clearSearchData());
+    setSearchString("");
+
+    const searchBar = document.getElementById("post-search");
+    searchBar.value = "";
+  };
+
   return (
     <>
       <div className="pb-2 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
@@ -27,15 +35,13 @@ export default function ListHeader() {
           <div className="sm:flex">
             <div className="items-center hidden mb-3 sm:flex sm:divide-x sm:divide-gray-100 sm:mb-0 dark:divide-gray-700">
               <form
-                className="lg:pr-3"
-                action="#"
-                method="GET"
+                className="lg:pr-3 flex gap-4 items-center"
                 onSubmit={(e) => {
                   handleSubmit(e);
                 }}
               >
                 <label className="sr-only">Search</label>
-                <div className="relative mt-1 lg:w-64 xl:w-96">
+                <div className="relative lg:w-64 xl:w-96">
                   <input
                     type="text"
                     name="post"
@@ -49,13 +55,21 @@ export default function ListHeader() {
                 </div>
                 <button
                   type="submit"
-                  className="flex items-center px-4 py-2 text-gray-400 border border-gray-300 rounded-md text-md"
+                  className="flex items-center px-4 h-10 text-gray-400 border border-gray-300 rounded-md text-md"
                 >
                   Submit
                 </button>
               </form>
             </div>
           </div>
+          <button
+            onClick={() => {
+              handleClear();
+            }}
+            className="text-xs ml-1 text-gray-400 hover:underline hover:underline-offset-4"
+          >
+            clear results
+          </button>
         </div>
       </div>
     </>

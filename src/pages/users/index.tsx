@@ -87,7 +87,7 @@ export default function Users() {
                           name
                         </div>
                         <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                          email{" "}
+                          email
                         </div>
                       </div>
                     </td>
