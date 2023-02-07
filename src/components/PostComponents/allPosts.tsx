@@ -8,6 +8,7 @@ import {
   rehydrate,
   selectSearchData,
   fetchMoreSearchResults,
+  addUserCompliance,
 } from "@/redux/slices/allPostsSlice";
 import Loading from "./loading";
 import { useSession } from "next-auth/react";
@@ -144,6 +145,12 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     });
     const data = await response.json();
 
+    const index = filteredPosts.findIndex((post) => {
+      return post.id === postId;
+    });
+
+    dispatch(addUserCompliance({ data, index }));
+
     setVoteAnimation(true);
     setPostClicked(postId);
   };
@@ -172,7 +179,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     ]);
   };
 
-  const getTruthiness = (post) => {
+  const getPostStats = (post) => {
     //Truthiness is the average of:
     // Average User Compliance
     // Average Expert Compliance
@@ -223,7 +230,24 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
         return a + b;
       }) / allAverages.length;
 
-    return `${averageTruthiness * 100}%`;
+    //divisiveness is the max average response - the min average response
+    //the max this can be is 2, so we divide the result by 2
+    //this results in a percentage value that represents how divisive something is
+    //for example 100% divisiveness would display if:
+    // ai compliance was 1 and expert compliance was -1
+    const getDivisivness = (allAverages) => {
+      const maxValue = Math.max(...allAverages);
+      const minValue = Math.min(...allAverages);
+
+      return `${maxValue - (minValue / 2) * 100}%`;
+    };
+
+    const divisivness = getDivisivness(allAverages);
+
+    return {
+      truthiness: `${averageTruthiness * 100}%`,
+      divisivness: divisivness,
+    };
   };
 
   return (
@@ -306,7 +330,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                             <div className="flex justify-beginning gap-1 items-center">
                               <button
                                 onClick={() => {
-                                  handleTrueVote(post.id);
+                                  handleTrueVote(post.id, post);
                                 }}
                                 className="flex group justify-center items-center relative"
                               >
@@ -402,7 +426,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Truthiness</p>
                   <div className="flex items-end text-xs">
-                    <div>{getTruthiness(post)}</div>
+                    <div>{getPostStats(post).truthiness}</div>
                     <span className="flex items-center">
                       <svg
                         width="20"
@@ -414,14 +438,13 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                       >
                         <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
                       </svg>
-                      12%
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Interest</p>
                   <div className="flex items-end text-xs">
-                    {/* {post.truthVotes.yellow} */}
+                    <div>{post.userCompliances.length}</div>
                     <span className="flex items-center">
                       <svg
                         width="20"
@@ -433,7 +456,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                       >
                         <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
                       </svg>
-                      10%
                     </span>
                   </div>
                 </div>
@@ -441,7 +463,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Divisiveness</p>
                   <div className="flex items-end text-xs">
-                    {/* {post.truthVotes.red} */}
+                    <div>{getPostStats(post).divisivness}</div>
                     <span className="flex items-center">
                       <svg
                         width="20"
@@ -453,7 +475,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                       >
                         <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
                       </svg>
-                      4%
                     </span>
                   </div>
                 </div>
