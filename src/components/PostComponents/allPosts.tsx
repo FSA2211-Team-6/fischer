@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   addPost,
-  selectAllPosts,
   updateCursor,
   selectCursor,
+  selectFilteredPosts,
+  rehydrate,
+  selectSearchData,
+  fetchMoreSearchResults,
 } from "@/redux/slices/allPostsSlice";
 import Loading from "./loading";
 import { useSession } from "next-auth/react";
@@ -19,7 +22,6 @@ interface Scroll {
 //THE ALL POSTS COMPONENT
 const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   firstPosts,
-  infiniteScroll,
 }) => {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
@@ -30,10 +32,10 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   const [userCompliance, setUserCompliance] = React.useState<Array<object>>([]);
   const [votemAnimation, setVoteAnimation] = React.useState<boolean>(false);
   const [postClicked, setPostClicked] = React.useState<number | null>(null);
+  const [filteredPosts, setFilteredPosts] = React.useState<any>(firstPosts);
 
   useEffect(() => {
     //if a session exists, set the userId
-
     if (session) {
       setUserId(session.user.fischerId);
     }
@@ -52,13 +54,18 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     }
   }, [userId]);
 
+  const getFilteredPosts = useAppSelector(selectFilteredPosts);
+
+  useEffect(() => {
+    if (getFilteredPosts!.length > 0) {
+      setFilteredPosts(getFilteredPosts);
+    }
+  }, [getFilteredPosts]);
+
+  const getSearchData = useAppSelector(selectSearchData);
+
   //gets the cursor from redux so we know what posts to fetch on infinite scroll
   const cursor = useAppSelector(selectCursor);
-
-  //we use this to know where to put the empty div that will trigger the endless scroll
-  const [infiniteScrollState, setInfiniteScrollState] = React.useState<
-    boolean | undefined
-  >(infiniteScroll);
 
   //observer and endOfScrollRef are what triggers the infinite scroll request
   const observer = React.useRef<IntersectionObserver | null>(null);
@@ -69,7 +76,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
 
       function throttle(callback: Function, time: number) {
         if (throttleTimer) {
-          console.log("throttling");
           return;
         }
         throttleTimer = true;
@@ -92,27 +98,38 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
         setLoading(false);
       };
 
+      const handleSearchRefresh = () => {
+        if (getSearchData.searchResults.length > 1) {
+          dispatch(fetchMoreSearchResults(getSearchData));
+        }
+
+        setLoading(false);
+      };
+
       if (observer.current) observer.current.disconnect();
 
       observer.current = new IntersectionObserver((entries) => {
-        setLoading(true);
-
         if (entries[0].isIntersecting) {
-          throttle(() => {
-            handleRefresh(cursor);
-          }, 600);
+          if (getSearchData.searchCursor) {
+            if (getSearchData.searchResults.length > 1) {
+              setLoading(true);
+            }
+            throttle(() => {
+              handleSearchRefresh();
+            }, 600);
+          } else {
+            setLoading(true);
+            throttle(() => {
+              handleRefresh(cursor);
+            }, 600);
+          }
         }
       });
 
       if (node) observer.current.observe(node);
     },
-    [cursor, dispatch]
+    [cursor, dispatch, getSearchData]
   );
-
-  //we use this only to check if it exists, if it doesnt exist I know the infinite scroll div needs
-  //to be at the end of the initial post version of <AllPosts>.  If it is > 0, it needs to be in the
-  //infinite scroll version of <AllPosts>.
-  const posts = useAppSelector(selectAllPosts);
 
   const submitVote = async (compliance: number, postId: number) => {
     const userComplicance = {
@@ -157,8 +174,8 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
 
   return (
     <div>
-      {firstPosts!.length > 0 &&
-        firstPosts!.map((post, index) => {
+      {filteredPosts!.length > 0 &&
+        filteredPosts!.map((post, index) => {
           return (
             <div
               key={post.id}
@@ -383,14 +400,15 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
               </div>
               {/* This is the blank div element at end of current posts, 
               reaching this element will attempt to fetch more posts */}
-              {(firstPosts!.length === index + 1 &&
+              {/* {(firstPosts!.length === index + 1 &&
                 posts.length === 0 &&
                 infiniteScrollState === false) ||
               (firstPosts!.length === index + 1 &&
                 posts.length > 0 &&
                 infiniteScrollState === true) ? (
                 <div ref={endOfScrollRef}></div>
-              ) : null}
+              ) : null} */}
+              <div ref={endOfScrollRef}></div>
             </div>
           );
         })}
