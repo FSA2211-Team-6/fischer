@@ -5,19 +5,19 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
   ) {
-    const url = req.body.url;
-     
-    const id = await prisma.websiteArticle.findFirst({
+    const url = req.body.url
+    
+    const id = await prisma.websiteArticle.findMany({
       where: {
-        articleURL: url
-      }
+        articleURL: url,
+      },
     })
+    const articleId = id[0].id;
 
     const posts = await prisma.post.findMany({
       where: {
-        websiteArticleId: id?.id
-      }
-    })
+        websiteArticleId: articleId
+    }})
 
     res.status(200).send(posts);
   }
