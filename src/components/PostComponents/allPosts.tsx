@@ -152,37 +152,38 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
           return (
             <div
               key={post.id}
-              className="grid grid-cols-1 gap-4 my-4 md:grid-cols-1 lg:grid-cols-1 relative w-full px-4 py-6 bg-white shadow-lg dark:bg-gray-700"
+              className="grid grid-cols-1 gap-4 my-4 md:grid-cols-1 lg:grid-cols-1 relative w-full px-4 py-4 bg-white dark:bg-gray-700 shadow-slate-900 drop-shadow-2xl"
             >
-              <div className="">
+              <div className="inline-flex items-center w-full">
                 {/* Begin website indicator */}
-                <div className="items-center gap-1 bg-white text-gray-700 text-sm w-max inline-flex font-semibold pl-4 pr-4 pt-2 pb-2 mr-8 rounded-full rounded-tl-none hover:bg-slate-800 hover:text-white hover:cursor-pointer">
+                <div className="relative items-center gap-1 bg-white text-gray-700 text-sm w-max inline-flex font-semibold pl-4 pr-4 pt-2 pb-2 mr-8 rounded-full rounded-tl-none hover:bg-slate-800 hover:text-white hover:cursor-pointer">
                   <span className="material-symbols-outlined">language</span>
-                  <a href={post.websiteArticle.articleURL}>
-                    {post.websiteArticle.website.hostSite.slice(
-                      post.websiteArticle.website.hostSite.indexOf(".") + 1
-                    )}
-                  </a>
+                  {post.websiteArticle.website.hostSite.slice(
+                    post.websiteArticle.website.hostSite.indexOf(".") + 1
+                  )}
+                  <a
+                    className="absolute w-full h-full top-0 left-0 z-10"
+                    href={post.websiteArticle.articleURL}
+                  ></a>
                 </div>
+
                 {/* End website indicator */}
 
                 {/* Begin post categories */}
-                <div className="inline-flex gap-2 w-max">
-                  <div className="bg-purple-200 text-purple-700 font-semibold font-sans tracking-wide text-xs w-max inline rounded-full pl-3 pr-3 pt-1 pb-1">
+                <div className="inline-flex gap-2">
+                  <div className=" bg-gray-800 text-emerald-500 font-semibold font-sans tracking-wide text-xs w-max inline rounded-full pl-3.5 pr-3.5 pt-1.5 pb-1.5">
                     {post.topicName}
                   </div>
                 </div>
                 {/* End post categories */}
 
                 {/* Post User Name */}
-                <div className="inline-flex gap-2 float-right items-center">
+                <div className="ml-auto">
                   {post.user ? (
                     <div className="flex items-center gap-2">
-                      <p className="inline float-right text-xs">
-                        {post.user.name}
-                      </p>
+                      <p className="text-xs">{post.user.name}</p>
                       <Image
-                        className="rounded-full mx-auto object-cover inline float-right"
+                        className="rounded-full"
                         src={post.user.image as string}
                         alt="User profile picture"
                         width={40}
@@ -191,9 +192,9 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <p className="inline float-right text-xs">deleted user</p>
+                      <p className="text-xs">Deleted user</p>
                       <Image
-                        className="rounded-full mx-auto object-cover inline float-right"
+                        className="rounded-full"
                         src="/images/user.jpeg"
                         alt="User profile picture"
                         width={40}
@@ -205,9 +206,9 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
               </div>
               {/* Main Section of Card */}
               <div className="flex items-end space-x-2">
-                <section className="flex flex-col gap-y-5">
+                <section className="flex flex-col gap-y-5 w-full">
                   {/* Assertion */}
-                  <div className="border-l-2 border-orange-500 p-4">
+                  <div className="border-l-2 border-orange-500 p-4 shadow-md shadow-gray-800">
                     <div className="flex h-max mb-4">
                       <p className="font-bold text-lg w-max pl-2 pr-2.5">
                         Assertion
@@ -293,7 +294,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                                 </span>
                                 <span className="material-symbols-outlined text-red-400 hover:text-red-300">
                                   gpp_bad
-                                </span>{" "}
+                                </span>
                               </button>
                             </div>
                           )}
@@ -301,35 +302,43 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       ) : null}
                       {/* end voting buttons */}
                     </div>
-                    <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative">
-                      <span className="text-4xl font-serif absolute -left-2 -top-2">
+                    <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative flex items-center gap-4">
+                      {/* <span className="text-4xl font-serif absolute -left-2 -top-2">
                         &#8220;
                       </span>
                       {post.assertion}
                       <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
                         &#8221;
+                      </span> */}
+                      <span className="material-symbols-outlined nohover material-icons md-36 text-orange-300">
+                        format_quote
                       </span>
+                      {post.assertion}
                     </div>
                   </div>
                   {/* AI Response */}
-                  <div className="border-l-2 border-yellow-500 p-4">
+                  <div className="border-l-2 border-yellow-500 p-4 shadow-md shadow-gray-800">
                     <p className="mb-4 font-bold text-lg  w-max pl-2 pr-2">
                       AI Response
                     </p>
-                    <div className="w-full relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2">
-                      <span className="text-4xl font-serif absolute -left-2 -top-2">
+                    <div className="w-full relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2 flex items-center gap-4">
+                      {/* <span className="text-4xl font-serif absolute -left-2 -top-2">
                         &#8220;
                       </span>
                       {post.aiResponse}
                       <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
                         &#8221;
+                      </span> */}
+                      <span className="material-symbols-outlined nohover material-icons md-36 text-amber-200">
+                        format_quote
                       </span>
+                      {post.aiResponse}
                     </div>
                   </div>
                 </section>
               </div>
-              {/* Comment/Expert Repsonse Box */}
-              <div className="flex gap-5">
+              {/* Comment/Expert Repsonse + Stats Box */}
+              <div className="flex gap-5 items-start">
                 {/* Comments */}
                 <div className="flex items-center">
                   <div className="w-full">
@@ -340,7 +349,9 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       >
                         Comments
                       </span>
-                      <span className="material-symbols-outlined">chat</span>
+                      <span className="material-symbols-outlined nohover material-icons">
+                        chat
+                      </span>
                       {post.comments ? (
                         <Link href={`/posts/${post.id}`}>
                           {post.comments.length}
@@ -361,7 +372,9 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       >
                         Expert Responses
                       </span>
-                      <span className="material-symbols-outlined">3p</span>
+                      <span className="material-symbols-outlined nohover material-icons">
+                        3p
+                      </span>
                       {post.expertResponses ? (
                         <Link href={`/posts/${post.id}`}>
                           {post.expertResponses.length}
@@ -372,62 +385,52 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* Begin Post Stats */}
-              <div className="dark:text-white flex gap-2 justify-between -mt-1">
-                <div className="flex items-center space-x-3 text-sm">
-                  <p>Truthiness</p>
-                  <div className="flex items-end text-xs">
-                    <div>{getPostStats(post).truthiness}</div>
-                    <span className="flex items-center">
-                      <svg
-                        width="20"
-                        fill="currentColor"
-                        height="20"
-                        className="h-3 text-red-500 transform rotate-180"
-                        viewBox="0 0 1792 1792"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
-                      </svg>
+                {/* Begin Post Stats */}
+                <div className="dark:text-white flex gap-4 ml-auto">
+                  {/* <p>Truthiness</p> */}
+                  <div
+                    className={`flex group relative items-center gap-1.5 text-xs border-b pb-2 m-px cursor-default ${
+                      getPostStats(post).truthColor
+                    } hover:mb-0 hover:border-b-2`}
+                  >
+                    <span
+                      className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                    >
+                      Truthiness
                     </span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3 text-sm">
-                  <p>Interest</p>
-                  <div className="flex items-end text-xs">
-                    <div> {post.userCompliances.length}</div>
-                    <span className="flex items-center">
-                      <svg
-                        width="20"
-                        fill="currentColor"
-                        height="20"
-                        className="h-3 text-green-500"
-                        viewBox="0 0 1792 1792"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
-                      </svg>
+                    <span className="material-symbols-outlined">
+                      query_stats
                     </span>
+                    <div className="">{getPostStats(post).truthiness}</div>
                   </div>
-                </div>
-
-                <div className="flex items-center space-x-3 text-sm">
-                  <p>Divisiveness</p>
-                  <div className="flex items-end text-xs">
+                  {/* Divisiveness */}
+                  <div
+                    className={`flex group relative items-center gap-1.5 text-xs border-b pb-2 m-px cursor-default ${
+                      getPostStats(post).divisivenessColor
+                    } hover:mb-0 hover:border-b-2`}
+                  >
+                    <span
+                      className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                    >
+                      Divisivness
+                    </span>
+                    <span className="material-symbols-outlined">
+                      call_split
+                    </span>
                     <div>{getPostStats(post).divisivness}</div>
-                    <span className="flex items-center">
-                      <svg
-                        width="20"
-                        fill="currentColor"
-                        height="20"
-                        className="h-3 text-red-500 transform rotate-180"
-                        viewBox="0 0 1792 1792"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M1675 971q0 51-37 90l-75 75q-38 38-91 38-54 0-90-38l-294-293v704q0 52-37.5 84.5t-90.5 32.5h-128q-53 0-90.5-32.5t-37.5-84.5v-704l-294 293q-36 38-90 38t-90-38l-75-75q-38-38-38-90 0-53 38-91l651-651q35-37 90-37 54 0 91 37l651 651q37 39 37 91z"></path>
-                      </svg>
+                  </div>
+                  {/*Interest */}
+                  <div className="flex group relative items-center gap-1.5 text-xs border-b border-blue-400 pb-2 mb-px cursor-default hover:mb-0 hover:border-b-2">
+                    <span
+                      className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                    >
+                      Interest
                     </span>
+                    <span className="material-symbols-outlined">bar_chart</span>
+                    <div> {post.userCompliances.length}</div>
                   </div>
                 </div>
               </div>

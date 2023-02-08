@@ -49,6 +49,21 @@ export const getPostStats = (post: Post) => {
       return a + b;
     }) / allAverages.length;
 
+  //This is just getting colors for CSS
+  let truthColor: string = "";
+  console.log(averageTruthiness);
+
+  if (averageTruthiness > 0.15) {
+    truthColor = "border-emerald-400";
+  }
+
+  if (averageTruthiness < -0.15) {
+    truthColor = "border-red-400";
+  }
+
+  if (averageTruthiness >= -0.15 && averageTruthiness <= 0.15)
+    truthColor = "border-yellow-400";
+
   //divisiveness is the max average response - the min average response
   //the max this can be is 2, so we divide the result by 2
   //this results in a percentage value that represents how divisive something is
@@ -58,14 +73,31 @@ export const getPostStats = (post: Post) => {
     const maxValue = Math.max(...allAverages);
     const minValue = Math.min(...allAverages);
 
-    return `${maxValue - (minValue / 2) * 100}%`;
+    return (maxValue - minValue) / 2;
   };
 
+  //This is just getting colors for CSS
   const divisivness = getDivisivness(allAverages);
+
+  let divisivenessColor: string = "";
+
+  if (divisivness > 0.65) {
+    divisivenessColor = "border-red-400";
+  }
+
+  if (divisivness < 0.45) {
+    divisivenessColor = "border-emerald-400";
+  }
+
+  if (divisivness >= 0.45 && divisivness <= 0.65) {
+    divisivenessColor = "border-yellow-400";
+  }
 
   return {
     truthiness: `${averageTruthiness * 100}%`,
-    divisivness: divisivness,
+    truthColor: truthColor,
+    divisivness: `${divisivness * 100}%`,
+    divisivenessColor: divisivenessColor,
   };
 };
 
