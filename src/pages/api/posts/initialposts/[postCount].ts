@@ -16,6 +16,7 @@ export default async function handler(
       user: true,
       userCompliances: true,
       expertResponses: true,
+      comments: true,
     },
   });
 

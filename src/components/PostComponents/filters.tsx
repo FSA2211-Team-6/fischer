@@ -3,7 +3,7 @@ import PostSearch from "../SharedComponents/postSearch";
 const Filters = () => {
   return (
     <>
-      <div className="flex items-center space-x-4">
+      {/* <div className="flex items-center space-x-4">
         <button className="flex items-center px-4 py-2 text-gray-400 border border-gray-300 rounded-r-full rounded-tl-sm rounded-bl-full text-md">
           <svg
             width="20"
@@ -33,7 +33,7 @@ const Filters = () => {
       </div>
       <h2 className="text-gray-400 text-md">
         Here&#x27;s the figgity fax of the week!
-      </h2>
+      </h2> */}
       <PostSearch />
     </>
   );

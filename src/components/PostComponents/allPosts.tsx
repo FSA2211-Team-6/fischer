@@ -12,6 +12,8 @@ import {
 import Loading from "./loading";
 import { useSession } from "next-auth/react";
 import { getPostStats, throttle } from "@/library/post/postHelpers";
+import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
   firstPosts: Post[];
@@ -152,9 +154,10 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
               key={post.id}
               className="grid grid-cols-1 gap-4 my-4 md:grid-cols-1 lg:grid-cols-1 relative w-full px-4 py-6 bg-white shadow-lg dark:bg-gray-700"
             >
-              <div>
+              <div className="">
                 {/* Begin website indicator */}
-                <div className="bg-purple-500 text-sm w-max inline-flex font-semibold pl-4 pr-4 pt-2 pb-2 mr-12 rounded-full rounded-tl-none hover:bg-purple-400">
+                <div className="items-center gap-1 bg-white text-gray-700 text-sm w-max inline-flex font-semibold pl-4 pr-4 pt-2 pb-2 mr-8 rounded-full rounded-tl-none hover:bg-slate-800 hover:text-white hover:cursor-pointer">
+                  <span className="material-symbols-outlined">language</span>
                   <a href={post.websiteArticle.articleURL}>
                     {post.websiteArticle.website.hostSite.slice(
                       post.websiteArticle.website.hostSite.indexOf(".") + 1
@@ -165,7 +168,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
 
                 {/* Begin post categories */}
                 <div className="inline-flex gap-2 w-max">
-                  <div className="bg-red-500 text-sm w-max inline font-semibold rounded-full pl-3 pr-3 pt-1 pb-1">
+                  <div className="bg-purple-200 text-purple-700 font-semibold font-sans tracking-wide text-xs w-max inline rounded-full pl-3 pr-3 pt-1 pb-1">
                     {post.topicName}
                   </div>
                 </div>
@@ -174,13 +177,30 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                 {/* Post User Name */}
                 <div className="inline-flex gap-2 float-right items-center">
                   {post.user ? (
-                    <p className="inline float-right text-xs">
-                      {post.user.name}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="inline float-right text-xs">
+                        {post.user.name}
+                      </p>
+                      <Image
+                        className="rounded-full mx-auto object-cover inline float-right"
+                        src={post.user.image as string}
+                        alt="User profile picture"
+                        width={40}
+                        height={40}
+                      />
+                    </div>
                   ) : (
-                    <p className="inline float-right text-xs">deleted user</p>
+                    <div className="flex items-center gap-2">
+                      <p className="inline float-right text-xs">deleted user</p>
+                      <Image
+                        className="rounded-full mx-auto object-cover inline float-right"
+                        src="/images/user.jpeg"
+                        alt="User profile picture"
+                        width={40}
+                        height={40}
+                      />
+                    </div>
                   )}
-                  <div className="mx-auto object-cover inline float-right rounded-full bg-white h-10 w-10 "></div>
                 </div>
               </div>
               {/* Main Section of Card */}
@@ -308,20 +328,53 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                   </div>
                 </section>
               </div>
-              {/* Comments */}
-              <div className="flex items-center">
-                <div className="w-full">
-                  <div className="text-sm hover:underline underline-offset-4 cursor-pointer">
-                    {post.comments
-                      ? post.comments.length === 1
-                        ? `${post.comments.length} comment`
-                        : `${post.comments} comments`
-                      : `0 comments`}
+              {/* Comment/Expert Repsonse Box */}
+              <div className="flex gap-5">
+                {/* Comments */}
+                <div className="flex items-center">
+                  <div className="w-full">
+                    <div className="group relative text-sm cursor-pointer flex pb-2 items-center gap-1 border-b border-transparent hover:border-white">
+                      <span
+                        className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                      >
+                        Comments
+                      </span>
+                      <span className="material-symbols-outlined">chat</span>
+                      {post.comments ? (
+                        <Link href={`/posts/${post.id}`}>
+                          {post.comments.length}
+                        </Link>
+                      ) : (
+                        <Link href={`/posts/${post.id}`}>0</Link>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {/* Expert Resposnes */}
+                <div className="flex items-center">
+                  <div className="w-full">
+                    <div className=" group relative text-sm cursor-pointer pb-2 flex  items-center gap-1 border-b border-transparent hover:border-white">
+                      <span
+                        className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                      >
+                        Expert Responses
+                      </span>
+                      <span className="material-symbols-outlined">3p</span>
+                      {post.expertResponses ? (
+                        <Link href={`/posts/${post.id}`}>
+                          {post.expertResponses.length}
+                        </Link>
+                      ) : (
+                        <Link href={`/posts/${post.id}`}>0</Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
               {/* Begin Post Stats */}
-              <div className="dark:text-white flex gap-2 justify-between mt-6">
+              <div className="dark:text-white flex gap-2 justify-between -mt-1">
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Truthiness</p>
                   <div className="flex items-end text-xs">

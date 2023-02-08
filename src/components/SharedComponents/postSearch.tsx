@@ -57,7 +57,7 @@ export default function ListHeader() {
                 </div>
                 <button
                   type="submit"
-                  className="flex items-center px-4 h-10 text-gray-400 border border-gray-300 rounded-md text-md"
+                  className="flex items-center px-4 h-10 text-gray-400 border border-gray-300 rounded-md text-md hover:bg-white hover:text-gray-700"
                 >
                   Submit
                 </button>
