@@ -19,7 +19,7 @@ export default async function handler(
     },
   });
 
-  const firstPosts: Array<firstPosts> = JSON.parse(JSON.stringify(posts));
+  const firstPosts: Array<Post> = JSON.parse(JSON.stringify(posts));
 
   //place cursor at last ID.
   const myCursor = firstPosts[firstPosts.length - 1].id;

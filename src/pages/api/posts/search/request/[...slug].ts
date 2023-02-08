@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { slug } = req.query;
+  const { slug } = req.query as { slug: string };
   const searchString = slug[0];
   const myCursor = slug[1];
 
@@ -24,7 +24,7 @@ export default async function handler(
     },
   });
 
-  const searchResults: Array<firstPosts> = JSON.parse(JSON.stringify(results));
+  const searchResults: Array<Post> = JSON.parse(JSON.stringify(results));
 
   const newCursor = Number(myCursor) + 2;
 

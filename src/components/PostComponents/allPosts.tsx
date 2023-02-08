@@ -14,17 +14,19 @@ import { useSession } from "next-auth/react";
 import { getPostStats, throttle } from "@/library/post/postHelpers";
 
 interface Props {
-  firstPosts: firstPosts[];
+  firstPosts: Post[];
 }
 //THE ALL POSTS COMPONENT
 const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
 
-  //state
+  //local state
   const [loading, setLoading] = React.useState<boolean>(false);
   const [userId, setUserId] = React.useState<number | null>(null);
-  const [userCompliance, setUserCompliance] = React.useState<Array<object>>([]);
+  const [userCompliance, setUserCompliance] = React.useState<
+    Array<UserCompliance>
+  >([]);
   const [votemAnimation, setVoteAnimation] = React.useState<boolean>(false);
   const [postClicked, setPostClicked] = React.useState<number | null>(null);
   const [filteredPosts, setFilteredPosts] = React.useState<any>(firstPosts);
@@ -73,7 +75,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
         const morePosts = await fetch(`/api/posts/request/${cursor}`);
         const data = await morePosts.json();
 
-        data.posts.forEach((post: firstPosts) => {
+        data.posts.forEach((post: Post) => {
           dispatch(addPost(post));
         });
         dispatch(updateCursor(data.newCursor));
@@ -128,7 +130,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
     });
     const data = await response.json();
 
-    const index = filteredPosts.findIndex((post) => {
+    const index = filteredPosts.findIndex((post: Post) => {
       return post.id === postId;
     });
 
@@ -144,7 +146,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   return (
     <div>
       {filteredPosts!.length > 0 &&
-        filteredPosts!.map((post, index) => {
+        filteredPosts!.map((post: Post, index: Number) => {
           return (
             <div
               key={post.id}

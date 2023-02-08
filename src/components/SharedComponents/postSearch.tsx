@@ -10,7 +10,7 @@ export default function ListHeader() {
 
   const [searchString, setSearchString] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchString === "") {
       dispatch(clearSearchData());
@@ -23,7 +23,9 @@ export default function ListHeader() {
     dispatch(clearSearchData());
     setSearchString("");
 
-    const searchBar = document.getElementById("post-search");
+    const searchBar = document.getElementById(
+      "post-search"
+    ) as HTMLInputElement;
     searchBar.value = "";
   };
 

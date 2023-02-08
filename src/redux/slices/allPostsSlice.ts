@@ -1,35 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { RootState, useAppSelector } from "../store";
-
-export const fetchAllPosts = createAsyncThunk("/api/posts", async () => {
-  try {
-    const response = await fetch("/api/posts");
-
-    const data: Array<post> = await response.json();
-    return data;
-  } catch (error: any) {
-    console.log("fetchAllPosts Error: ", error);
-    return error;
-  }
-});
+import { RootState } from "../store";
 
 export const fetchInitialPosts = createAsyncThunk(
   "/api/posts/initialposts",
-  async (numPosts) => {
+  async (numPosts: number) => {
     const response = await fetch(
       `http://localhost:3000/api/posts/initialposts/${numPosts}`
     );
 
     const data = await response.json();
-    console.log("thunk!!!!!!", data);
     return data;
   }
 );
 
 export const fetchSearchResults = createAsyncThunk(
   "/api/posts/search",
-  async (searchString) => {
+  async (searchString: string) => {
     const response = await fetch(`/api/posts/search/${searchString}`);
 
     const data = await response.json();
@@ -39,7 +26,7 @@ export const fetchSearchResults = createAsyncThunk(
 
 export const fetchMoreSearchResults = createAsyncThunk(
   "/api/posts/search/request",
-  async (searchData) => {
+  async (searchData: SearchData) => {
     const searchString = searchData.searchString;
     const cursor = searchData.searchCursor;
 
@@ -72,7 +59,7 @@ export const allPostsSlice = createSlice({
       state.allPostsData.push(action.payload);
       state.filteredPosts.push(action.payload);
     },
-    addUserCompliance: (state: any, action: PayloadAction<object>) => {
+    addUserCompliance: (state: any, action: PayloadAction<any>) => {
       state.allPostsData[action.payload.index].userCompliances.push(
         action.payload.data
       );
@@ -98,24 +85,6 @@ export const allPostsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    //ALL POSTS BUILDERS
-    builder.addCase(
-      fetchAllPosts.fulfilled,
-      (state: any, action: PayloadAction<post>) => {
-        state.allPostsData = action.payload;
-        state.status = "idle";
-      }
-    );
-    builder.addCase(fetchAllPosts.pending, (state: any) => {
-      state.status = "loading";
-    });
-    builder.addCase(
-      fetchAllPosts.rejected,
-      (state: any, action: PayloadAction<any>) => {
-        if (action.payload) state.error = action.payload.message;
-        state.status = "idle";
-      }
-    );
     //INITIAL POSTS BUILDERS
     builder.addCase(
       fetchInitialPosts.fulfilled,

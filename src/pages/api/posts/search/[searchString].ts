@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const searchString = req.query.searchString;
+  const searchString: string = req.query.searchString as string;
 
   const posts = await prisma.post.findMany({
     take: 2,
@@ -13,7 +13,7 @@ export default async function handler(
     include: { websiteArticle: { include: { website: true } }, user: true },
   });
 
-  const searchResults: Array<firstPosts> = JSON.parse(JSON.stringify(posts));
+  const searchResults: Array<Post> = JSON.parse(JSON.stringify(posts));
 
   //place cursor at last ID.
   const myCursor = searchResults[searchResults.length - 1].id;
