@@ -126,7 +126,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
 
     const response = await fetch("/api/usercompliance", {
       method: "POST",
-      body: JSON.stringify(userCompliance),
+      body: JSON.stringify(newCompliance),
     });
     const data = await response.json();
 
