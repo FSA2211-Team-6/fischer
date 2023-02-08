@@ -1,29 +1,23 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   addPost,
   updateCursor,
   selectCursor,
   selectFilteredPosts,
-  rehydrate,
   selectSearchData,
   fetchMoreSearchResults,
   addUserCompliance,
 } from "@/redux/slices/allPostsSlice";
 import Loading from "./loading";
 import { useSession } from "next-auth/react";
+import { getPostStats, throttle } from "@/library/post/postHelpers";
 
 interface Props {
   firstPosts: firstPosts[];
 }
-
-interface Scroll {
-  infiniteScroll: boolean;
-}
 //THE ALL POSTS COMPONENT
-const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
-  firstPosts,
-}) => {
+const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
 
@@ -35,57 +29,45 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
   const [postClicked, setPostClicked] = React.useState<number | null>(null);
   const [filteredPosts, setFilteredPosts] = React.useState<any>(firstPosts);
 
+  //useSelectors
+  const getFilteredPosts = useAppSelector(selectFilteredPosts);
+  const getSearchData = useAppSelector(selectSearchData);
+  const cursor = useAppSelector(selectCursor);
+
+  //useEffects///////////////////////////////////////////////////////////////////
+
+  //if a session exists, set the userId
   useEffect(() => {
-    //if a session exists, set the userId
     if (session) {
       setUserId(session.user.fischerId);
     }
   }, [session]);
 
+  //get the users vote history so we can hide the vote button if they have already voted
   useEffect(() => {
-    //get the users vote history so we can hide the vote button if they have already voted
     const fetchUserCompliance = async () => {
       const data = await fetch(`/api/usercompliance/${userId}`);
       const complianceData = await data.json();
       setUserCompliance(complianceData);
     };
-
     if (userId) {
       fetchUserCompliance();
     }
   }, [userId]);
 
-  const getFilteredPosts = useAppSelector(selectFilteredPosts);
-
+  //put filtered posts in state to be rendered
   useEffect(() => {
     if (getFilteredPosts!.length > 0) {
       setFilteredPosts(getFilteredPosts);
     }
   }, [getFilteredPosts]);
 
-  const getSearchData = useAppSelector(selectSearchData);
+  //////////////////////////////////////////////////////////////////////////////
 
-  //gets the cursor from redux so we know what posts to fetch on infinite scroll
-  const cursor = useAppSelector(selectCursor);
-
-  //observer and endOfScrollRef are what triggers the infinite scroll request
+  //Infinite scroll Logic//////////////////////////////////////////////////////
   const observer = React.useRef<IntersectionObserver | null>(null);
   const endOfScrollRef = React.useCallback<any>(
     (node: HTMLElement) => {
-      //trottle function prevents a user from scrolling super fast and spamming get requests too quickly
-      let throttleTimer: boolean;
-
-      function throttle(callback: Function, time: number) {
-        if (throttleTimer) {
-          return;
-        }
-        throttleTimer = true;
-        setTimeout(() => {
-          callback();
-          throttleTimer = false;
-        }, time);
-      }
-
       //handleRefresh requests more posts from the db
       const handleRefresh = async (cursor: number) => {
         const morePosts = await fetch(`/api/posts/request/${cursor}`);
@@ -94,7 +76,6 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
         data.posts.forEach((post: firstPosts) => {
           dispatch(addPost(post));
         });
-        //setting the new cursor
         dispatch(updateCursor(data.newCursor));
         setLoading(false);
       };
@@ -131,9 +112,11 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
     },
     [cursor, dispatch, getSearchData]
   );
+  //////////////////////////////////////////////////////////////////////////////
 
+  //Vote submission logic//////////////////////////////////////////////////////
   const submitVote = async (compliance: number, postId: number) => {
-    const userComplicance = {
+    const newCompliance = {
       fischerId: userId,
       postId: postId,
       compliance: compliance,
@@ -141,7 +124,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
 
     const response = await fetch("/api/usercompliance", {
       method: "POST",
-      body: JSON.stringify(userComplicance),
+      body: JSON.stringify(userCompliance),
     });
     const data = await response.json();
 
@@ -151,104 +134,12 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
 
     dispatch(addUserCompliance({ data, index }));
 
-    setVoteAnimation(true);
-    setPostClicked(postId);
-  };
-
-  const handleTrueVote = (postId: number) => {
-    submitVote(1, postId);
     setUserCompliance([
       ...userCompliance,
-      ...[{ postId, fischerId: userId, compliance: 1 }],
+      ...[{ postId, fischerId: userId, compliance: compliance }],
     ]);
   };
-
-  const handleSubjVote = (postId: number) => {
-    submitVote(0, postId);
-    setUserCompliance([
-      ...userCompliance,
-      ...[{ postId, fischerId: userId, compliance: 0 }],
-    ]);
-  };
-
-  const handleFalseVote = (postId: number) => {
-    submitVote(-1, postId);
-    setUserCompliance([
-      ...userCompliance,
-      ...[{ postId, fischerId: userId, compliance: -1 }],
-    ]);
-  };
-
-  const getPostStats = (post) => {
-    //Truthiness is the average of:
-    // Average User Compliance
-    // Average Expert Compliance
-    // AI Compliance
-
-    // Display as a percentage to indicate truthiness
-    // 16% to 100% = green
-    // -15% to +15% = yellow
-    // -16% to -100% = red
-
-    const aiAverage = post.aiCompliance;
-    let expertAverage = null;
-    let userAverage = null;
-
-    //get the average expert compliance
-    if (post.expertResponses.length > 0) {
-      expertAverage =
-        post.expertCompliances
-          .map((vote) => {
-            return vote.compliance;
-          })
-          .reduce((a, b) => {
-            return a + b;
-          }) / post.expertCompliances.length;
-    }
-    //get the average user compliance
-    if (post.userCompliances.length > 0) {
-      userAverage =
-        post.userCompliances
-          .map((vote) => {
-            return vote.compliance;
-          })
-          .reduce((a, b) => {
-            return a + b;
-          }) / post.userCompliances.length;
-    }
-
-    //filter out the nulls so average will be accurate
-    const allAverages = [userAverage, expertAverage, aiAverage].filter(
-      (category) => {
-        return category !== null;
-      }
-    );
-
-    //average the available values together, and return the % value
-    const averageTruthiness =
-      allAverages.reduce((a, b) => {
-        return a + b;
-      }) / allAverages.length;
-
-    //divisiveness is the max average response - the min average response
-    //the max this can be is 2, so we divide the result by 2
-    //this results in a percentage value that represents how divisive something is
-    //for example 100% divisiveness would display if:
-    // ai compliance was 1 and expert compliance was -1
-    const getDivisivness = (allAverages) => {
-      const maxValue = Math.max(...allAverages);
-      const minValue = Math.min(...allAverages);
-
-      return `${maxValue - (minValue / 2) * 100}%`;
-    };
-
-    const divisivness = getDivisivness(allAverages);
-
-    return {
-      truthiness: `${averageTruthiness * 100}%`,
-      divisivness: divisivness,
-    };
-  };
+  /////////////////////////////////////////////////////////////////////////////
 
   return (
     <div>
@@ -330,7 +221,9 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                             <div className="flex justify-beginning gap-1 items-center">
                               <button
                                 onClick={() => {
-                                  handleTrueVote(post.id, post);
+                                  submitVote(1, post.id);
+                                  setVoteAnimation(true);
+                                  setPostClicked(post.id);
                                 }}
                                 className="flex group justify-center items-center relative"
                               >
@@ -346,7 +239,9 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                               </button>
                               <button
                                 onClick={() => {
-                                  handleSubjVote(post.id);
+                                  submitVote(0, post.id);
+                                  setVoteAnimation(true);
+                                  setPostClicked(post.id);
                                 }}
                                 className="flex group justify-center items-center relative"
                               >
@@ -362,7 +257,9 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                               </button>
                               <button
                                 onClick={() => {
-                                  handleFalseVote(post.id);
+                                  submitVote(-1, post.id);
+                                  setVoteAnimation(true);
+                                  setPostClicked(post.id);
                                 }}
                                 className="flex group justify-center items-center relative"
                               >
@@ -444,7 +341,7 @@ const AllPosts: React.FC<Partial<Props> & Partial<Scroll>> = ({
                 <div className="flex items-center space-x-3 text-sm">
                   <p>Interest</p>
                   <div className="flex items-end text-xs">
-                    <div>{post.userCompliances.length}</div>
+                    <div> {post.userCompliances.length}</div>
                     <span className="flex items-center">
                       <svg
                         width="20"
