@@ -32,9 +32,20 @@ model Comment {
   content         String
   createdAt       DateTime    @default(now())
   upvotes         Int         @default(0)
+  votedUsers      UserCommentVote[]
 
   post            Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
   commenter       User        @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
+}
+
+model UserCommentVote {
+  commentId       Int
+  compliance      Int       @default(0)
+  fischerId       Int
+
+  user            User      @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
+  comment         Comment      @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  @@unique([fischerId, commentId])
 }
 
 model UserCompliance {
@@ -65,6 +76,7 @@ model User {
   comments          Comment[]
   expertise         Expert[]
   posts             Post[]
+  userCommentVotes   UserCommentVote[]
 }
 
 model BadPost {
@@ -122,6 +134,7 @@ model Expert {
   updatedAt         DateTime
   id                Int       @id @default(autoincrement())
   fischerId         Int
+  approval          Boolean?
 
   expertResponses   ExpertResponse[]
 
