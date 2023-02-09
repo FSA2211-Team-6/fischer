@@ -23,8 +23,11 @@ export default async function handler(
   });
 
   const posts = results;
+  let newCursor = Number(myCursor);
 
-  const newCursor = Number(myCursor) + 2;
+  if (posts.length > 0) {
+    newCursor = Number(myCursor) + posts.length;
+  }
 
   res.status(200).send({ posts, newCursor });
 }
