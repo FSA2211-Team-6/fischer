@@ -59,7 +59,7 @@ export default function CommentBox({ post, user }: any) {
               onChange(event);
             }}
             placeholder="What are your thoughts?"
-            className="flex pt-2 pl-4 w-full  rounded-lg bg-gray-700 min-h-[150px]"
+            className="flex pt-2 pl-4 w-full  rounded-lg bg-gray-700 min-h-[100px]"
           ></textarea>
           <div className="flex w-full bg-gray-600 ">
             <div className="flex justify-end">

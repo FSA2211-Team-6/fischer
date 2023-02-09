@@ -3,9 +3,9 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-export default function SingleComment({ comment }: any) {
+export default function SingleComment({ comment, onUpvoteChange }: any) {
   const [upvotes, setUpvotes] = useState(0);
-
+  const [upvotesDB, setUpvotesDB] = useState(0);
   const [userId, setUserId] = React.useState<number | null>(null);
   const [userVote, setUserVote] = useState<1 | -1 | 0>(0);
   const [userVoteArray, setUserVoteArray] = React.useState<Array<object>>([]);
@@ -17,6 +17,12 @@ export default function SingleComment({ comment }: any) {
     }
   }, [session]);
 
+  const fetchUserCommentVote = async () => {
+    const data = await fetch(`/api/usercommentvote/${userId}`);
+    const voteData = await data.json();
+    setUserVoteArray(voteData);
+  };
+
   useEffect(() => {
     const fetchUserCommentVote = async () => {
       const data = await fetch(`/api/usercommentvote/${userId}`);
@@ -27,6 +33,13 @@ export default function SingleComment({ comment }: any) {
       fetchUserCommentVote();
     }
   }, [userId]);
+
+  console.log("userVoteArray: ", userVoteArray);
+  console.log("upvotesDB:", upvotesDB);
+
+  useEffect(() => {
+    setUpvotesDB(comment.upvotes);
+  }, [comment.upvotes]);
 
   useEffect(() => {
     const userCommentVote: any = userVoteArray.find(
@@ -42,14 +55,21 @@ export default function SingleComment({ comment }: any) {
     commentId: number
   ) => {
     const commentData = {
-      upvotes: comment.upvotes + upvotesIncrement,
+      upvotes: upvotesDB + upvotesIncrement,
       commentId: comment.id,
+      fischerId: userId,
     };
     const putResponse = await fetch(`/api/comments/${commentId}`, {
       method: "PUT",
       body: JSON.stringify(commentData),
     });
     const data = await putResponse.json();
+    console.log("data after updating Upvotes:", data);
+    fetchUserCommentVote();
+    // onUpvoteChange();
+    setUpvotesDB((upvotesDB) => {
+      return upvotesDB + upvotesIncrement;
+    });
   };
 
   const sendVoteToDB = async (compliance: number, commentId: number) => {
@@ -72,6 +92,8 @@ export default function SingleComment({ comment }: any) {
       });
       const createData = await postResponse.json();
     }
+    fetchUserCommentVote();
+    // onUpvoteChange();
   };
 
   const handleUpvotes = async (commentId: number) => {
@@ -91,8 +113,11 @@ export default function SingleComment({ comment }: any) {
       await sendVoteToDB(1, commentId);
       await updateCommentUpvotes(1, commentId);
     }
-  };
 
+    return upvotesDB;
+  };
+  console.log("upvotes: ", upvotes);
+  console.log("userVote: ", userVote);
   const handleDownvotes = async (commentId: number) => {
     if (userVote === -1) {
       setUpvotes(upvotes + 1);
@@ -140,7 +165,9 @@ export default function SingleComment({ comment }: any) {
               </div>
               {/* UPVOTE BUTTON */}
               <button
-                onClick={(e: any) => handleUpvotes(comment.id)}
+                onClick={(e: any) => {
+                  handleUpvotes(comment.id);
+                }}
                 className="inline-flex items-center px-1 pt-2 ml-1 flex-column"
               >
                 <svg
@@ -160,7 +187,7 @@ export default function SingleComment({ comment }: any) {
               </button>
               <div className="text-sm inline-flex items-center ml-1 flex-column">
                 {/* upVotes HERE */}
-                {comment.upvotes + upvotes}
+                {upvotesDB}
               </div>
               {/* DOWNVOTE BUTTON */}
               <button
