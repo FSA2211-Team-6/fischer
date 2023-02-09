@@ -32,6 +32,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   const [votemAnimation, setVoteAnimation] = React.useState<boolean>(false);
   const [postClicked, setPostClicked] = React.useState<number | null>(null);
   const [filteredPosts, setFilteredPosts] = React.useState<any>(firstPosts);
+  const [outOfPosts, setOutOfPosts] = React.useState<boolean>(false);
 
   //useSelectors
   const getFilteredPosts = useAppSelector(selectFilteredPosts);
@@ -69,26 +70,46 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   //////////////////////////////////////////////////////////////////////////////
 
   //Infinite scroll Logic//////////////////////////////////////////////////////
+
+  //handleRefresh requests more posts from the db
+  const handleRefresh = async (cursor: number) => {
+    const morePosts = await fetch(`/api/posts/request/${cursor}`);
+    const data = await morePosts.json();
+
+    if (data.posts.length === 0) {
+      setOutOfPosts(true);
+      setLoading(false);
+    } else {
+      data.posts.forEach((post: Post) => {
+        dispatch(addPost(post));
+      });
+      dispatch(updateCursor(data.newCursor));
+      setOutOfPosts(false);
+      setLoading(false);
+    }
+  };
+
+  //trottle function prevents a user from scrolling super fast and spamming get requests too quickly
+  let throttleTimer: boolean | undefined;
+
+  function throttle(callback: Function, time: number) {
+    if (throttleTimer) {
+      return;
+    }
+    throttleTimer = true;
+    setTimeout(() => {
+      callback();
+      throttleTimer = false;
+    }, time);
+  }
+
   const observer = React.useRef<IntersectionObserver | null>(null);
   const endOfScrollRef = React.useCallback<any>(
     (node: HTMLElement) => {
-      //handleRefresh requests more posts from the db
-      const handleRefresh = async (cursor: number) => {
-        const morePosts = await fetch(`/api/posts/request/${cursor}`);
-        const data = await morePosts.json();
-
-        data.posts.forEach((post: Post) => {
-          dispatch(addPost(post));
-        });
-        dispatch(updateCursor(data.newCursor));
-        setLoading(false);
-      };
-
       const handleSearchRefresh = () => {
         if (getSearchData.searchResults.length > 1) {
           dispatch(fetchMoreSearchResults(getSearchData));
         }
-
         setLoading(false);
       };
 
@@ -102,20 +123,21 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
             }
             throttle(() => {
               handleSearchRefresh();
-            }, 600);
-          } else {
+            }, 1000);
+          } else if (!outOfPosts) {
             setLoading(true);
             throttle(() => {
               handleRefresh(cursor);
-            }, 600);
+            }, 1000);
           }
         }
       });
 
       if (node) observer.current.observe(node);
     },
-    [cursor, dispatch, getSearchData]
+    [cursor, dispatch, getSearchData, outOfPosts]
   );
+
   //////////////////////////////////////////////////////////////////////////////
 
   //Vote submission logic//////////////////////////////////////////////////////
@@ -438,6 +460,27 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
           );
         })}
       <div ref={endOfScrollRef}></div>
+      {outOfPosts ? (
+        <div className="text-center">
+          <p className="text-gray-500 font-sans text-xl tracking-wider mb-4">
+            Sorry! There are no more assertions to show you, try again later...
+          </p>
+          <button
+            onClick={() => {
+              setLoading(true);
+              throttle(() => {
+                handleRefresh(cursor);
+              }, 600);
+            }}
+            className="flex items-center m-auto gap-2 pr-2 pl-1 pt-2 pb-2 mb-6 h-10 text-gray-400 border border-gray-300 rounded-md text-md hover:bg-white hover:text-gray-700"
+          >
+            <span className="material-symbols-outlined material-icons md-36 ">
+              refresh
+            </span>
+            Refresh
+          </button>
+        </div>
+      ) : null}
       {loading ? <Loading /> : null}
     </div>
   );

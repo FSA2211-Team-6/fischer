@@ -51,7 +51,6 @@ export const getPostStats = (post: Post) => {
 
   //This is just getting colors for CSS
   let truthColor: string = "";
-  console.log(averageTruthiness);
 
   if (averageTruthiness > 0.15) {
     truthColor = "border-emerald-400";
