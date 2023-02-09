@@ -10,6 +10,9 @@ export default function SingleComment({ comment }: any) {
   const [userVote, setUserVote] = useState<1 | -1 | 0>(0);
   const [userVoteArray, setUserVoteArray] = React.useState<Array<object>>([]);
 
+  const [content, setContent] = useState(comment.content);
+  const [isEditing, setIsEditing] = useState(false);
+
   const { data: session } = useSession();
   useEffect(() => {
     if (session) {
@@ -130,6 +133,21 @@ export default function SingleComment({ comment }: any) {
     }
   };
 
+  ////////editing comment////////
+  const handleEditClick = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setContent(event.target.value);
+  };
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // API CALL
+    setIsEditing(false);
+  };
+
   return (
     <section className="relative flex  justify-center  antialiased   min-w-screen">
       <div className="container px-0 mx-auto sm:px-5 pb-4">
@@ -137,13 +155,13 @@ export default function SingleComment({ comment }: any) {
           <div className="flex flex-row">
             {/* COMMENTER IMG HERE */}
             <Image
-              className="object-cover w-12 h-12 mt-4 border-2 border-gray-300 rounded-full"
+              className="object-cover w-12 h-12 mt-3 border-2 border-gray-300 rounded-full"
               alt="avatar"
               src={comment.commenter.image}
               width={100}
               height={100}
             />
-            <div className="flex-col mt-1">
+            <div className="flex-col mt-1 w-full">
               <div className="flex items-center flex-1 px-4 font-bold text-white leading-tight">
                 {/* COMMENTER NAME HERE */}
                 {comment.commenter.name}
@@ -154,18 +172,35 @@ export default function SingleComment({ comment }: any) {
               </div>
               <div className="flex-1 px-2 ml-2 mt-1 text-sm font-medium leading-2 text-gray-300">
                 {/* COMMENT HERE */}
-                {comment.content}
+                {/* {comment.content} */}
+
+                <div>
+                  {isEditing ? (
+                    <form onSubmit={handleFormSubmit}>
+                      <input
+                        type="text"
+                        value={content}
+                        onChange={handleContentChange}
+                      />
+                      <button type="submit">Edit</button>
+                    </form>
+                  ) : (
+                    <div>
+                      <p>{content}</p>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex-row items-center">
+              <div className="flex w-full items-center">
                 {/* UPVOTE BUTTON */}
                 <button
                   onClick={(e: any) => {
                     handleUpvotes(comment.id);
                   }}
-                  className="items-center px-1 pt-1 ml-1 flex-column"
+                  className="px-1 pt-1 ml-1 "
                 >
                   <svg
-                    className={`w-5 h-5 ml-2 text-gray-400 cursor-pointer hover:fill-green-200 ${
+                    className={`flex items-center w-5 h-5 ml-2 text-gray-400 cursor-pointer hover:fill-green-200 ${
                       userVote === 1 ? "fill-green-400" : "fill-none"
                     }`}
                     stroke="currentColor"
@@ -180,14 +215,14 @@ export default function SingleComment({ comment }: any) {
                     ></path>
                   </svg>
                 </button>
-                <div className="upvotes-text text-sm mx-2 my-2 flex-column items-center">
+                <div className="upvotes-text flex items-center text-sm mx-2 mt-1">
                   {/* upVotes HERE */}
                   {upvotesDB}
                 </div>
                 {/* DOWNVOTE BUTTON */}
                 <button
                   onClick={(e: any) => handleDownvotes(comment.id)}
-                  className=" items-center px-1 flex-column"
+                  className="flex items-center px-1 mt-1"
                 >
                   <svg
                     className={`w-5 h-5 text-gray-400 cursor-pointer hover:fill-red-300 ${
@@ -206,6 +241,28 @@ export default function SingleComment({ comment }: any) {
                     />
                   </svg>
                 </button>
+                {userId === comment.fischerId ? (
+                  <button
+                    onClick={(e: any) => handleEditClick()}
+                    className="edit-button flex flex-col justify-end items-center px-1 mt-1 ml-3 text-gray-400 hover:fill-gray-600"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                      />
+                    </svg>
+                  </button>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </div>

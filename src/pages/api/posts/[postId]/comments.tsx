@@ -8,6 +8,7 @@ const CommentsApi = async (req: NextApiRequest, res: NextApiResponse) => {
       if (postId) {
         const data = await prisma.comment.findMany({
           where: { postId: +postId },
+          orderBy: { upvotes: "desc" },
           include: {
             commenter: true,
           },
