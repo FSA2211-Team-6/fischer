@@ -10,7 +10,13 @@ export default async function handler(
   const posts = await prisma.post.findMany({
     take: 2,
     where: { assertion: { contains: searchString, mode: "insensitive" } },
-    include: { websiteArticle: { include: { website: true } }, user: true },
+    include: {
+      websiteArticle: { include: { website: true } },
+      user: true,
+      userCompliances: true,
+      expertResponses: true,
+      comments: true,
+    },
   });
 
   const searchResults: Array<Post> = JSON.parse(JSON.stringify(posts));

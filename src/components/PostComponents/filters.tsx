@@ -34,7 +34,9 @@ const Filters = () => {
       <h2 className="text-gray-400 text-md">
         Here&#x27;s the figgity fax of the week!
       </h2> */}
-      <PostSearch />
+      <div className="flex justify-end mt-24">
+        <PostSearch />
+      </div>
     </>
   );
 };

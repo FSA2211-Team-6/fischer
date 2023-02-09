@@ -32,6 +32,10 @@
   font-variation-settings: "FILL" 0, "wght" 500, "GRAD" -25, "opsz" 48;
 }
 
+.material-icons.filled {
+  font-variation-settings: "FILL" 1, "wght" 500, "GRAD" -25, "opsz" 48;
+}
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;

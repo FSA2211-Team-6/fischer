@@ -11,7 +11,7 @@ import {
 } from "@/redux/slices/allPostsSlice";
 import Loading from "./loading";
 import { useSession } from "next-auth/react";
-import { getPostStats, throttle } from "@/library/post/postHelpers";
+import { getPostStats } from "@/library/post/postHelpers";
 import Image from "next/image";
 import Link from "next/link";
 

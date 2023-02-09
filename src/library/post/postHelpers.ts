@@ -99,17 +99,3 @@ export const getPostStats = (post: Post) => {
     divisivenessColor: divisivenessColor,
   };
 };
-
-//trottle function prevents a user from scrolling super fast and spamming get requests too quickly
-export function throttle(callback: Function, time: number) {
-  let throttleTimer: boolean | undefined;
-
-  if (throttleTimer) {
-    return;
-  }
-  throttleTimer = true;
-  setTimeout(() => {
-    callback();
-    throttleTimer = false;
-  }, time);
-}
