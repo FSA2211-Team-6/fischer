@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import useSWR from "swr";
 import SingleComment from "./singleComment";
 
 export default function Comments({ post }: any) {
-  const [refetch, setRefetch] = useState(false);
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
   const { data: comments, error } = useSWR(
@@ -15,10 +14,6 @@ export default function Comments({ post }: any) {
     { revalidateOnFocus: false }
   );
 
-  const handleRefetch = () => {
-    setRefetch(!refetch);
-  };
-
   if (error) return <h1>Something went wrong!</h1>;
   if (!comments) return <h1>Loading...</h1>;
 
@@ -26,11 +21,7 @@ export default function Comments({ post }: any) {
     <>
       {/* COMMENT Map begins*/}
       {comments.map((comment: any) => (
-        <SingleComment
-          key={comment.id}
-          comment={comment}
-          onUpvoteChange={handleRefetch}
-        />
+        <SingleComment key={comment.id} comment={comment} />
       ))}
     </>
   );
