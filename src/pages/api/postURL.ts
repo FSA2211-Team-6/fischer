@@ -5,7 +5,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
   ) {
-    const url = req.body.url
+    const data = JSON.parse(req.body)
+    const url = data.url;
     
     const id = await prisma.websiteArticle.findMany({
       where: {
