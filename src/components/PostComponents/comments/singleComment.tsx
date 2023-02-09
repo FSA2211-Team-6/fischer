@@ -172,8 +172,6 @@ export default function SingleComment({ comment }: any) {
               </div>
               <div className="flex-1 px-2 ml-2 mt-1 text-sm font-medium leading-2 text-gray-300">
                 {/* COMMENT HERE */}
-                {/* {comment.content} */}
-
                 <div>
                   {isEditing ? (
                     <form onSubmit={handleFormSubmit}>

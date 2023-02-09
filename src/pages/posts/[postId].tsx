@@ -39,7 +39,7 @@ export default function SinglePostPage() {
             <SinglePost post={post} />
           </div>
         </div>
-        {/* tabs  */}
+        {/* Comment Box; shows only if visitor is signed in  */}
         <div className="flex flex-col mb-4 justify-center px-14">
           <div className="w-full bg-gray-700  ">
             {user ? (
@@ -51,13 +51,13 @@ export default function SinglePostPage() {
                 <section className="relative flex  justify-center  antialiased   min-w-screen">
                   <div className="container px-0 mx-auto sm:px-8 py-4">
                     <div className="flex-col w-full pt-4 mx-auto bg-gray-800 border-b-2 border-r-2 border-gray-900 sm:px-4 sm:py-2 md:px-4 sm:rounded-lg sm:shadow-sm ">
-                      <div className="flex items-center justify-center py-2 text-xs">
+                      <div className="flex items-center justify-center py-2 text-sm">
                         Commenting is reserved for signed in users. Please sign
                         in to comment!
                       </div>
                       <div className="flex justify-center pt-1 pb-2">
                         <button
-                          className="text-sm font-medium px-4 items-center text-white bg-green-900 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
+                          className="text-sm font-medium px-4 py-1 items-center text-white bg-green-900 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
                           onClick={() => signIn()}
                         >
                           Sign in
@@ -68,7 +68,7 @@ export default function SinglePostPage() {
                 </section>
               </>
             )}
-
+            {/* EXPERTS / COMMENTS tab */}
             <div>
               <Tabs post={post} />
             </div>

@@ -59,11 +59,11 @@ export default function CommentBox({ post, user }: any) {
               onChange(event);
             }}
             placeholder="What are your thoughts?"
-            className="flex pt-2 pl-4 w-full  rounded-lg bg-gray-700 min-h-[100px]"
+            className="pt-2 pl-4 w-full rounded-lg bg-gray-700 min-h-[100px]"
           ></textarea>
           <div className="flex w-full bg-gray-600 ">
-            <div className="flex justify-end">
-              <button className="px-4 py-2 bg-green-500 rounded-lg text-white">
+            <div className="flex justify-center">
+              <button className=" px-4 py-1 text-white bg-green-900 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900 ">
                 Comment
               </button>
             </div>
