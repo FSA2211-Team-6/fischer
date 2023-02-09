@@ -14,7 +14,11 @@ export default function SinglePostPage() {
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const router = useRouter();
-  let postId = router.query["postId"] || "";
+  // let postId = router.query["postId"] || "";
+
+  const { params } = router.query;
+  const postId = params[0];
+  const tabSelection = params[1];
 
   const post: singlePostState = useAppSelector(singlePostState);
   useEffect(() => {
@@ -44,7 +48,7 @@ export default function SinglePostPage() {
           <div className="w-full bg-gray-700  ">
             <div>
               <CommentBox post={post} user={user} />
-              <Tabs post={post} />
+              <Tabs post={post} tabSelection={tabSelection} />
             </div>
           </div>
         </div>
