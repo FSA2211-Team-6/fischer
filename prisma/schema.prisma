@@ -134,6 +134,7 @@ model Expert {
   updatedAt         DateTime
   id                Int       @id @default(autoincrement())
   fischerId         Int
+  approval          Boolean?
 
   expertResponses   ExpertResponse[]
 

@@ -20,6 +20,8 @@ export default async function handler(
     },
     include: {
       expertise: true,
+      comments: true,
+      posts: true,
     },
   });
   res.json(users);
