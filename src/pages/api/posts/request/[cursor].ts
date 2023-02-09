@@ -13,12 +13,21 @@ export default async function handler(
     cursor: {
       id: Number(myCursor),
     },
-    include: { websiteArticle: { include: { website: true } }, user: true },
+    include: {
+      websiteArticle: { include: { website: true } },
+      user: true,
+      userCompliances: true,
+      expertResponses: true,
+      comments: true,
+    },
   });
 
   const posts = results;
+  let newCursor = Number(myCursor);
 
-  const newCursor = Number(myCursor) + 2;
+  if (posts.length > 0) {
+    newCursor = Number(myCursor) + posts.length;
+  }
 
   res.status(200).send({ posts, newCursor });
 }

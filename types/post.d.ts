@@ -1,37 +1,11 @@
 declare global {
   interface comment {
-    commentId: number;
-    userId: number;
-    postId: number;
-    comment: String;
-    upvotes: number;
-  }
-  interface user {
-    id: string;
-    email: string;
-    name: string;
-    createdAt: Date;
+    id: number;
     fischerId: number;
-    image: string;
-    isAdmin: Boolean;
-    currentTokens: number;
-    maxTokens: number;
-    expertise: any[];
-  }
-  interface truthVotes {
-    green: number;
-    yellow: number;
-    red: number;
-  }
-  interface post {
-    postId: null | number;
-    user: user;
-    fact: String;
-    aiResponse: string;
-    articleURL: string;
-    host: string;
-    truthVotes: truthVotes;
-    comments: Array<comment>;
+    postId: number;
+    content: string;
+    upvotes: number;
+    createdAt: string;
   }
 
   interface website {
@@ -46,7 +20,7 @@ declare global {
     websiteId: number;
   }
 
-  interface firstPostUser {
+  interface User {
     createdAt: string;
     email: string;
     emailVerified: boolean | null;
@@ -55,31 +29,49 @@ declare global {
     image: string | null;
     name: string;
   }
+  interface UserCompliance {
+    compliance: number;
+    fischerId: number | null;
+    postId: number;
+  }
 
-  interface firstPosts {
+  interface ExpertResponse {
+    id: number;
+    postId: number;
+    expertId: number;
+    content: string;
+    compliance: number;
+    createdAt: string;
+    upvotes: number;
+  }
+
+  interface SearchData {
+    searchCursor: number | null;
+    searchResults: Array<Post>;
+    searchString: string;
+  }
+
+  interface Post {
     aiCompliance: number;
     aiResponse: string;
     assertion: string;
     createdAt: string;
-    fischerId: number;
+    fischerId: number | null;
     id: number;
     publicCompliance: number;
     topicId: number;
     topicName: string;
-    user: firstPostUser;
+    user: User;
+    userCompliances: Array<UserCompliance | null>;
     websiteArticle: websiteArticle;
     websiteArticleId: number;
     comments: Array<comment>;
-    expertResponses: Array<>;
-    expertCompliance: number | null;
-    publicCompliance: number | null;
-    truthiness: number | null;
-    userCompliances: Array<>;
+    expertResponses: Array<ExpertResponse>;
   }
   interface allPostsState {
-    allPostsData: Array<firstPosts>;
-    filteredPosts: Array<firstPosts>;
-    searchData: object;
+    allPostsData: Array<Post>;
+    filteredPosts: Array<Post>;
+    searchData: SearchData;
     cursor: number;
     status: "loading" | "idle";
     error: string | null;
