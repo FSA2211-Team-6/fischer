@@ -51,24 +51,29 @@ export const getPostStats = (post: Post) => {
 
   //This is just getting colors for CSS
   let truthColor: string = "";
+  let extensionTruthColor: string = "";
 
   if (averageTruthiness > 0.15) {
     truthColor = "border-emerald-400";
+    extensionTruthColor = "green";
   }
 
   if (averageTruthiness < -0.15) {
     truthColor = "border-red-400";
+    extensionTruthColor = "red";
   }
 
-  if (averageTruthiness >= -0.15 && averageTruthiness <= 0.15)
+  if (averageTruthiness >= -0.15 && averageTruthiness <= 0.15) {
     truthColor = "border-yellow-400";
+    extensionTruthColor = "yellow";
+  }
 
   //divisiveness is the max average response - the min average response
   //the max this can be is 2, so we divide the result by 2
   //this results in a percentage value that represents how divisive something is
   //for example 100% divisiveness would display if:
   // ai compliance was 1 and expert compliance was -1
-  const getDivisivness = (allAverages: any) => {
+  const getDivisiveness = (allAverages: any) => {
     const maxValue = Math.max(...allAverages);
     const minValue = Math.min(...allAverages);
 
@@ -76,26 +81,32 @@ export const getPostStats = (post: Post) => {
   };
 
   //This is just getting colors for CSS
-  const divisivness = getDivisivness(allAverages);
+  const divisiveness = getDivisiveness(allAverages);
 
   let divisivenessColor: string = "";
+  let extensionDivisivenessColor: string = "";
 
-  if (divisivness > 0.65) {
+  if (divisiveness > 0.65) {
     divisivenessColor = "border-red-400";
+    extensionDivisivenessColor = "red";
   }
 
-  if (divisivness < 0.45) {
+  if (divisiveness < 0.45) {
     divisivenessColor = "border-emerald-400";
+    extensionDivisivenessColor = "green";
   }
 
-  if (divisivness >= 0.45 && divisivness <= 0.65) {
+  if (divisiveness >= 0.45 && divisiveness <= 0.65) {
     divisivenessColor = "border-yellow-400";
+    extensionDivisivenessColor = "yellow";
   }
 
   return {
     truthiness: `${averageTruthiness * 100}%`,
     truthColor: truthColor,
-    divisivness: `${divisivness * 100}%`,
+    extensionTruthColor: extensionTruthColor,
+    divisiveness: `${divisiveness * 100}%`,
     divisivenessColor: divisivenessColor,
+    extensionDivisivenessColor: extensionDivisivenessColor,
   };
 };

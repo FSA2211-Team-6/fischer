@@ -441,7 +441,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                     <span className="material-symbols-outlined">
                       call_split
                     </span>
-                    <div>{getPostStats(post).divisivness}</div>
+                    <div>{getPostStats(post).divisiveness}</div>
                   </div>
                   {/*Interest */}
                   <div className="flex group relative items-center gap-1.5 text-xs border-b border-blue-400 pb-2 mb-px cursor-default hover:mb-0 hover:border-b-2">
