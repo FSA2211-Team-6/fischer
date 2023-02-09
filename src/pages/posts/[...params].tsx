@@ -11,18 +11,34 @@ import { useSession } from "next-auth/react";
 
 export default function SinglePostPage() {
   const [user, setUser] = React.useState<object | null>(null);
+  const [currPostId, setCurPostId] = React.useState<number | null>(null);
+  const [currTabSelection, setCurrTabSelection] = React.useState<number | null>(
+    null
+  );
+
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const router = useRouter();
-  let postId = router.query["postId"] || "";
+
+  useEffect(() => {
+    if (router.isReady) {
+      const { params } = router.query;
+
+      if (!params) return null;
+      const postId = params[0];
+      const tabSelection = params[1];
+      setCurrTabSelection(Number(tabSelection));
+      setCurPostId(Number(postId));
+    }
+  }, [router, currPostId, currTabSelection]);
 
   const post: singlePostState = useAppSelector(singlePostState);
   useEffect(() => {
     const fetchData = () => {
-      postId ? dispatch(fetchSinglePost(+postId)) : "";
+      currPostId ? dispatch(fetchSinglePost(+currPostId)) : "";
     };
     fetchData();
-  }, [dispatch, postId]);
+  }, [dispatch, currPostId]);
 
   useEffect(() => {
     if (session) {
@@ -44,7 +60,7 @@ export default function SinglePostPage() {
           <div className="w-full bg-gray-700  ">
             <div>
               <CommentBox post={post} user={user} />
-              <Tabs post={post} />
+              <Tabs post={post} tabSelection={currTabSelection} />
             </div>
           </div>
         </div>

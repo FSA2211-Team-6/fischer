@@ -2,8 +2,9 @@ import React from "react";
 import Experts from "./experts";
 import Comments from "./comments/commentsSection";
 
-export default function Tabs({ post }: any) {
-  const [openTab, setOpenTab] = React.useState(1);
+export default function Tabs({ post, tabSelection }: any) {
+  console.log(typeof tabSelection);
+  const [openTab, setOpenTab] = React.useState(Number(tabSelection));
   return (
     <>
       <div className="flex flex-wrap">

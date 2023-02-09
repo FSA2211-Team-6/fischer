@@ -58,6 +58,7 @@ export const fetchSinglePost = createAsyncThunk(
     try {
       const response = await fetch(`/api/posts/${postId}`);
       const data: object = await response.json();
+      console.log("thunk!", data);
       return data;
     } catch (err: any) {
       console.error("fetchSinglePost err: ", err);
@@ -68,7 +69,11 @@ export const fetchSinglePost = createAsyncThunk(
 const singlePostSlice = createSlice({
   name: "singlePost",
   initialState,
-  reducers: {},
+  reducers: {
+    addUserCompliance: (state: any, action: PayloadAction<any>) => {
+      state.singlePostData.userCompliances.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       fetchSinglePost.fulfilled,
@@ -93,4 +98,7 @@ const singlePostSlice = createSlice({
 export const singlePostState = (state: RootState) => {
   return state.singlePost;
 };
+
+export const { addUserCompliance } = singlePostSlice.actions;
+
 export default singlePostSlice.reducer;

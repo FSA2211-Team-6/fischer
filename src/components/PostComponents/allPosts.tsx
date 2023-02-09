@@ -371,15 +371,27 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       >
                         Comments
                       </span>
-                      <span className="material-symbols-outlined nohover material-icons">
-                        chat
-                      </span>
+
                       {post.comments ? (
-                        <Link href={`/posts/${post.id}`}>
+                        <Link
+                          href={`/posts/${post.id}/2`}
+                          className="flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined nohover material-icons">
+                            chat
+                          </span>
                           {post.comments.length}
                         </Link>
                       ) : (
-                        <Link href={`/posts/${post.id}`}>0</Link>
+                        <Link
+                          href={`/posts/${post.id}/2`}
+                          className="flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined nohover material-icons">
+                            chat
+                          </span>
+                          0
+                        </Link>
                       )}
                     </div>
                   </div>
@@ -394,15 +406,29 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       >
                         Expert Responses
                       </span>
-                      <span className="material-symbols-outlined nohover material-icons">
+                      {/* <span className="material-symbols-outlined nohover material-icons">
                         3p
-                      </span>
+                      </span> */}
                       {post.expertResponses ? (
-                        <Link href={`/posts/${post.id}`}>
+                        <Link
+                          href={`/posts/${post.id}/1`}
+                          className="flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined nohover material-icons">
+                            3p
+                          </span>
                           {post.expertResponses.length}
                         </Link>
                       ) : (
-                        <Link href={`/posts/${post.id}`}>0</Link>
+                        <Link
+                          href={`/posts/${post.id}/1`}
+                          className="flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined nohover material-icons">
+                            3p
+                          </span>
+                          0
+                        </Link>
                       )}
                     </div>
                   </div>
