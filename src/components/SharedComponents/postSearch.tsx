@@ -10,7 +10,7 @@ export default function ListHeader() {
 
   const [searchString, setSearchString] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchString === "") {
       dispatch(clearSearchData());
@@ -23,54 +23,56 @@ export default function ListHeader() {
     dispatch(clearSearchData());
     setSearchString("");
 
-    const searchBar = document.getElementById("post-search");
+    const searchBar = document.getElementById(
+      "post-search"
+    ) as HTMLInputElement;
     searchBar.value = "";
   };
 
   return (
     <>
-      <div className="pb-2 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
-        <div className="w-full mb-1">
-          <div className="mb-4"></div>
-          <div className="sm:flex">
-            <div className="items-center hidden mb-3 sm:flex sm:divide-x sm:divide-gray-100 sm:mb-0 dark:divide-gray-700">
-              <form
-                className="lg:pr-3 flex gap-4 items-center"
-                onSubmit={(e) => {
-                  handleSubmit(e);
+      <div className=" bg-white block lg:mt-1.5 dark:bg-gray-800 mb-1">
+        <form
+          className="flex items-center"
+          onSubmit={(e) => {
+            handleSubmit(e);
+          }}
+        >
+          <label className="sr-only">Search</label>
+          <div className="relative lg:w-64 xl:w-96 flex">
+            <input
+              type="text"
+              name="post"
+              id="post-search"
+              onChange={(e) => {
+                setSearchString(e.target.value);
+              }}
+              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-l-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              placeholder="search"
+              autoComplete="false"
+            />
+            <button
+              type="submit"
+              className="bg-emerald-600 rounded-r-lg px-2.5 flex items-center cursor-pointer hover:bg-emerald-500"
+            >
+              <span className="material-symbols-outlined material-icons md-24 ">
+                search
+              </span>
+            </button>
+            {searchString !== "" ? (
+              <button
+                onClick={() => {
+                  handleClear();
                 }}
+                className="text-xs ml-1 text-gray-400 absolute right-14 top-3"
               >
-                <label className="sr-only">Search</label>
-                <div className="relative lg:w-64 xl:w-96">
-                  <input
-                    type="text"
-                    name="post"
-                    id="post-search"
-                    onChange={(e) => {
-                      setSearchString(e.target.value);
-                    }}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="search"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="flex items-center px-4 h-10 text-gray-400 border border-gray-300 rounded-md text-md"
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+                <span className="material-symbols-outlined material-icons filled md-18">
+                  cancel
+                </span>
+              </button>
+            ) : null}
           </div>
-          <button
-            onClick={() => {
-              handleClear();
-            }}
-            className="text-xs ml-1 text-gray-400 hover:underline hover:underline-offset-4"
-          >
-            clear results
-          </button>
-        </div>
+        </form>
       </div>
     </>
   );

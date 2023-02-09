@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { slug } = req.query;
+  const { slug } = req.query as { slug: string };
   const searchString = slug[0];
   const myCursor = slug[1];
 
@@ -16,10 +16,15 @@ export default async function handler(
       id: Number(myCursor),
     },
     where: { assertion: { contains: searchString, mode: "insensitive" } },
-    include: { websiteArticle: { include: { website: true } }, user: true },
+    include: {
+      websiteArticle: { include: { website: true } },
+      user: true,
+      userCompliances: true,
+      expertResponses: true,
+    },
   });
 
-  const searchResults: Array<firstPosts> = JSON.parse(JSON.stringify(results));
+  const searchResults: Array<Post> = JSON.parse(JSON.stringify(results));
 
   const newCursor = Number(myCursor) + 2;
 
