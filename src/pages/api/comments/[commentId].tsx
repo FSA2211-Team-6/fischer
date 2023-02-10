@@ -29,6 +29,15 @@ const SingleCommentApi = async (req: NextApiRequest, res: NextApiResponse) => {
         console.log(err);
         return res.status(403).send({ err: "Error updating comment!" });
       }
+    case "DELETE":
+      if (commentId) {
+        const deletedComment = await prisma.comment.delete({
+          where: {
+            id: +commentId,
+          },
+        });
+        return res.status(200).json(deletedComment);
+      }
   }
 };
 
