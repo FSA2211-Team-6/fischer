@@ -25,7 +25,7 @@ export default function SinglePostPage() {
     if (router.isReady) {
       const { params } = router.query;
 
-      if (!params) return null;
+      if (!params) return;
       const postId = params[0];
       const tabSelection = params[1];
       setCurrTabSelection(Number(tabSelection));
@@ -50,16 +50,15 @@ export default function SinglePostPage() {
   return (
     <>
       {currTabSelection ? (
-        <main className="relative h-screen overflow-auto bg-gray-100 dark:bg-gray-800">
+        <main className="relative h-screen bg-gray-100 dark:bg-gray-800 overflow-visible">
           <div className="flex flex-col justify-center px-14 pt-10 pb-4">
-            {/* <div className="flex flex-col  w-full max-w-7xl h-18"></div> */}
             <div>
               <SinglePost post={post} />
             </div>
           </div>
-          {/* tabs  */}
+          {/* show commnetbox if user is signed in, else show them link to sign in  */}
           <div className="flex flex-col mb-4 justify-center px-14">
-            <div className="w-full bg-gray-700  ">
+            <div className="w-full bg-gray-700 overflow-visible ">
               {user ? (
                 <div>
                   <CommentBox post={post} user={user} />
@@ -87,7 +86,7 @@ export default function SinglePostPage() {
                 </>
               )}
 
-              <div>
+              <div className="">
                 <Tabs post={post} tabSelection={currTabSelection} />
               </div>
             </div>
