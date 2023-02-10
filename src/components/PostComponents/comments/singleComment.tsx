@@ -13,6 +13,8 @@ export default function SingleComment({ comment, handleDeleteComment }: any) {
   const [content, setContent] = useState(comment.content);
   const [isEditing, setIsEditing] = useState(false);
 
+  const [showOptions, setShowOptions] = useState(false);
+
   const { data: session } = useSession();
   useEffect(() => {
     if (session) {
@@ -189,6 +191,7 @@ export default function SingleComment({ comment, handleDeleteComment }: any) {
                   {/* COMMENT TIME HERE*/}
                   {new Date(comment.createdAt).toLocaleString()}
                 </span>
+                <div className="ml-auto"></div>
               </div>
               <div className="flex-1 px-2 ml-2 mt-1 text-sm font-medium leading-2 text-gray-300">
                 {/* COMMENT HERE */}
