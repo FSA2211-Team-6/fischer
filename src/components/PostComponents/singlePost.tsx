@@ -38,8 +38,6 @@ export default function SinglePost({ post }: any) {
     }
   }, [userId]);
 
-  console.log(userCompliance);
-
   //Vote submission logic//////////////////////////////////////////////////////
   const submitVote = async (compliance: number, postId: number) => {
     const newCompliance = {
@@ -62,8 +60,6 @@ export default function SinglePost({ post }: any) {
     ]);
   };
   /////////////////////////////////////////////////////////////////////////////
-
-  console.log(post);
 
   return (
     <>

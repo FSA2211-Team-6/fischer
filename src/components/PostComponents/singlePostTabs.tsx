@@ -3,7 +3,6 @@ import Experts from "./experts";
 import Comments from "./comments/commentsSection";
 
 export default function Tabs({ post, tabSelection }: any) {
-  console.log(typeof tabSelection);
   const [openTab, setOpenTab] = React.useState(Number(tabSelection));
   return (
     <>

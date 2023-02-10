@@ -14,7 +14,6 @@ const SingleCommentApi = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     case "PUT":
       const data = JSON.parse(req.body);
-      console.log("data sent for upvotes update: ", data);
       try {
         const updatedComment = await prisma.comment.updateMany({
           where: {
