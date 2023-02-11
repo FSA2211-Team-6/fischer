@@ -19,6 +19,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 const Charts: NextPage = ({ allPostStats }) => {
+  console.log(allPostStats);
   return (
     <div>
       <div className="text-xl font-sans text-stone-200 font-light text-center mt-24 -mb-12">
@@ -31,11 +32,13 @@ const Charts: NextPage = ({ allPostStats }) => {
           barWidth={8}
           animate={{
             duration: 1000,
-            onLoad: { duration: 500 },
+            onLoad: { duration: 600 },
           }}
           x="hostSite"
           y="averageTruthiness"
-          labels={({ datum }) => `${datum.averageTruthiness * 100}%`}
+          labels={({ datum }) =>
+            `${parseInt(datum.averageTruthiness * 100, 10)}%`
+          }
           labelComponent={
             <VictoryLabel style={[{ fill: "white", fontSize: 5 }]} />
           }

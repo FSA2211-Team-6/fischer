@@ -100,7 +100,6 @@ export const LogInButton = () => {
   }
   return (
     <>
-      Not signed in <br />
       <button onClick={() => signIn()}>Sign in</button>
     </>
   );
