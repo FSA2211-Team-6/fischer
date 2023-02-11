@@ -10,8 +10,8 @@ const Stats = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [expertData, setExpertData] = useState<Array<Post>>();
-  const [divisiveData, setDivisiveData] = useState<Array<Post>>();
+  const [expertData, setExpertData] = useState<Post[] | Array<any>>([]);
+  const [divisiveData, setDivisiveData] = useState<Post[] | Array<any>>([]);
   const [topSiteData, setTopSiteData] = useState<any>();
   const [userComplianceData, setUserComplianceData] = useState<any>();
 
@@ -49,7 +49,7 @@ const Stats = () => {
     fetchUserComplianceData();
   }, [session]);
 
-  const handleExpertFilter = (filterData) => {
+  const handleExpertFilter = (filterData: Post[]) => {
     dispatch(changeFilter(filterData));
   };
 

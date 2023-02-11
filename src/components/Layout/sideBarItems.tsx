@@ -13,7 +13,7 @@ interface props {
 export const SideBarItem = ({ name, link, viewbox, children }: props) => {
   const dispatch = useAppDispatch();
 
-  const handleGetFeaturedPieces = async (name) => {
+  const handleGetFeaturedPieces = async (name: string) => {
     const response = await fetch("/api/stats/featuredpieces");
     const data = await response.json();
     dispatch(changeFilter(data));
