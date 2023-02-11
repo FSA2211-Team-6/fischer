@@ -65,7 +65,11 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
     if (getFilteredPosts!.length > 0) {
       setFilteredPosts(getFilteredPosts);
     }
-  }, [getFilteredPosts]);
+
+    if (getSearchData.statsFilter === true) {
+      setOutOfPosts(true);
+    } else setOutOfPosts(false);
+  }, [getFilteredPosts, getSearchData]);
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -486,7 +490,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
           );
         })}
       <div ref={endOfScrollRef}></div>
-      {outOfPosts ? (
+      {outOfPosts && !getSearchData.statsFilter ? (
         <div className="text-center">
           <p className="text-gray-500 font-sans text-xl tracking-wider mb-4">
             Sorry! There are no more assertions to show you, try again later...
