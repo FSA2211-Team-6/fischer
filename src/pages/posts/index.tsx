@@ -7,8 +7,7 @@ import AllPosts from "@/components/PostComponents/allPosts";
 import Filters from "@/components/PostComponents/filters";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  console.log("serverside");
-  const numPosts = 2;
+  const numPosts = 3;
   await store.dispatch(fetchInitialPosts(numPosts));
 
   const firstPosts = store.getState().allPosts;

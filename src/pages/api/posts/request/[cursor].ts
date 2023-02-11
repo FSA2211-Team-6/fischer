@@ -8,7 +8,7 @@ export default async function handler(
   const myCursor = req.query.cursor;
 
   const results = await prisma.post.findMany({
-    take: 2,
+    take: 3,
     skip: 1, // Skip the cursor
     cursor: {
       id: Number(myCursor),
@@ -20,13 +20,14 @@ export default async function handler(
       expertResponses: true,
       comments: true,
     },
+    orderBy: { id: "desc" },
   });
 
   const posts = results;
   let newCursor = Number(myCursor);
 
   if (posts.length > 0) {
-    newCursor = Number(myCursor) + posts.length;
+    newCursor = Number(myCursor) - posts.length;
   }
 
   res.status(200).send({ posts, newCursor });
