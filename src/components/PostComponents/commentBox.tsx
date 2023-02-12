@@ -64,7 +64,7 @@ export default function CommentBox({
 
     if (expertHasCommented) {
       alert(
-        "Response not submitted. You have already submitted an Expert Response on this post!"
+        "Response not submitted. An Expert can only submit one Expert Response per post!"
       );
       return;
     }
