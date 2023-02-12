@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { fetchSinglePost } from "@/redux/slices/singlePostSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useRouter } from "next/router";
@@ -11,11 +11,16 @@ import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
 
 export default function SinglePostPage() {
-  const [user, setUser] = React.useState<object | null>(null);
+  const [userId, setUserId] = React.useState<number | null>(null);
   const [currPostId, setCurPostId] = React.useState<number | null>(null);
   const [currTabSelection, setCurrTabSelection] = React.useState<number | null>(
     null
   );
+
+  const [isExpert, setIsExpert] = useState(false);
+  const [expertiseArray, setExpertiseArray] = React.useState<Array<object>>([]);
+  const [isExpertResponse, setIsExpertResponse] = useState(false);
+  const [currExpertId, setCurrExpertId] = React.useState<number | null>(null);
 
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
@@ -33,7 +38,8 @@ export default function SinglePostPage() {
     }
   }, [router, currPostId, currTabSelection]);
 
-  const post: singlePostState = useAppSelector(singlePostState);
+  const post: any = useAppSelector(singlePostState);
+
   useEffect(() => {
     const fetchData = () => {
       currPostId ? dispatch(fetchSinglePost(+currPostId)) : "";
@@ -43,9 +49,36 @@ export default function SinglePostPage() {
 
   useEffect(() => {
     if (session) {
-      setUser(session.user);
+      setUserId(session.user.fischerId);
     }
   }, [session]);
+
+  //get current user's expertise
+  useEffect(() => {
+    const fetchExpertiseFromUserId = async () => {
+      const response = await fetch(`/api/experts/${userId}`);
+      const data = await response.json();
+      setExpertiseArray(data);
+    };
+    if (userId) {
+      fetchExpertiseFromUserId();
+    }
+  }, [userId]);
+
+  //check to see if user is an expert of the current post's topic
+  useEffect(() => {
+    if (post) {
+      const expertData: any = expertiseArray.find(
+        (ele: any) => ele.topicId === post.singlePostData.topicId
+      );
+      if (expertData) {
+        setIsExpert(true);
+        setCurrExpertId(expertData.id);
+      }
+    }
+  }, [expertiseArray, isExpert, post]);
+
+  console.log("isExpertResponse: ", isExpertResponse);
 
   return (
     <>
@@ -56,12 +89,64 @@ export default function SinglePostPage() {
               <SinglePost post={post} />
             </div>
           </div>
+
           {/* show commnetbox if user is signed in, else show them link to sign in  */}
           <div className="flex flex-col mb-4 justify-center px-14">
             <div className="w-full bg-gray-700 overflow-visible ">
-              {user ? (
+              {/* Toggle only shows if u are an expert for the current post/topic */}
+              {isExpert ? (
+                <div className="inline-flex">
+                  <label className=" inline-flex items-center cursor-pointer pt-4 px-4 ">
+                    <input
+                      type="checkbox"
+                      className="hidden"
+                      checked={isExpertResponse}
+                      onChange={() => setIsExpertResponse(!isExpertResponse)}
+                    />
+                    <span
+                      className={`relative w-12 h-6  border border-gray-500 rounded-full ${
+                        isExpertResponse
+                          ? "shadow-md bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    >
+                      <span
+                        className={`absolute left-0 top-0 bottom-0 h-6 w-6 bg-white rounded-full shadow-inner ${
+                          isExpertResponse ? "transform translate-x-full" : ""
+                        }`}
+                      />
+                    </span>
+                  </label>
+                  <div className="pt-4 text-sm text-gray-200">
+                    {isExpertResponse ? (
+                      <div
+                        className={`transition-opacity ease-in opacity-100 duration-500 ${
+                          isExpertResponse ? "opacity-100" : "opacity-50"
+                        }`}
+                      >
+                        You are now commenting as an Expert!
+                      </div>
+                    ) : (
+                      <div
+                        className={`transition-opacity ease-in opacity-50 duration-500 ${
+                          isExpertResponse ? "opacity-100" : "opacity-50"
+                        }`}
+                      >
+                        Turn on to comment as an Expert
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : null}
+
+              {userId ? (
                 <div>
-                  <CommentBox post={post} user={user} />
+                  <CommentBox
+                    post={post}
+                    userId={userId}
+                    isExpertResponse={isExpertResponse}
+                    currExpertId={currExpertId}
+                  />
                 </div>
               ) : (
                 <>

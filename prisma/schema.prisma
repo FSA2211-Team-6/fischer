@@ -15,14 +15,25 @@ datasource db {
 model ExpertResponse {
   id          Int    @id @default(autoincrement())
   postId      Int
-  expertId    Int
+  expertId    Int     @unique
   content     String
   compliance  Int      @default(0)
   createdAt   DateTime @default(now())
   upvotes     Int      @default(0)
+  votedUsers  UserExpertResponseVote[]
 
   post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   expert      Expert   @relation(fields: [expertId], references: [id], onDelete: Cascade)
+}
+
+model UserExpertResponseVote {
+  expertResponseId       Int
+  compliance      Int       @default(0)
+  fischerId       Int
+
+  user            User      @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
+  expertResponse         ExpertResponse      @relation(fields: [expertResponseId], references: [id], onDelete: Cascade)
+  @@unique([fischerId, expertResponseId])
 }
 
 model Comment {
@@ -77,6 +88,7 @@ model User {
   expertise         Expert[]
   posts             Post[]
   userCommentVotes   UserCommentVote[]
+  userExpertResponseVotes UserExpertResponseVote[]
 }
 
 model BadPost {

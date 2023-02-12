@@ -1,5 +1,5 @@
 import React from "react";
-import Experts from "./experts";
+import Experts from "./experts/expertsSection";
 import Comments from "./comments/commentsSection";
 
 export default function Tabs({ post, tabSelection }: any) {
@@ -16,8 +16,8 @@ export default function Tabs({ post, tabSelection }: any) {
               className={
                 "text-sm uppercase px-5 py-3 shadow-lg rounded block leading-normal " +
                 (openTab === 1
-                  ? "text-white underline bg-gray-600 "
-                  : "text-white  bg-gray-700 hover:bg-gray-600")
+                  ? "text-white underline bg-gray-600 transition-opacity ease-in opacity-100 duration-500"
+                  : "text-white  bg-gray-700 hover:bg-gray-600 opacity-50")
               }
               onClick={(e) => {
                 e.preventDefault();
@@ -35,8 +35,8 @@ export default function Tabs({ post, tabSelection }: any) {
               className={
                 "text-sm uppercase px-5 py-3 shadow-lg rounded block leading-normal " +
                 (openTab === 2
-                  ? "text-white underline bg-gray-600 "
-                  : "text-white  bg-gray-700 hover:bg-gray-600")
+                  ? "text-white underline bg-gray-600 transition-opacity ease-in opacity-100 duration-500"
+                  : "text-white  bg-gray-700 hover:bg-gray-600 opacity-50")
               }
               onClick={(e) => {
                 e.preventDefault();
@@ -54,7 +54,7 @@ export default function Tabs({ post, tabSelection }: any) {
           <div className="px-4 py-5 flex-auto">
             <div className="tab-content tab-space ">
               <div className={openTab === 1 ? "block" : "hidden"} id="experts">
-                <Experts />
+                <Experts post={post} />
               </div>
               <div className={openTab === 2 ? "block" : "hidden"} id="comments">
                 <Comments post={post} />
