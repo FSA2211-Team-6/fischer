@@ -63,7 +63,7 @@ export default function CommentBox({ post, user }: any) {
           ></textarea>
           <div className="flex w-full bg-gray-600 ">
             <div className="flex justify-end">
-              <button className="px-4 py-2 bg-green-500 rounded-lg text-white">
+              <button className=" px-4 py-1 text-white bg-green-900 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900 ">
                 Comment
               </button>
             </div>
