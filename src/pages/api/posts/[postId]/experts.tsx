@@ -1,17 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/db/prismadb";
 
-const CommentsApi = async (req: NextApiRequest, res: NextApiResponse) => {
+////////get expert responses based on postId////////
+
+const ExpertResponsesApi = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   switch (req.method) {
     case "GET":
       const postId = req.query.postId;
       if (postId) {
-        const data = await prisma.comment.findMany({
+        const data = await prisma.expertResponse.findMany({
           where: { postId: +postId },
           orderBy: { upvotes: "desc" },
-          include: {
-            commenter: true,
-          },
+          include: { expert: { include: { user: true } } },
         });
         return res.status(200).json(data);
       }
@@ -19,7 +22,7 @@ const CommentsApi = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST":
       const incomingData = JSON.parse(req.body);
       try {
-        const newComment = await prisma.comment.create({
+        const newComment = await prisma.expertResponse.create({
           data: incomingData,
         });
         return res.status(200).json(newComment);
@@ -34,4 +37,4 @@ const CommentsApi = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default CommentsApi;
+export default ExpertResponsesApi;
