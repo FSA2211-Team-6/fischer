@@ -84,14 +84,14 @@ export default function SinglePostPage() {
     <>
       {currTabSelection ? (
         <main className="relative h-screen bg-gray-100 dark:bg-gray-800 overflow-visible">
-          <div className="flex flex-col justify-center px-14 pt-10 pb-4">
+          <div className="flex flex-col justify-center pt-10">
             <div>
               <SinglePost post={post} />
             </div>
           </div>
 
           {/* show commnetbox if user is signed in, else show them link to sign in  */}
-          <div className="flex flex-col mb-4 justify-center px-14">
+          <div className="flex flex-col mb-4 justify-center ">
             <div className="w-full bg-gray-700 overflow-visible ">
               {/* Toggle only shows if u are an expert for the current post/topic */}
               {isExpert ? (

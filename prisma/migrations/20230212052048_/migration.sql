@@ -12,6 +12,13 @@ CREATE TABLE "ExpertResponse" (
 );
 
 -- CreateTable
+CREATE TABLE "UserExpertResponseVote" (
+    "expertResponseId" INTEGER NOT NULL,
+    "compliance" INTEGER NOT NULL DEFAULT 0,
+    "fischerId" INTEGER NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "Comment" (
     "id" SERIAL NOT NULL,
     "postId" INTEGER NOT NULL,
@@ -21,6 +28,13 @@ CREATE TABLE "Comment" (
     "upvotes" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UserCommentVote" (
+    "commentId" INTEGER NOT NULL,
+    "compliance" INTEGER NOT NULL DEFAULT 0,
+    "fischerId" INTEGER NOT NULL
 );
 
 -- CreateTable
@@ -97,6 +111,7 @@ CREATE TABLE "Expert" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "id" SERIAL NOT NULL,
     "fischerId" INTEGER NOT NULL,
+    "approval" BOOLEAN,
 
     CONSTRAINT "Expert_pkey" PRIMARY KEY ("id")
 );
@@ -145,6 +160,15 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "ExpertResponse_expertId_key" ON "ExpertResponse"("expertId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserExpertResponseVote_fischerId_expertResponseId_key" ON "UserExpertResponseVote"("fischerId", "expertResponseId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserCommentVote_fischerId_commentId_key" ON "UserCommentVote"("fischerId", "commentId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "UserCompliance_fischerId_postId_key" ON "UserCompliance"("fischerId", "postId");
 
 -- CreateIndex
@@ -181,10 +205,22 @@ ALTER TABLE "ExpertResponse" ADD CONSTRAINT "ExpertResponse_postId_fkey" FOREIGN
 ALTER TABLE "ExpertResponse" ADD CONSTRAINT "ExpertResponse_expertId_fkey" FOREIGN KEY ("expertId") REFERENCES "Expert"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "UserExpertResponseVote" ADD CONSTRAINT "UserExpertResponseVote_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserExpertResponseVote" ADD CONSTRAINT "UserExpertResponseVote_expertResponseId_fkey" FOREIGN KEY ("expertResponseId") REFERENCES "ExpertResponse"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserCommentVote" ADD CONSTRAINT "UserCommentVote_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserCommentVote" ADD CONSTRAINT "UserCommentVote_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserCompliance" ADD CONSTRAINT "UserCompliance_fischerId_fkey" FOREIGN KEY ("fischerId") REFERENCES "User"("fischerId") ON DELETE CASCADE ON UPDATE CASCADE;
