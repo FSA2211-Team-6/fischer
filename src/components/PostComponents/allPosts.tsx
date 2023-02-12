@@ -79,7 +79,6 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   const handleRefresh = async (cursor: number) => {
     const morePosts = await fetch(`/api/posts/request/${cursor}`);
     const data = await morePosts.json();
-    console.log(data);
     if (data.posts.length === 0) {
       setOutOfPosts(true);
       setLoading(false);

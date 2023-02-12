@@ -3,10 +3,10 @@ import {
   VictoryChart,
   VictoryAxis,
   VictoryLabel,
-  VictoryTheme,
+  Background,
 } from "victory";
 import type { NextPage } from "next";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const response = await fetch("http://localhost:3000/api/stats/allposts");
@@ -18,14 +18,21 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-const Charts: NextPage = ({ allPostStats }) => {
-  console.log(allPostStats);
+const Charts: NextPage = ({
+  allPostStats,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <div>
-      <div className="text-xl font-sans text-stone-200 font-light text-center mt-24 -mb-12">
+    <div className="bg-gray-700 flex-col pt-1">
+      <div className="text-3xl font-sans text-stone-200 tracking-wide font-semibold text-center mt-16 -mb-12">
         Average Truthiness
       </div>
-      <VictoryChart domainPadding={20} width={400} height={200}>
+      <VictoryChart
+        domainPadding={20}
+        width={475}
+        height={200}
+        // style={{ background: { fill: "#374151" } }}
+        // backgroundComponent={<Background y={} height={420} />}
+      >
         <VictoryBar
           style={{ data: { fill: "#60A5FA" } }}
           data={allPostStats}
@@ -37,7 +44,7 @@ const Charts: NextPage = ({ allPostStats }) => {
           x="hostSite"
           y="averageTruthiness"
           labels={({ datum }) =>
-            `${parseInt(datum.averageTruthiness * 100, 10)}%`
+            `${parseInt((datum.averageTruthiness * 100).toString(), 10)}%`
           }
           labelComponent={
             <VictoryLabel style={[{ fill: "white", fontSize: 5 }]} />
@@ -46,14 +53,14 @@ const Charts: NextPage = ({ allPostStats }) => {
         <VictoryAxis
           tickFormat={(t) => `${t.slice(0, t.length - 4).slice(12)}`}
           style={{
-            axis: { stroke: "#1F2937" },
+            axis: { stroke: "#374151" },
             tickLabels: { fontSize: 6, fill: "#FFFFFF" },
           }}
           offsetY={50}
         />
         <VictoryAxis
           style={{
-            axis: { stroke: "#374151" },
+            axis: { stroke: "#1F2836" },
             tickLabels: { fontSize: 0 },
           }}
         />

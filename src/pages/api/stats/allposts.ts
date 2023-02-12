@@ -18,16 +18,7 @@ export default async function handler(
 
   const allPosts: Array<Post> = JSON.parse(JSON.stringify(posts));
 
-  const websiteTruth = {};
-
-  //   const postStats = allPosts.map((post) => {
-  //     return {
-  //       postId: post.id,
-  //       websiteId: post.websiteArticle.website.id,
-  //       websiteName: post.websiteArticle.website.hostSite,
-  //       postStats: getPostStats(post),
-  //     };
-  //   });
+  const websiteTruth: { [key: string]: websiteTruth } = {};
 
   allPosts.forEach((post) => {
     if (websiteTruth[post.websiteArticle.website.id]) {
@@ -37,10 +28,15 @@ export default async function handler(
     } else {
       websiteTruth[post.websiteArticle.website.id] = {
         truthinessValues: [getPostStats(post).truthAsNumber],
-        chartData: { hostSite: post.websiteArticle.website.hostSite },
+        chartData: {
+          hostSite: post.websiteArticle.website.hostSite,
+          averageTruthiness: null,
+        },
       };
     }
   });
+
+  console.log(websiteTruth);
 
   const truthArray = [];
 
@@ -53,7 +49,6 @@ export default async function handler(
     );
 
     truthArray.push(websiteTruth[key].chartData);
-    console.log(typeof truthArray[0].averageTruthiness);
   }
 
   res.status(200).send(truthArray);

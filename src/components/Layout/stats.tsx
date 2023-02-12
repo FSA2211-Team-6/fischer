@@ -12,8 +12,9 @@ const Stats = () => {
 
   const [expertData, setExpertData] = useState<Post[] | Array<any>>([]);
   const [divisiveData, setDivisiveData] = useState<Post[] | Array<any>>([]);
-  const [topSiteData, setTopSiteData] = useState<any>();
-  const [userComplianceData, setUserComplianceData] = useState<any>();
+  const [topSiteData, setTopSiteData] = useState<topSites>();
+  const [userComplianceData, setUserComplianceData] =
+    useState<userComplianceStats>();
 
   useEffect(() => {
     const fetchExpertData = async () => {
@@ -116,7 +117,7 @@ const Stats = () => {
             href={session ? "/posts" : "/api/auth/signin"}
             onClick={() => {
               if (session) {
-                handleExpertFilter(userComplianceData.sortedPosts);
+                handleExpertFilter(userComplianceData!.sortedPosts);
               }
             }}
             className="px-4 pt-6 pb-5 bg-white shadow-lg dark:bg-gray-700 hover:bg-gray-900 w-full xl:pt-8 xl:pb-8"
