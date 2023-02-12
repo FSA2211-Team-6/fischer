@@ -5,6 +5,15 @@ const nextConfig = {
   images: {
     domains: ["lh3.googleusercontent.com", "avatars.githubusercontent.com"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/posts",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

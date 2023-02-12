@@ -31,7 +31,7 @@ export default function ListHeader() {
 
   return (
     <>
-      <div className=" bg-white block lg:mt-1.5 dark:bg-gray-800 mb-1">
+      <div className=" bg-white block lg:mt-1.5 ml-auto dark:bg-gray-800 mb-1">
         <form
           className="flex items-center"
           onSubmit={(e) => {

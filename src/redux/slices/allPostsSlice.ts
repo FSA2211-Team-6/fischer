@@ -42,7 +42,12 @@ export const fetchMoreSearchResults = createAsyncThunk(
 const initialState: allPostsState = {
   allPostsData: [],
   filteredPosts: [],
-  searchData: { searchString: "", searchResults: [], searchCursor: null },
+  searchData: {
+    searchString: "",
+    searchResults: [],
+    searchCursor: null,
+    statsFilter: false,
+  },
   cursor: 0,
   status: "idle",
   error: null,
@@ -54,6 +59,10 @@ export const allPostsSlice = createSlice({
   reducers: {
     setInitialPosts: (state: any, action: PayloadAction<object>) => {
       state.allPostsData = action.payload;
+    },
+    changeFilter: (state: any, action: PayloadAction<object>) => {
+      state.searchData.statsFilter = true;
+      state.filteredPosts = action.payload;
     },
     addPost: (state: any, action: PayloadAction<object>) => {
       state.allPostsData.push(action.payload);
@@ -81,6 +90,7 @@ export const allPostsSlice = createSlice({
         searchString: "",
         searchResults: [],
         searchCursor: null,
+        statsFilter: false,
       };
     },
   },
@@ -112,6 +122,7 @@ export const allPostsSlice = createSlice({
         state.searchData.searchResults = action.payload.data.searchResults;
         state.searchData.searchString = action.payload.searchString;
         state.searchData.searchCursor = action.payload.data.myCursor;
+        state.searchData.statsFilter = false;
         state.filteredPosts = action.payload.data.searchResults;
         state.status = "idle";
       }
@@ -158,6 +169,7 @@ export const selectCursor = (state: RootState) => state.allPosts.cursor;
 export const selectFilteredPosts = (state: RootState) =>
   state.allPosts.filteredPosts;
 export const selectSearchData = (state: RootState) => state.allPosts.searchData;
+export const selectStatus = (state: RootState) => state.allPosts.status;
 export const {
   setInitialPosts,
   addPost,
@@ -165,6 +177,7 @@ export const {
   rehydrate,
   clearSearchData,
   addUserCompliance,
+  changeFilter,
 } = allPostsSlice.actions;
 
 export default allPostsSlice.reducer;

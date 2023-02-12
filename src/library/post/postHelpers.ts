@@ -103,6 +103,7 @@ export const getPostStats = (post: Post) => {
 
   return {
     truthiness: `${averageTruthiness * 100}%`,
+    truthAsNumber: averageTruthiness,
     truthColor: truthColor,
     extensionTruthColor: extensionTruthColor,
     divisiveness: `${divisiveness * 100}%`,

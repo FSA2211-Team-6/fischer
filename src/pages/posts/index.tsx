@@ -7,7 +7,7 @@ import AllPosts from "@/components/PostComponents/allPosts";
 import Filters from "@/components/PostComponents/filters";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const numPosts = 2;
+  const numPosts = 3;
   await store.dispatch(fetchInitialPosts(numPosts));
 
   const firstPosts = store.getState().allPosts;
@@ -25,7 +25,9 @@ export default function Posts({
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(rehydrate(firstPosts));
+    if (store.getState().allPosts.filteredPosts.length == 0) {
+      dispatch(rehydrate(firstPosts));
+    }
   }, [dispatch, firstPosts]);
 
   return (
