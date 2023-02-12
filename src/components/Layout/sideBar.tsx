@@ -5,13 +5,16 @@ const SideBar = () => {
   return (
     <div className="relative hidden h-screen shadow-lg lg:block w-80">
       <div className="h-full bg-white dark:bg-gray-700">
-        <Link href="/">
+        <Link href="/posts">
           <div className="flex items-center justify-start pt-6 ml-8">
             <p className="text-xl font-bold dark:text-white">Fischer</p>
           </div>
         </Link>
         <nav className="mt-6">
           <div>
+            <SideBarItem name="Home" link="/posts" viewbox="0 0 1792 1792">
+              <path d="M1472 992v480q0 26-19 45t-45 19h-384v-384h-256v384h-384q-26 0-45-19t-19-45v-480q0-1 .5-3t.5-3l575-474 575 474q1 2 1 6zm223-69l-62 74q-8 9-21 11h-3q-13 0-21-7l-692-577-692 577q-12 8-24 7-13-2-21-11l-62-74q-8-10-7-23.5t11-21.5l719-599q32-26 76-26t76 26l244 204v-195q0-14 9-23t23-9h192q14 0 23 9t9 23v408l219 182q10 8 11 21.5t-7 23.5z"></path>
+            </SideBarItem>
             <SideBarItem
               name="Featured Pieces"
               link="/posts"
@@ -19,9 +22,7 @@ const SideBar = () => {
             >
               <path d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z"></path>
             </SideBarItem>
-            <SideBarItem name="Home" link="/home" viewbox="0 0 1792 1792">
-              <path d="M1472 992v480q0 26-19 45t-45 19h-384v-384h-256v384h-384q-26 0-45-19t-19-45v-480q0-1 .5-3t.5-3l575-474 575 474q1 2 1 6zm223-69l-62 74q-8 9-21 11h-3q-13 0-21-7l-692-577-692 577q-12 8-24 7-13-2-21-11l-62-74q-8-10-7-23.5t11-21.5l719-599q32-26 76-26t76 26l244 204v-195q0-14 9-23t23-9h192q14 0 23 9t9 23v408l219 182q10 8 11 21.5t-7 23.5z"></path>
-            </SideBarItem>
+
             <SideBarItem name="Charts" link="/charts" viewbox="0 0 20 20">
               <path
                 fillRule="evenodd"

@@ -1,77 +1,179 @@
+import { changeFilter } from "@/redux/slices/allPostsSlice";
+import { useAppDispatch } from "@/redux/store";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Stats = () => {
   const { data: session, status } = useSession();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [expertData, setExpertData] = useState<Post[] | Array<any>>([]);
+  const [divisiveData, setDivisiveData] = useState<Post[] | Array<any>>([]);
+  const [topSiteData, setTopSiteData] = useState<topSites>();
+  const [userComplianceData, setUserComplianceData] =
+    useState<userComplianceStats>();
+
+  useEffect(() => {
+    const fetchExpertData = async () => {
+      const response = await fetch("/api/stats/experts");
+      const data = await response.json();
+      setExpertData(data);
+    };
+
+    const fetchDivisiveData = async () => {
+      const response = await fetch("/api/stats/divisive");
+      const data = await response.json();
+      setDivisiveData(data);
+    };
+
+    const fetchTopSiteData = async () => {
+      const response = await fetch("/api/stats/topsites");
+      const data = await response.json();
+      setTopSiteData(data);
+    };
+
+    const fetchUserComplianceData = async () => {
+      if (session) {
+        const response = await fetch(
+          `/api/stats/usercompliance/${session?.user.fischerId}`
+        );
+        const data = await response.json();
+        setUserComplianceData(data);
+      }
+    };
+    fetchTopSiteData();
+    fetchExpertData();
+    fetchDivisiveData();
+    fetchUserComplianceData();
+  }, [session]);
+
+  const handleExpertFilter = (filterData: Post[]) => {
+    dispatch(changeFilter(filterData));
+  };
 
   return (
     <>
-      <h1 className="text-4xl font-semibold text-gray-800 dark:text-white">
-        Good afternoon, {session ? session.user.name : null}
-      </h1>
-      <div className="flex flex-col items-center w-full my-6 space-y-4 md:space-x-4 md:space-y-0 md:flex-row">
-        <div className="w-full md:w-6/12">
-          <div className="relative w-full overflow-hidden bg-white shadow-lg dark:bg-gray-700">
-            <a href="#" className="block w-full h-full">
-              <div className="flex items-center justify-between px-4 py-6 space-x-4">
-                <div className="flex items-center">
-                  <span className="relative p-5 bg-yellow-100 rounded-full">
-                    <svg
-                      width="40"
-                      fill="currentColor"
-                      height="40"
-                      className="absolute h-5 text-yellow-500 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                      viewBox="0 0 1792 1792"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M1362 1185q0 153-99.5 263.5t-258.5 136.5v175q0 14-9 23t-23 9h-135q-13 0-22.5-9.5t-9.5-22.5v-175q-66-9-127.5-31t-101.5-44.5-74-48-46.5-37.5-17.5-18q-17-21-2-41l103-135q7-10 23-12 15-2 24 9l2 2q113 99 243 125 37 8 74 8 81 0 142.5-43t61.5-122q0-28-15-53t-33.5-42-58.5-37.5-66-32-80-32.5q-39-16-61.5-25t-61.5-26.5-62.5-31-56.5-35.5-53.5-42.5-43.5-49-35.5-58-21-66.5-8.5-78q0-138 98-242t255-134v-180q0-13 9.5-22.5t22.5-9.5h135q14 0 23 9t9 23v176q57 6 110.5 23t87 33.5 63.5 37.5 39 29 15 14q17 18 5 38l-81 146q-8 15-23 16-14 3-27-7-3-3-14.5-12t-39-26.5-58.5-32-74.5-26-85.5-11.5q-95 0-155 43t-60 111q0 26 8.5 48t29.5 41.5 39.5 33 56 31 60.5 27 70 27.5q53 20 81 31.5t76 35 75.5 42.5 62 50 53 63.5 31.5 76.5 13 94z"></path>
-                    </svg>
-                  </span>
-                  <p className="ml-2 text-sm font-semibold text-gray-700 border-b border-gray-200 dark:text-white">
-                    Level 2 Expert
-                  </p>
-                </div>
-
-                <div className="mt-6 text-xl font-bold text-black border-b border-gray-200 md:mt-0 dark:text-white">
-                  Tokens: 1<span className="text-s text-gray-400">/4</span>
-                </div>
-              </div>
-              <div className="w-full h-3 bg-gray-100">
-                <div className="w-2/5 h-full text-xs text-center text-white bg-green-400"></div>
-              </div>
-            </a>
+      <div>
+        {session ? (
+          <div>
+            <h1 className="text-4xl font-semibold text-gray-800 dark:text-white tracking-wide">{`Hello, ${session.user.name}!`}</h1>
+            <p className="text-gray-500 tracking-wide">
+              {"Let's do some fact checking!"}
+            </p>
+          </div>
+        ) : (
+          <div>
+            <h1 className="text-4xl font-semibold text-gray-800 dark:text-white tracking-wide">
+              {"Hello!"}
+            </h1>
+            <p className="text-gray-500 tracking-wide">
+              {"It's a great day for some fact checking."}
+            </p>
+          </div>
+        )}
+      </div>
+      <div className="flex items-center w-full my-6 gap-4 flex-wrap xl:flex-nowrap">
+        <div className="px-4 py-12 bg-white shadow-lg dark:bg-gray-700 w-full 2xl:py-10">
+          <div className="flex gap-2 items-center">
+            <span className="material-symbols-outlined filled material-icons md-72 text-orange-400">
+              local_fire_department
+            </span>
+            <div className="grid grid-cols-1 gap-y-2 w-4/5 sm:grid-cols-2 lg:w-1/2 2xl:w-2/3 xl:w-2/3 md:w-2/5 m-auto place-items-center">
+              {topSiteData?.siteMap
+                .slice(0, 4)
+                .sort((a, b) => {
+                  return b.count - a.count;
+                })
+                .map((site) => {
+                  return (
+                    <div key={site.id}>
+                      <div
+                        onClick={() => {
+                          handleExpertFilter(
+                            topSiteData.posts.filter((post: Post) => {
+                              return post.websiteArticle.website.id === site.id;
+                            })
+                          );
+                          router.push("/posts");
+                        }}
+                        className="bg-white text-gray-700 w-20 sm:w-36 md:w-32 lg:w-40 2xl:w-40 xl:w-32 md:text-sm xl:text-sm 2xl:text-base lg:text-base text-center p-4 rounded-full py-1 text-xs  hover:bg-gray-900 hover:text-white cursor-pointer"
+                      >
+                        {site.name.slice(12, site.name.length - 4)}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+            <p className="text-sm text-gray-400 lg:w-1/4">
+              Websites with frequent submissions
+            </p>
           </div>
         </div>
-        <div className="flex items-center w-full space-x-4 md:w-1/2">
-          <div className="w-1/2">
-            <div className="relative w-full px-4 py-6 bg-white shadow-lg dark:bg-gray-700">
-              <p className="text-2xl font-bold text-black dark:text-white">
-                12
-              </p>
-              <p className="text-sm text-gray-400">Expert Answers Given</p>
-            </div>
-          </div>
-          <div className="w-1/2">
-            <div className="relative w-full px-4 py-6 bg-white shadow-lg dark:bg-gray-700">
-              <p className="text-2xl font-bold text-black dark:text-white">
-                1,176
-              </p>
-              <p className="text-sm text-gray-400">
-                Submissions Looking for Experts
-              </p>
-              <span className="absolute p-4 bg-purple-500 rounded-full top-2 right-4">
-                <svg
-                  width="40"
-                  fill="currentColor"
-                  height="40"
-                  className="absolute h-4 text-white transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  viewBox="0 0 1792 1792"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M1362 1185q0 153-99.5 263.5t-258.5 136.5v175q0 14-9 23t-23 9h-135q-13 0-22.5-9.5t-9.5-22.5v-175q-66-9-127.5-31t-101.5-44.5-74-48-46.5-37.5-17.5-18q-17-21-2-41l103-135q7-10 23-12 15-2 24 9l2 2q113 99 243 125 37 8 74 8 81 0 142.5-43t61.5-122q0-28-15-53t-33.5-42-58.5-37.5-66-32-80-32.5q-39-16-61.5-25t-61.5-26.5-62.5-31-56.5-35.5-53.5-42.5-43.5-49-35.5-58-21-66.5-8.5-78q0-138 98-242t255-134v-180q0-13 9.5-22.5t22.5-9.5h135q14 0 23 9t9 23v176q57 6 110.5 23t87 33.5 63.5 37.5 39 29 15 14q17 18 5 38l-81 146q-8 15-23 16-14 3-27-7-3-3-14.5-12t-39-26.5-58.5-32-74.5-26-85.5-11.5q-95 0-155 43t-60 111q0 26 8.5 48t29.5 41.5 39.5 33 56 31 60.5 27 70 27.5q53 20 81 31.5t76 35 75.5 42.5 62 50 53 63.5 31.5 76.5 13 94z"></path>
-                </svg>
+        <div className="flex items-center w-full flex-col gap-4 sm:flex-row">
+          <Link
+            href={session ? "/posts" : "/api/auth/signin"}
+            onClick={() => {
+              if (session) {
+                handleExpertFilter(userComplianceData!.sortedPosts);
+              }
+            }}
+            className="px-4 pt-6 pb-5 bg-white shadow-lg dark:bg-gray-700 hover:bg-gray-900 w-full xl:pt-8 xl:pb-8"
+          >
+            <div className="flex gap-2 items-center">
+              <span className="material-symbols-outlined filled material-icons md-48 text-blue-400">
+                bookmark_added
               </span>
+              <p className="text-5xl font-bold text-black dark:text-white">
+                {session ? userComplianceData?.userCompliance.length : 0}
+              </p>
             </div>
-          </div>
+            <p className="text-sm text-gray-400 w-2/3 sm:w-32 md:w-5/6 xl:w-32 2xl:w-full">
+              {session
+                ? `Contributions made, see what\'s happening now!`
+                : "Contributions made, sign up to start!"}
+            </p>
+          </Link>
+          <Link
+            href="/posts"
+            onClick={() => {
+              handleExpertFilter(divisiveData);
+            }}
+            className="px-4 pt-6 pb-5 bg-white shadow-lg dark:bg-gray-700 hover:bg-gray-900 w-full xl:pt-8 xl:pb-8"
+          >
+            <div className="flex gap-2 items-center">
+              <span className="material-symbols-outlined filled material-icons md-48 text-red-400">
+                call_split
+              </span>
+              <p className="text-5xl font-bold text-black dark:text-white">
+                {divisiveData?.length}
+              </p>
+            </div>
+            <p className="text-sm text-gray-400 w-2/3 sm:w-32 md:w-5/6 xl:w-32 2xl:w-full">
+              Submissions with a high degree of divisiveness
+            </p>
+          </Link>
+          <Link
+            href="/posts"
+            onClick={() => {
+              handleExpertFilter(expertData);
+            }}
+            className="px-4 pt-6 pb-5 bg-white shadow-lg dark:bg-gray-700 hover:bg-gray-900 w-full xl:pt-8 xl:pb-8"
+          >
+            <div className="flex gap-2 items-center">
+              <span className="material-symbols-outlined filled material-icons md-48 text-amber-200">
+                person_search
+              </span>
+              <p className="text-5xl font-bold text-black dark:text-white">
+                {expertData?.length}
+              </p>
+            </div>
+            <p className="text-sm text-gray-400 w-3/5 md:w-4/6 xl:w-4/5 2xl:full">
+              Submissions Looking for Experts
+            </p>
+          </Link>
         </div>
       </div>
     </>

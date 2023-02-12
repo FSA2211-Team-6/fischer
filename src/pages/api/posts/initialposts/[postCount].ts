@@ -18,6 +18,7 @@ export default async function handler(
       expertResponses: true,
       comments: true,
     },
+    orderBy: { id: "desc" },
   });
 
   const firstPosts: Array<Post> = JSON.parse(JSON.stringify(posts));

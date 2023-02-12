@@ -49,6 +49,7 @@ declare global {
     searchCursor: number | null;
     searchResults: Array<Post>;
     searchString: string;
+    statsFilter: boolean;
   }
 
   interface Post {
