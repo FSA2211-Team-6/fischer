@@ -155,7 +155,7 @@ model Website {
 model Expert {
   topicId           Int
   createdAt         DateTime  @default(now())
-  updatedAt         DateTime
+  updatedAt         DateTime?
   id                Int       @id @default(autoincrement())
   fischerId         Int
   approval          Boolean?
@@ -165,6 +165,7 @@ model Expert {
 
   topic             Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
   user              User          @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
+  @@unique([fischerId, topicId])
 }
 
 model Topic {

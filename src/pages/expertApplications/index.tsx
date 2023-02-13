@@ -3,7 +3,7 @@ import Image from "next/image";
 import EditProfileModal from "@/components/SharedComponents/EditProfileModal";
 import DeleteModal from "@/components/SharedComponents/DeleteModal";
 
-export default function Users() {
+export default function ExpertApplications() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [users, setUsers] = useState([]);
@@ -41,7 +41,9 @@ export default function Users() {
         <div className="w-full mb-1">
           <div className="mb-4">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              {filter.length ? "Your search: " + filter : "All Users"}
+              {filter.length
+                ? "Your search: " + filter
+                : "Expertise Applications"}
             </h1>
           </div>
           <div className="sm:flex">
