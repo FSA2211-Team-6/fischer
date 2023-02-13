@@ -9,6 +9,7 @@ const ExpertsApi = async (req: NextApiRequest, res: NextApiResponse) => {
         const data = await prisma.expert.findMany({
           where: { fischerId: +fischerId },
           include: { expertResponses: true },
+
         });
         return res.status(200).json(data);
       }
