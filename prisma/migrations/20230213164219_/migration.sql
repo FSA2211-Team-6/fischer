@@ -90,6 +90,7 @@ CREATE TABLE "Post" (
     "aiCompliance" INTEGER NOT NULL DEFAULT 0,
     "publicCompliance" INTEGER NOT NULL DEFAULT 0,
     "topicName" TEXT NOT NULL,
+    "innerHTML" TEXT NOT NULL DEFAULT 'test',
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
