@@ -10,7 +10,7 @@ const Filters = () => {
   const statFilter = useAppSelector(selectSearchData).statsFilter;
   return (
     <>
-      <div className="flex mt-24">
+      <div className="flex mt-24 px-14">
         {statFilter ? (
           <div
             onClick={() => {

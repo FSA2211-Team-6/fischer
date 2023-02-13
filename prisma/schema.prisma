@@ -112,6 +112,7 @@ model Post {
   aiCompliance      Int             @default(0)
   publicCompliance  Int             @default(0)
   topicName         String
+  innerHTML         String          @default("test")
 
   expertResponses   ExpertResponse[]
   comments          Comment[]

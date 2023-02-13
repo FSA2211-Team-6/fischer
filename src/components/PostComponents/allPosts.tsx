@@ -171,7 +171,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   /////////////////////////////////////////////////////////////////////////////
 
   return (
-    <div>
+    <div className="px-14">
       {filteredPosts!.length > 0 &&
         filteredPosts!.map((post: Post, index: Number) => {
           return (

@@ -86,6 +86,7 @@ export default async function handler(
     aiResponse: aiData.cleanResponse,
     aiCompliance: aiData.compliance,
     topicName: topic.name,
+    innerHTML: post.innerHTML.innerHTML,
   };
 
   const newPost = await prisma.post.create({ data: addPost });
