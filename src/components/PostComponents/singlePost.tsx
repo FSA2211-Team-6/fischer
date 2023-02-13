@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 import { useAppDispatch } from "@/redux/store";
-import { addUserCompliance } from "@/redux/slices/singlePostSlice";
+import {
+  addUserCompliance,
+  addExpertCompliance,
+} from "@/redux/slices/singlePostSlice";
 import { useSession } from "next-auth/react";
 import { getPostStats } from "@/library/post/postHelpers";
 import Image from "next/image";
 
-export default function SinglePost({ post }: any) {
+export default function SinglePost({ post, currExpertId }: any) {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
 
@@ -16,6 +19,10 @@ export default function SinglePost({ post }: any) {
   >([]);
   const [votemAnimation, setVoteAnimation] = React.useState<boolean>(false);
   const [postClicked, setPostClicked] = React.useState<number | null>(null);
+
+  const [expertCompliance, setExpertCompliance] = React.useState<
+    Array<ExpertCompliance>
+  >([]);
 
   //useEffects///////////////////////////////////////////////////////////////////
 
@@ -33,10 +40,21 @@ export default function SinglePost({ post }: any) {
       const complianceData = await data.json();
       setUserCompliance(complianceData);
     };
-    if (userId) {
+
+    const fetchExpertCompliance = async () => {
+      const data = await fetch(`/api/expertcompliance/${currExpertId}`);
+      const expertComplianceData = await data.json();
+      setExpertCompliance(expertComplianceData);
+    };
+
+    if (currExpertId) {
+      fetchExpertCompliance();
+    } else if (userId) {
       fetchUserCompliance();
     }
-  }, [userId]);
+  }, [userId, currExpertId]);
+
+  console.log("ExpertCompliance: ", expertCompliance);
 
   //Vote submission logic//////////////////////////////////////////////////////
   const submitVote = async (compliance: number, postId: number) => {
@@ -46,19 +64,42 @@ export default function SinglePost({ post }: any) {
       compliance: compliance,
     };
 
-    const response = await fetch("/api/usercompliance", {
-      method: "POST",
-      body: JSON.stringify(newCompliance),
-    });
-    const data = await response.json();
+    const newExpertCompliance = {
+      expertId: currExpertId,
+      postId: postId,
+      compliance: compliance,
+    };
 
-    dispatch(addUserCompliance(data));
+    if (currExpertId) {
+      const response = await fetch("/api/expertcompliance", {
+        method: "POST",
+        body: JSON.stringify(newExpertCompliance),
+      });
+      const data = await response.json();
+      console.log("newExpertCompliance: ", newExpertCompliance);
 
-    setUserCompliance([
-      ...userCompliance,
-      ...[{ postId, fischerId: userId, compliance: compliance }],
-    ]);
+      dispatch(addExpertCompliance(data));
+
+      setExpertCompliance([
+        ...expertCompliance,
+        ...[{ postId, expertId: currExpertId, compliance: compliance }],
+      ]);
+    } else {
+      const response = await fetch("/api/usercompliance", {
+        method: "POST",
+        body: JSON.stringify(newCompliance),
+      });
+      const data = await response.json();
+
+      dispatch(addUserCompliance(data));
+
+      setUserCompliance([
+        ...userCompliance,
+        ...[{ postId, fischerId: userId, compliance: compliance }],
+      ]);
+    }
   };
+
   /////////////////////////////////////////////////////////////////////////////
 
   return (
@@ -130,7 +171,95 @@ export default function SinglePost({ post }: any) {
                     Assertion
                   </p>
                   {/* start voting buttons */}
-                  {userId ? (
+                  {currExpertId ? (
+                    <div>
+                      {expertCompliance.find(
+                        (x) => x.postId === post.singlePostData.id
+                      ) ? (
+                        <div className="flex items-center">
+                          <div className="group relative flex items-center">
+                            <span className="material-symbols-outlined hover:cursor-pointer">
+                              beenhere
+                            </span>
+                            <span
+                              className="group-hover:opacity-100  transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            >
+                              You&#39;ve already voted.
+                            </span>
+                          </div>
+                          <span
+                            className={`${
+                              votemAnimation &&
+                              post.singlePostData.id === postClicked
+                                ? "animate-fade"
+                                : "opacity-0"
+                            } opacity-0 text-xs ml-2`}
+                            onAnimationEnd={() => setVoteAnimation(false)}
+                          >
+                            Thank you for voting. Your feedback matters.
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-beginning gap-1 items-center">
+                          <button
+                            onClick={() => {
+                              submitVote(1, post.singlePostData.id);
+                              setVoteAnimation(true);
+                              setPostClicked(post.singlePostData.id);
+                            }}
+                            className="flex group justify-center items-center relative"
+                          >
+                            <span
+                              className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            >
+                              Assertion is true
+                            </span>
+                            <span className="material-symbols-outlined text-emerald-600 hover:text-emerald-400">
+                              verified_user
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              submitVote(0, post.singlePostData.id);
+                              setVoteAnimation(true);
+                              setPostClicked(post.singlePostData.id);
+                            }}
+                            className="flex group justify-center items-center relative"
+                          >
+                            <span
+                              className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            >
+                              Assertion is Subjective
+                            </span>
+                            <span className="material-symbols-outlined text-amber-400 hover:text-amber-300">
+                              gpp_maybe
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              submitVote(-1, post.singlePostData.id);
+                              setVoteAnimation(true);
+                              setPostClicked(post.singlePostData.id);
+                            }}
+                            className="flex group justify-center items-center relative"
+                          >
+                            <span
+                              className="group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                      -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                            >
+                              Assertion is False
+                            </span>
+                            <span className="material-symbols-outlined text-red-400 hover:text-red-300">
+                              gpp_bad
+                            </span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
                     <div>
                       {userCompliance.find(
                         (x) => x.postId === post.singlePostData.id
@@ -218,7 +347,7 @@ export default function SinglePost({ post }: any) {
                         </div>
                       )}
                     </div>
-                  ) : null}
+                  )}
                   {/* end voting buttons */}
                 </div>
                 <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative flex items-center gap-4">

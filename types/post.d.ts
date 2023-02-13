@@ -34,6 +34,11 @@ declare global {
     fischerId: number | null;
     postId: number;
   }
+  interface ExpertCompliance {
+    compliance: number;
+    expertId: number | null;
+    postId: number;
+  }
 
   interface ExpertResponse {
     id: number;
@@ -68,7 +73,9 @@ declare global {
     websiteArticleId: number;
     comments: Array<comment>;
     expertResponses: Array<ExpertResponse>;
+    expertCompliances: Array<ExpertCompliance | null>;
   }
+
   interface allPostsState {
     allPostsData: Array<Post>;
     filteredPosts: Array<Post>;

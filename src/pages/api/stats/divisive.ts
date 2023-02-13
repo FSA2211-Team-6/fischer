@@ -10,11 +10,12 @@ export default async function handler(
       websiteArticle: { include: { website: true } },
       user: true,
       userCompliances: true,
+      expertCompliances: true,
       expertResponses: true,
       comments: true,
     },
     where: {
-      expertResponses: { every: { compliance: 1 } },
+      expertCompliances: { every: { compliance: 1 } },
       aiCompliance: -1,
     },
   });
@@ -24,11 +25,12 @@ export default async function handler(
       websiteArticle: { include: { website: true } },
       user: true,
       userCompliances: true,
+      expertCompliances: true,
       expertResponses: true,
       comments: true,
     },
     where: {
-      expertResponses: { every: { compliance: -1 } },
+      expertCompliances: { every: { compliance: -1 } },
       aiCompliance: 1,
     },
   });
