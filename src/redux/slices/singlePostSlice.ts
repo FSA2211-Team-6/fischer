@@ -30,6 +30,7 @@ export interface post {
   host: String;
   truthVotes: truthVotes;
   comments: Array<comment>;
+  expertCompliances: Array<ExpertCompliance>;
 }
 
 export interface singlePostState {
@@ -38,16 +39,8 @@ export interface singlePostState {
   error: string | null;
 }
 
-const initialState: singlePostState = {
-  singlePostData: {
-    postId: null,
-    user: { userId: null, userName: "", firstName: "", lastName: "" },
-    fact: "",
-    articleURL: "",
-    host: "",
-    truthVotes: { greenCount: 0, yellowCount: 0, redCount: 0 },
-    comments: [],
-  },
+const initialState: any = {
+  singlePostData: {},
   status: "idle",
   error: null,
 };
@@ -71,6 +64,9 @@ const singlePostSlice = createSlice({
   reducers: {
     addUserCompliance: (state: any, action: PayloadAction<any>) => {
       state.singlePostData.userCompliances.push(action.payload);
+    },
+    addExpertCompliance: (state: any, action: PayloadAction<any>) => {
+      state.singlePostData.expertCompliances.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -98,6 +94,7 @@ export const singlePostState = (state: RootState) => {
   return state.singlePost;
 };
 
-export const { addUserCompliance } = singlePostSlice.actions;
+export const { addUserCompliance, addExpertCompliance } =
+  singlePostSlice.actions;
 
 export default singlePostSlice.reducer;

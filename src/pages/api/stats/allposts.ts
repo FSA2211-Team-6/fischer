@@ -11,6 +11,7 @@ export default async function handler(
       websiteArticle: { include: { website: true } },
       user: true,
       userCompliances: true,
+      expertCompliances: true,
       expertResponses: true,
       comments: true,
     },

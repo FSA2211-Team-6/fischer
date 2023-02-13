@@ -17,7 +17,7 @@ model ExpertResponse {
   postId      Int
   expertId    Int     @unique
   content     String
-  compliance  Int      @default(0)
+  compliance  Int?      
   createdAt   DateTime @default(now())
   upvotes     Int      @default(0)
   votedUsers  UserExpertResponseVote[]
@@ -34,6 +34,16 @@ model UserExpertResponseVote {
   user            User      @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
   expertResponse         ExpertResponse      @relation(fields: [expertResponseId], references: [id], onDelete: Cascade)
   @@unique([fischerId, expertResponseId])
+}
+
+model ExpertCompliance {
+  postId          Int
+  compliance      Int
+  expertId       Int
+
+  expert            Expert      @relation(fields: [expertId], references: [id], onDelete: Cascade)
+  post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  @@unique([expertId, postId])
 }
 
 model Comment {
@@ -82,6 +92,7 @@ model User {
   isAdmin           Boolean   @default(false)
 
   userCompliances   UserCompliance[]
+  
   accounts          Account[]
   sessions          Session[]
   comments          Comment[]
@@ -117,7 +128,7 @@ model Post {
   expertResponses   ExpertResponse[]
   comments          Comment[]
   userCompliances   UserCompliance[]
-
+  expertCompliances ExpertCompliance[]
   websiteArticle    WebsiteArticle?  @relation(fields: [websiteArticleId], references: [id])
   topic             Topic           @relation(fields: [topicId], references: [id])
   user              User?            @relation(fields: [fischerId], references: [fischerId])
@@ -150,6 +161,7 @@ model Expert {
   approval          Boolean?
 
   expertResponses   ExpertResponse[]
+  expertCompliances ExpertCompliance[]
 
   topic             Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
   user              User          @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
