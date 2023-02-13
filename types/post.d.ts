@@ -25,9 +25,12 @@ declare global {
     email: string;
     emailVerified: boolean | null;
     fischerId: number;
-    id: number;
+    id: string;
     image: string | null;
     name: string;
+    isAdmin: boolean;
+    currentTokens: number;
+    maxTokens: number;
   }
   interface UserCompliance {
     compliance: number;
@@ -83,6 +86,12 @@ declare global {
     cursor: number;
     status: "loading" | "idle";
     error: string | null;
+  }
+
+  interface Topic {
+    name: string;
+    posts: any[];
+    id: number;
   }
 }
 
