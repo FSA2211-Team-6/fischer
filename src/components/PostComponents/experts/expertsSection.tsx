@@ -48,10 +48,14 @@ export default function Experts({ post }: any) {
       )
     : expertResponses;
 
+  const newResponses = filteredExpertResponses.filter(
+    (expertResponse: any) => expertResponse.content.trim() !== ""
+  );
+
   return (
     <>
       {/* COMMENT Map begins*/}
-      {filteredExpertResponses.map((expertResponse: any) => (
+      {newResponses.map((expertResponse: any) => (
         <SingleExpertResponse
           key={expertResponse.id}
           expertResponse={expertResponse}

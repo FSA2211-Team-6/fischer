@@ -86,7 +86,11 @@ export default function SinglePostPage() {
         <main className="relative h-screen bg-gray-100 dark:bg-gray-800 overflow-visible">
           <div className="flex flex-col justify-center pt-10">
             <div>
-              <SinglePost post={post} />
+              <SinglePost
+                post={post}
+                userId={userId}
+                currExpertId={currExpertId}
+              />
             </div>
           </div>
 
