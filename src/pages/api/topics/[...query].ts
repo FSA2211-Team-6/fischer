@@ -9,7 +9,7 @@ export default async function handler(
   const page = parseInt(query[0]);
   const filter = query[1];
 
-  const users = await prisma.user.findMany({
+  const topics = await prisma.topic.findMany({
     skip: (page - 1) * 20,
     take: 20,
     where: {
@@ -19,10 +19,9 @@ export default async function handler(
       },
     },
     include: {
-      expertise: true,
-      comments: true,
+      experts: true,
       posts: true,
     },
   });
-  res.json(users);
+  res.json(topics);
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-export default function EditProfileModal(user: user) {
+export default function EditProfileModal(user: User) {
   const [showModal, setShowModal] = useState(false);
   return (
     <>
@@ -33,7 +33,7 @@ export default function EditProfileModal(user: user) {
               {/*content*/}
               <div className="border-2 rounded-lg shadow-lg relative flex flex-col w-full bg-white dark:bg-gray-800 outline-none focus:outline-none">
                 {/*header*/}
-                <div className="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-700">
+                <div className="flex items-center p-5 border-b rounded-t dark:border-gray-700">
                   <Image
                     className="w-10 h-10 rounded-full"
                     src={user.image}
@@ -42,7 +42,7 @@ export default function EditProfileModal(user: user) {
                     height={100}
                   />
                   <h3 className="text-xl font-semibold dark:text-white">
-                    {" " + user.name}
+                    {user.name}
                   </h3>
                   <button
                     type="button"
@@ -57,9 +57,9 @@ export default function EditProfileModal(user: user) {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </button>
