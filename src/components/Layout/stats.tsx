@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { cleanURL } from "@/library/stats/statsHelpers";
 
 const Stats = () => {
   const { data: session, status } = useSession();
@@ -101,7 +102,7 @@ const Stats = () => {
                         }}
                         className="bg-white text-gray-700 w-20 sm:w-24 md:w-36 lg:w-36 2xl:w-32 xl:w-28 md:text-sm xl:text-sm 2xl:text-base lg:text-base text-center p-4 rounded-full py-1 text-xs  hover:bg-gray-900 hover:text-white cursor-pointer"
                       >
-                        {site.name.slice(12, site.name.length - 4)}
+                        {cleanURL(site.name)}
                       </div>
                     </div>
                   );
