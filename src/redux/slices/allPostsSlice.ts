@@ -69,9 +69,9 @@ export const allPostsSlice = createSlice({
       state.filteredPosts.push(action.payload);
     },
     addUserCompliance: (state: any, action: PayloadAction<any>) => {
-      state.allPostsData[action.payload.index].userCompliances.push(
-        action.payload.data
-      );
+      // state.allPostsData[action.payload.index].userCompliances.push(
+      //   action.payload.data
+      // );
       state.filteredPosts[action.payload.index].userCompliances.push(
         action.payload.data
       );

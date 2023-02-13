@@ -1,15 +1,18 @@
 import { changeFilter } from "@/redux/slices/allPostsSlice";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cleanURL } from "@/library/stats/statsHelpers";
+import { selectFilteredPosts } from "@/redux/slices/allPostsSlice";
 
 const Stats = () => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const filteredPosts = useAppSelector(selectFilteredPosts);
 
   const [expertData, setExpertData] = useState<Post[] | Array<any>>([]);
   const [divisiveData, setDivisiveData] = useState<Post[] | Array<any>>([]);
@@ -36,20 +39,25 @@ const Stats = () => {
       setTopSiteData(data);
     };
 
+    fetchTopSiteData();
+    fetchExpertData();
+    fetchDivisiveData();
+  }, [session]);
+
+  useEffect(() => {
     const fetchUserComplianceData = async () => {
       if (session) {
         const response = await fetch(
           `/api/stats/usercompliance/${session?.user.fischerId}`
         );
         const data = await response.json();
+        console.log(data);
         setUserComplianceData(data);
       }
     };
-    fetchTopSiteData();
-    fetchExpertData();
-    fetchDivisiveData();
+
     fetchUserComplianceData();
-  }, [session]);
+  }, [session, filteredPosts]);
 
   const handleExpertFilter = (filterData: Post[]) => {
     dispatch(changeFilter(filterData));
