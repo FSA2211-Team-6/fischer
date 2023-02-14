@@ -14,16 +14,28 @@ export const getPostStats = (post: Post) => {
   let userAverage: number | null = null;
 
   //get the average expert compliance
-  if (post.expertResponses.length > 0) {
+  // if (post.expertResponses.length > 0) {
+  //   expertAverage =
+  //     post.expertResponses
+  //       .map((vote) => {
+  //         return vote.compliance;
+  //       })
+  //       .reduce((a, b) => {
+  //         return a + b;
+  //       }) / post.expertResponses.length;
+  // }
+
+  if (post.expertCompliances.length > 0) {
     expertAverage =
-      post.expertResponses
+      post.expertCompliances
         .map((vote) => {
-          return vote.compliance;
+          return vote!.compliance;
         })
         .reduce((a, b) => {
           return a + b;
-        }) / post.expertResponses.length;
+        }) / post.expertCompliances.length;
   }
+
   //get the average user compliance
   if (post.userCompliances.length > 0) {
     userAverage =

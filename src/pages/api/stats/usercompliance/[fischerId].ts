@@ -7,13 +7,24 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const fischerId = req.query.fischerId;
-  const userCompliance = await prisma.userCompliance.findMany({
+
+  const compliance = await prisma.userCompliance.findMany({
+    where: { fischerId: Number(fischerId) },
+  });
+  const expertCompliance = await prisma.expertCompliance.findMany({
     where: { fischerId: Number(fischerId) },
   });
 
-  const postIds = userCompliance.map((compliance) => {
+  const userCompliance = [...compliance, ...expertCompliance];
+
+  const userPostIds = userCompliance.map((compliance) => {
     return compliance.postId;
   });
+  const expertPostIds = expertCompliance.map((compliance) => {
+    return compliance.postId;
+  });
+
+  const postIds = [...userPostIds, ...expertPostIds];
 
   const posts = await prisma.post.findMany({
     include: {

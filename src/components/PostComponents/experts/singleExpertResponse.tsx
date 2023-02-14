@@ -54,10 +54,6 @@ export default function SingleExpertResponse({
     }
   }, [expertiseArray, post.singlePostData.topicId]);
 
-  // console.log(
-  //   `post topic is ${post.singlePostData.topicId}, isExpert: ${isExpert}`
-  // );
-
   const fetchUserExpertResponseVote = async () => {
     const data = await fetch(`/api/userexpertresponsevote/${userId}`);
     const voteData = await data.json();
@@ -255,7 +251,7 @@ export default function SingleExpertResponse({
                         value={content}
                         onChange={handleContentChange}
                       />
-                      <button type="submit">Edit</button>
+                      <button type="submit">Edit Comment</button>
                     </form>
                   ) : (
                     <div>

@@ -69,10 +69,18 @@ export const allPostsSlice = createSlice({
       state.filteredPosts.push(action.payload);
     },
     addUserCompliance: (state: any, action: PayloadAction<any>) => {
-      state.allPostsData[action.payload.index].userCompliances.push(
+      // state.allPostsData[action.payload.index].userCompliances.push(
+      //   action.payload.data
+      // );
+      state.filteredPosts[action.payload.index].userCompliances.push(
         action.payload.data
       );
-      state.filteredPosts[action.payload.index].userCompliances.push(
+    },
+    addExpertCompliance: (state: any, action: PayloadAction<any>) => {
+      // state.allPostsData[action.payload.index].expertCompliances.push(
+      //   action.payload.data
+      // );
+      state.filteredPosts[action.payload.index].expertCompliances.push(
         action.payload.data
       );
     },
@@ -177,6 +185,7 @@ export const {
   rehydrate,
   clearSearchData,
   addUserCompliance,
+  addExpertCompliance,
   changeFilter,
 } = allPostsSlice.actions;
 
