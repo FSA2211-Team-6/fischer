@@ -5,7 +5,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const fischerId = parseInt(req.query.fischerId);
+  const fischerString: any = req.query.fischerId;
+  const fischerId: any = parseInt(fischerString);
 
   try {
     if (fischerId === 0) {
@@ -35,5 +36,5 @@ export default async function handler(
   } catch (err) {
     console.log(err);
   }
-  res.status(200).send();
+  res.status(200).send("success");
 }

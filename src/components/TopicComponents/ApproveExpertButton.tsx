@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ApproveExpertButton({ fischerId, topicId }) {
+export default function ApproveExpertButton({ fischerId, topicId }: any) {
   const approveExpert = async () => {
     await fetch(`/api/expert/${fischerId}/${topicId}/true`, {
       method: "PUT",
