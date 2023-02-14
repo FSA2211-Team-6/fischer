@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { names } = req.query;
+  const { names } = req.query as { names: string };
   const currentName = names[0];
   const newName = names[1];
 

@@ -31,6 +31,7 @@ declare global {
     isAdmin: boolean;
     currentTokens: number;
     maxTokens: number;
+    expertise: Array;
   }
   interface UserCompliance {
     compliance: number;

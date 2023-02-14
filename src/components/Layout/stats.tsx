@@ -51,7 +51,6 @@ const Stats = () => {
           `/api/stats/usercompliance/${session?.user.fischerId}`
         );
         const data = await response.json();
-        console.log(data);
         setUserComplianceData(data);
       }
     };
