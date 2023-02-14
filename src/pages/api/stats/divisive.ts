@@ -15,7 +15,7 @@ export default async function handler(
       comments: true,
     },
     where: {
-      expertCompliances: { every: { compliance: 1 } },
+      expertCompliances: { some: { compliance: 1 } },
       aiCompliance: -1,
     },
   });
