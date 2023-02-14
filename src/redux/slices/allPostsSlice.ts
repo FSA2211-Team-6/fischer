@@ -6,7 +6,7 @@ export const fetchInitialPosts = createAsyncThunk(
   "/api/posts/initialposts",
   async (numPosts: number) => {
     const response = await fetch(
-      `http://localhost:3000/api/posts/initialposts/${numPosts}`
+      `https://fischer.onrender.com/api/posts/initialposts/${numPosts}`
     );
 
     const data = await response.json();
