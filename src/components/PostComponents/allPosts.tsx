@@ -192,7 +192,6 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
       (ele: any) => ele.topicId === topicId
     );
     if (expertData) {
-      setIsExpert(true);
       setCurrExpertId(expertData.id);
       if (expertData.id && userId) {
         setExpertCompliance([

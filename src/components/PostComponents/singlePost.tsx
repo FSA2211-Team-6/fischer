@@ -54,8 +54,6 @@ export default function SinglePost({ post, currExpertId }: any) {
     }
   }, [userId, currExpertId]);
 
-  console.log("ExpertCompliance: ", expertCompliance);
-
   //Vote submission logic//////////////////////////////////////////////////////
   const submitVote = async (compliance: number, postId: number) => {
     const newCompliance = {
@@ -77,7 +75,6 @@ export default function SinglePost({ post, currExpertId }: any) {
         body: JSON.stringify(newExpertCompliance),
       });
       const data = await response.json();
-      console.log("newExpertCompliance: ", newExpertCompliance);
 
       dispatch(addExpertCompliance(data));
 

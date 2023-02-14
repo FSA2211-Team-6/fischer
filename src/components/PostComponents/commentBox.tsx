@@ -80,8 +80,6 @@ export default function CommentBox({
     setComment("");
   };
 
-  console.log("expertResponseData", expertResponseData);
-
   return (
     <div className="flex justify-center ">
       <div className=" max-w-3xl w-full outline-1 outline-slate-400">
@@ -104,9 +102,18 @@ export default function CommentBox({
           ></textarea>
           <div className="flex w-full bg-gray-600 ">
             <div className="flex ml-auto">
-              <button className=" px-4 py-1 text-white bg-green-900 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900 ">
-                Comment
-              </button>
+              {comment.trim() === "" ? (
+                <button
+                  className=" px-4 py-1 text-white bg-green-900 rounded-full focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900 shadow-md opacity-60"
+                  disabled
+                >
+                  Comment
+                </button>
+              ) : (
+                <button className=" px-4 py-1 text-white bg-green-900 rounded-full hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900 shadow-md ">
+                  Comment
+                </button>
+              )}
             </div>
           </div>
         </form>
