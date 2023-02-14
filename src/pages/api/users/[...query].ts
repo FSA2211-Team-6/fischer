@@ -19,7 +19,11 @@ export default async function handler(
       },
     },
     include: {
-      expertise: true,
+      expertise: {
+        where: {
+          approval: true,
+        },
+      },
       comments: true,
       posts: true,
     },

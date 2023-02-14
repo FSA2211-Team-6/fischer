@@ -54,8 +54,6 @@ export default function SinglePost({ post, currExpertId }: any) {
     }
   }, [userId, currExpertId]);
 
-  console.log("ExpertCompliance: ", expertCompliance);
-
   //Vote submission logic//////////////////////////////////////////////////////
   const submitVote = async (compliance: number, postId: number) => {
     const newCompliance = {
@@ -68,6 +66,7 @@ export default function SinglePost({ post, currExpertId }: any) {
       expertId: currExpertId,
       postId: postId,
       compliance: compliance,
+      fischerId: userId,
     };
 
     if (currExpertId) {
@@ -76,13 +75,19 @@ export default function SinglePost({ post, currExpertId }: any) {
         body: JSON.stringify(newExpertCompliance),
       });
       const data = await response.json();
-      console.log("newExpertCompliance: ", newExpertCompliance);
 
       dispatch(addExpertCompliance(data));
 
       setExpertCompliance([
         ...expertCompliance,
-        ...[{ postId, expertId: currExpertId, compliance: compliance }],
+        ...[
+          {
+            postId,
+            fischerId: userId,
+            expertId: currExpertId,
+            compliance: compliance,
+          },
+        ],
       ]);
     } else {
       const response = await fetch("/api/usercompliance", {

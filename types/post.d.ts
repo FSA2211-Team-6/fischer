@@ -41,6 +41,7 @@ declare global {
     compliance: number;
     expertId: number | null;
     postId: number;
+    fischerId: number | null;
   }
 
   interface ExpertResponse {

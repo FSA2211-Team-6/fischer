@@ -76,6 +76,14 @@ export const allPostsSlice = createSlice({
         action.payload.data
       );
     },
+    addExpertCompliance: (state: any, action: PayloadAction<any>) => {
+      // state.allPostsData[action.payload.index].expertCompliances.push(
+      //   action.payload.data
+      // );
+      state.filteredPosts[action.payload.index].expertCompliances.push(
+        action.payload.data
+      );
+    },
     updateCursor: (state: any, action: PayloadAction<number>) => {
       state.cursor = action.payload;
     },
@@ -177,6 +185,7 @@ export const {
   rehydrate,
   clearSearchData,
   addUserCompliance,
+  addExpertCompliance,
   changeFilter,
 } = allPostsSlice.actions;
 

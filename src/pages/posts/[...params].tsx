@@ -78,12 +78,10 @@ export default function SinglePostPage() {
     }
   }, [expertiseArray, isExpert, post]);
 
-  console.log("isExpertResponse: ", isExpertResponse);
-
   return (
     <>
       {currTabSelection ? (
-        <main className="relative h-screen bg-gray-100 dark:bg-gray-800 overflow-visible">
+        <main className="px-14 relative h-screen bg-gray-100 dark:bg-gray-800 overflow-visible">
           <div className="flex flex-col justify-center pt-10">
             <div>
               <SinglePost

@@ -8,6 +8,7 @@ export default async function handler(
   const { query } = req.query;
   const fischerId = parseInt(query[0]);
   const topicId = parseInt(query[1]);
+  const approval = query[2];
 
   if (req.method === "GET") {
     try {
@@ -23,7 +24,7 @@ export default async function handler(
     } catch (err) {
       console.log(err);
     }
-  } else if (req.method === "PUT") {
+  } else if (req.method === "POST") {
     await prisma.expert.upsert({
       where: {
         fischerId_topicId: {
@@ -32,6 +33,40 @@ export default async function handler(
         },
       },
       update: {},
+      create: {
+        topicId,
+        fischerId,
+      },
+    });
+    res.status(200).send();
+  } else if (req.method === "PUT" && approval === "true") {
+    await prisma.expert.upsert({
+      where: {
+        fischerId_topicId: {
+          fischerId,
+          topicId,
+        },
+      },
+      update: {
+        approval: true,
+      },
+      create: {
+        topicId,
+        fischerId,
+      },
+    });
+    res.status(200).send();
+  } else if (req.method === "PUT" && approval === "false") {
+    await prisma.expert.upsert({
+      where: {
+        fischerId_topicId: {
+          fischerId,
+          topicId,
+        },
+      },
+      update: {
+        approval: false,
+      },
       create: {
         topicId,
         fischerId,

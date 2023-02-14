@@ -203,7 +203,7 @@ export default function SingleComment({ comment, handleDeleteComment }: any) {
                         value={content}
                         onChange={handleContentChange}
                       />
-                      <button type="submit">Edit</button>
+                      <button type="submit">Edit Comment</button>
                     </form>
                   ) : (
                     <div>
