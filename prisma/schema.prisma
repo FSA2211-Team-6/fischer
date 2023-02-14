@@ -15,7 +15,7 @@ datasource db {
 model ExpertResponse {
   id          Int    @id @default(autoincrement())
   postId      Int
-  expertId    Int     @unique
+  expertId    Int    
   content     String
   compliance  Int?      
   createdAt   DateTime @default(now())
