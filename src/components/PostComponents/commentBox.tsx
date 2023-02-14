@@ -35,13 +35,15 @@ export default function CommentBox({
   ) => {
     event.preventDefault();
     const response = await fetcher(
-      `fischer.onrender.com/api/posts/${post.singlePostData.id}/comments`,
+      `${process.env.NEXT_PUBLIC_HOST_NAME}/api/posts/${post.singlePostData.id}/comments`,
       {
         method: "POST",
         body: JSON.stringify(commentData),
       }
     );
-    mutate(`fischer.onrender.com/api/posts/${post.singlePostData.id}/comments`);
+    mutate(
+      `${process.env.NEXT_PUBLIC_HOST_NAME}/api/posts/${post.singlePostData.id}/comments`
+    );
     setComment("");
   };
 
@@ -51,7 +53,7 @@ export default function CommentBox({
     event.preventDefault();
 
     const existingCommentsResponse = await fetch(
-      `fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`,
+      `${process.env.NEXT_PUBLIC_HOST_NAME}/api/posts/${post.singlePostData.id}/experts`,
       { method: "GET" }
     );
     const existingComments = await existingCommentsResponse.json();
@@ -68,13 +70,15 @@ export default function CommentBox({
     }
 
     const response = await fetcher(
-      `fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`,
+      `${process.env.NEXT_PUBLIC_HOST_NAME}/api/posts/${post.singlePostData.id}/experts`,
       {
         method: "POST",
         body: JSON.stringify(expertResponseData),
       }
     );
-    mutate(`fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`);
+    mutate(
+      `${process.env.NEXT_PUBLIC_HOST_NAME}/api/posts/${post.singlePostData.id}/experts`
+    );
     setComment("");
   };
 
