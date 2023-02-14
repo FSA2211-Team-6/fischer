@@ -6,7 +6,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const email = req.query.email;
+  const email: any = req.query.email;
 
   const data = await prisma.user.findUnique({
     where: { email },
