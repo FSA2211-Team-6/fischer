@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { query } = req.query;
+  const { query } = req.query as { query: any[] };
   const fischerId = parseInt(query[0]);
   const topicId = parseInt(query[1]);
   const approval = query[2];
@@ -38,7 +38,7 @@ export default async function handler(
         fischerId,
       },
     });
-    res.status(200).send();
+    res.status(200).send("");
   } else if (req.method === "PUT" && approval === "true") {
     await prisma.expert.upsert({
       where: {
@@ -55,7 +55,7 @@ export default async function handler(
         fischerId,
       },
     });
-    res.status(200).send();
+    res.status(200).send("");
   } else if (req.method === "PUT" && approval === "false") {
     await prisma.expert.upsert({
       where: {
@@ -72,6 +72,6 @@ export default async function handler(
         fischerId,
       },
     });
-    res.status(200).send();
+    res.status(200).send("");
   }
 }
