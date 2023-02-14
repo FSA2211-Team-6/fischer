@@ -10,9 +10,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { cleanURL } from "@/library/stats/statsHelpers";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const response = await fetch(
-    "https://fischer.onrender.com/api/stats/allposts"
-  );
+  const response = await fetch("fischer.onrender.com/api/stats/allposts");
   const allPostStats = await response.json();
   return {
     props: {
