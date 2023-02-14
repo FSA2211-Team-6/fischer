@@ -5,16 +5,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { userInfo } = req.query;
+  const { userInfo }: any = req.query;
   if (req.method === "DELETE") {
-    const data = await prisma.User.delete({
+    const data = await prisma.user.delete({
       where: {
         id: userInfo[0],
       },
     });
     res.status(200).json(data);
   } else if (req.method === "UPDATE") {
-    const data = await prisma.User.update({
+    const data = await prisma.user.update({
       where: {
         id: userInfo[0],
       },

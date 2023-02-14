@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { query } = req.query;
+  const { query }: any = req.query;
   const page = parseInt(query[0]);
   const filter = query[1];
 
