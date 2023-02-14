@@ -68,6 +68,7 @@ export default function SinglePost({ post, currExpertId }: any) {
       expertId: currExpertId,
       postId: postId,
       compliance: compliance,
+      fischerId: userId,
     };
 
     if (currExpertId) {
@@ -82,7 +83,14 @@ export default function SinglePost({ post, currExpertId }: any) {
 
       setExpertCompliance([
         ...expertCompliance,
-        ...[{ postId, expertId: currExpertId, compliance: compliance }],
+        ...[
+          {
+            postId,
+            fischerId: userId,
+            expertId: currExpertId,
+            compliance: compliance,
+          },
+        ],
       ]);
     } else {
       const response = await fetch("/api/usercompliance", {

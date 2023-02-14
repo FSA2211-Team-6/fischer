@@ -40,8 +40,10 @@ model ExpertCompliance {
   postId          Int
   compliance      Int
   expertId       Int
+  fischerId       Int
 
   expert            Expert      @relation(fields: [expertId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [fischerId], references: [fischerId], onDelete: Cascade)
   post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   @@unique([expertId, postId])
 }
@@ -92,6 +94,7 @@ model User {
   isAdmin           Boolean   @default(false)
 
   userCompliances   UserCompliance[]
+  expertCompliances   ExpertCompliance[]
   
   accounts          Account[]
   sessions          Session[]

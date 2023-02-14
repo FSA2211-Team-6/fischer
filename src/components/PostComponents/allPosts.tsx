@@ -8,6 +8,7 @@ import {
   selectSearchData,
   fetchMoreSearchResults,
   addUserCompliance,
+  addExpertCompliance,
 } from "@/redux/slices/allPostsSlice";
 import Loading from "./loading";
 import { useSession } from "next-auth/react";
@@ -29,10 +30,17 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
   const [userCompliance, setUserCompliance] = React.useState<
     Array<UserCompliance>
   >([]);
+
   const [votemAnimation, setVoteAnimation] = React.useState<boolean>(false);
   const [postClicked, setPostClicked] = React.useState<number | null>(null);
   const [filteredPosts, setFilteredPosts] = React.useState<any>(firstPosts);
   const [outOfPosts, setOutOfPosts] = React.useState<boolean>(false);
+
+  const [expertCompliance, setExpertCompliance] = React.useState<
+    Array<ExpertCompliance>
+  >([]);
+  const [expertiseArray, setExpertiseArray] = React.useState<Array<object>>([]);
+  const [currExpertId, setCurrExpertId] = React.useState<number | null>(null);
 
   //useSelectors
   const getFilteredPosts = useAppSelector(selectFilteredPosts);
@@ -57,6 +65,17 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
     };
     if (userId) {
       fetchUserCompliance();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchExpertCompliance = async () => {
+      const data = await fetch(`/api/expertcompliancefischer/${userId}`);
+      const expertComplianceData = await data.json();
+      setExpertCompliance(expertComplianceData);
+    };
+    if (userId) {
+      fetchExpertCompliance();
     }
   }, [userId]);
 
@@ -143,30 +162,83 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
 
   //////////////////////////////////////////////////////////////////////////////
 
+  //expert compliance stuff////////////////////////////////////
+
+  //get current user's expertise
+  useEffect(() => {
+    const fetchExpertiseFromUserId = async () => {
+      const response = await fetch(`/api/experts/${userId}`);
+      const data = await response.json();
+      setExpertiseArray(data);
+    };
+    if (userId) {
+      fetchExpertiseFromUserId();
+    }
+  }, [userId]);
+
   //Vote submission logic//////////////////////////////////////////////////////
-  const submitVote = async (compliance: number, postId: number) => {
+  const submitVote = async (
+    compliance: number,
+    postId: number,
+    topicId: number
+  ) => {
     const newCompliance = {
       fischerId: userId,
       postId: postId,
       compliance: compliance,
     };
 
-    const response = await fetch("/api/usercompliance", {
-      method: "POST",
-      body: JSON.stringify(newCompliance),
-    });
-    const data = await response.json();
+    const expertData: any = expertiseArray.find(
+      (ele: any) => ele.topicId === topicId
+    );
+    if (expertData) {
+      setIsExpert(true);
+      setCurrExpertId(expertData.id);
+      if (expertData.id && userId) {
+        setExpertCompliance([
+          ...expertCompliance,
+          ...[
+            {
+              postId,
+              expertId: expertData.id,
+              fischerId: userId,
+              compliance: compliance,
+            },
+          ],
+        ]);
 
-    const index = filteredPosts.findIndex((post: Post) => {
-      return post.id === postId;
-    });
+        const response = await fetch("/api/expertcompliance", {
+          method: "POST",
+          body: JSON.stringify({
+            fischerId: userId,
+            expertId: expertData.id,
+            postId: postId,
+            compliance: compliance,
+          }),
+        });
+        const data = await response.json();
+        const index = filteredPosts.findIndex((post: Post) => {
+          return post.id === postId;
+        });
+        dispatch(addExpertCompliance({ data, index }));
+      }
+    } else {
+      const response = await fetch("/api/usercompliance", {
+        method: "POST",
+        body: JSON.stringify(newCompliance),
+      });
+      const data = await response.json();
 
-    dispatch(addUserCompliance({ data, index }));
-
-    setUserCompliance([
-      ...userCompliance,
-      ...[{ postId, fischerId: userId, compliance: compliance }],
-    ]);
+      const index = filteredPosts.findIndex((post: Post) => {
+        return post.id === postId;
+      });
+      dispatch(addUserCompliance({ data, index }));
+      setUserCompliance([
+        ...userCompliance,
+        ...[{ postId, fischerId: userId, compliance: compliance }],
+      ]);
+    }
+    return;
   };
   /////////////////////////////////////////////////////////////////////////////
 
@@ -241,7 +313,9 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       {/* start voting buttons */}
                       {userId ? (
                         <div>
-                          {userCompliance.find((x) => x.postId === post.id) ? (
+                          {expertCompliance.find(
+                            (x) => x.postId === post.id
+                          ) ? (
                             <div className="flex items-center">
                               <div className="group relative flex items-center">
                                 <span className="material-symbols-outlined hover:cursor-pointer">
@@ -265,11 +339,37 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                                 Thank you for voting. Your feedback matters.
                               </span>
                             </div>
+                          ) : userCompliance.find(
+                              (x) => x.postId === post.id
+                            ) ? (
+                            <div className="flex items-center">
+                              <div className="group relative flex items-center">
+                                <span className="material-symbols-outlined hover:cursor-pointer">
+                                  beenhere
+                                </span>
+                                <span
+                                  className="group-hover:opacity-100  transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
+                                        -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
+                                >
+                                  You&#39;ve already voted.
+                                </span>
+                              </div>
+                              <span
+                                className={`${
+                                  votemAnimation && post.id === postClicked
+                                    ? "animate-fade"
+                                    : "opacity-0"
+                                } opacity-0 text-xs ml-2`}
+                                onAnimationEnd={() => setVoteAnimation(false)}
+                              >
+                                Thank you for voting. Your feedback matters.
+                              </span>
+                            </div>
                           ) : (
                             <div className="flex justify-beginning gap-1 items-center">
                               <button
                                 onClick={() => {
-                                  submitVote(1, post.id);
+                                  submitVote(1, post.id, post.topicId);
                                   setVoteAnimation(true);
                                   setPostClicked(post.id);
                                 }}
@@ -287,7 +387,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                               </button>
                               <button
                                 onClick={() => {
-                                  submitVote(0, post.id);
+                                  submitVote(0, post.id, post.topicId);
                                   setVoteAnimation(true);
                                   setPostClicked(post.id);
                                 }}
@@ -305,7 +405,7 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                               </button>
                               <button
                                 onClick={() => {
-                                  submitVote(-1, post.id);
+                                  submitVote(-1, post.id, post.topicId);
                                   setVoteAnimation(true);
                                   setPostClicked(post.id);
                                 }}
@@ -328,13 +428,6 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       {/* end voting buttons */}
                     </div>
                     <div className="w-full h-1/12 p-2 text-gray-700 dark:text-white text-sm font-sans relative flex items-center gap-4">
-                      {/* <span className="text-4xl font-serif absolute -left-2 -top-2">
-                        &#8220;
-                      </span>
-                      {post.assertion}
-                      <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
-                        &#8221;
-                      </span> */}
                       <span className="material-symbols-outlined nohover material-icons md-36 text-orange-300">
                         format_quote
                       </span>
@@ -347,13 +440,6 @@ const AllPosts: React.FC<Partial<Props>> = ({ firstPosts }) => {
                       AI Response
                     </p>
                     <div className="w-full relative h-1/12 text-gray-700 dark:text-white text-sm font-sans p-2 flex items-center gap-4">
-                      {/* <span className="text-4xl font-serif absolute -left-2 -top-2">
-                        &#8220;
-                      </span>
-                      {post.aiResponse}
-                      <span className="text-4xl font-serif absolute -bottom-5 pl-1.5">
-                        &#8221;
-                      </span> */}
                       <span className="material-symbols-outlined nohover material-icons md-36 text-amber-200">
                         format_quote
                       </span>
