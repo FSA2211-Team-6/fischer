@@ -9,7 +9,7 @@ export default function Comments({ post }: any) {
   const { data: comments, error } = useSWR(
     () =>
       post.singlePostData.id
-        ? `https://fischer.onrender.com/api/posts/${post.singlePostData.id}/comments`
+        ? `fischer.onrender.com/api/posts/${post.singlePostData.id}/comments`
         : null,
     fetcher,
     { revalidateOnFocus: false }
@@ -20,7 +20,7 @@ export default function Comments({ post }: any) {
   const handleDeleteComment = async (commentId: number) => {
     try {
       const response = await fetch(
-        `https://fischer.onrender.com/api/comments/${commentId}`,
+        `fischer.onrender.com/api/comments/${commentId}`,
         {
           method: "DELETE",
         }
