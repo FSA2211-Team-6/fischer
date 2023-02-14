@@ -36,7 +36,7 @@ export default function EditProfileModal(user: User) {
                 <div className="flex items-center p-5 border-b rounded-t dark:border-gray-700">
                   <Image
                     className="w-10 h-10 rounded-full"
-                    src={user.image}
+                    src={user.image as string}
                     alt="avatar"
                     width={100}
                     height={100}

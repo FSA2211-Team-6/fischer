@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function DenyExpertButton({ fischerId, topicId }) {
+export default function DenyExpertButton({ fischerId, topicId }: any) {
   const denyExpert = async () => {
     await fetch(`/api/expert/${fischerId}/${topicId}/false`, {
       method: "PUT",
