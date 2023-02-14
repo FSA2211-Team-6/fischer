@@ -11,7 +11,7 @@ export default function Experts({ post }: any) {
   const { data: expertResponses, error } = useSWR(
     () =>
       post.singlePostData.id
-        ? `http://localhost:3000/api/posts/${post.singlePostData.id}/experts`
+        ? `https://fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`
         : null,
     fetcher,
     { revalidateOnFocus: false }
@@ -22,7 +22,7 @@ export default function Experts({ post }: any) {
   const handleDeleteExpertResponse = async (expertResponseId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/expertresponses/${expertResponseId}`,
+        `https://fischer.onrender.com/api/expertresponses/${expertResponseId}`,
         {
           method: "DELETE",
         }
@@ -56,7 +56,6 @@ export default function Experts({ post }: any) {
     <>
       {/* COMMENT Map begins*/}
       {newResponses.map((expertResponse: any) => (
-
         <SingleExpertResponse
           key={expertResponse.id}
           expertResponse={expertResponse}
