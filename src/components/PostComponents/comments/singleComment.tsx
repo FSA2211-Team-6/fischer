@@ -158,7 +158,7 @@ export default function SingleComment({ comment, handleDeleteComment }: any) {
     };
     try {
       const putResponse = await fetch(
-        `http://localhost:3000/api/comments/${commentId}`,
+        `https://fischer.onrender.com/api/comments/${commentId}`,
         {
           method: "PUT",
           body: JSON.stringify(commentData),

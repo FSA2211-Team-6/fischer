@@ -35,14 +35,14 @@ export default function CommentBox({
   ) => {
     event.preventDefault();
     const response = await fetcher(
-      `http://localhost:3000/api/posts/${post.singlePostData.id}/comments`,
+      `https://fischer.onrender.com/api/posts/${post.singlePostData.id}/comments`,
       {
         method: "POST",
         body: JSON.stringify(commentData),
       }
     );
     mutate(
-      `http://localhost:3000/api/posts/${post.singlePostData.id}/comments`
+      `https://fischer.onrender.com/api/posts/${post.singlePostData.id}/comments`
     );
     setComment("");
   };
@@ -53,7 +53,7 @@ export default function CommentBox({
     event.preventDefault();
 
     const existingCommentsResponse = await fetch(
-      `http://localhost:3000/api/posts/${post.singlePostData.id}/experts`,
+      `https://fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`,
       { method: "GET" }
     );
     const existingComments = await existingCommentsResponse.json();
@@ -70,13 +70,15 @@ export default function CommentBox({
     }
 
     const response = await fetcher(
-      `http://localhost:3000/api/posts/${post.singlePostData.id}/experts`,
+      `https://fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`,
       {
         method: "POST",
         body: JSON.stringify(expertResponseData),
       }
     );
-    mutate(`http://localhost:3000/api/posts/${post.singlePostData.id}/experts`);
+    mutate(
+      `https://fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`
+    );
     setComment("");
   };
 
