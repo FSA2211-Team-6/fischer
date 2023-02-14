@@ -37,8 +37,6 @@ export default async function handler(
     }
   });
 
-  console.log(websiteTruth);
-
   const truthArray = [];
 
   for (let key in websiteTruth) {
