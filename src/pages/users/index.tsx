@@ -6,7 +6,7 @@ import DeleteModal from "@/components/SharedComponents/DeleteModal";
 export default function Users() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any | null>([]);
 
   const getUsers = async (page: number, filter: string) => {
     const data = await fetch(`/api/users/${page}/${filter}`);
@@ -135,7 +135,7 @@ export default function Users() {
                             <td className="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
                               <Image
                                 className="w-10 h-10 rounded-full"
-                                src={user.image}
+                                src={user.image || ""}
                                 alt="avatar"
                                 width={100}
                                 height={100}

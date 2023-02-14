@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import AddTopic from "@/components/SharedComponents/AddTopic";
 
 export default function MyAccount() {
   const { data: session } = useSession();
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<any | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -82,7 +81,7 @@ export default function MyAccount() {
                 Expertises
               </h1>
               <p className="text-gray-600 text-center font-light lg:px-16">
-                {user.expertise.map((expertise) => {
+                {user.expertise.map((expertise: any) => {
                   return expertise.topic.name + ", ";
                 })}
               </p>
