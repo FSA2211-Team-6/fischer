@@ -56,7 +56,8 @@ const parseResponse = async (aiResponse: string) => {
     compliance = -1;
   }
 
-  const cleanResponse = aiExplanation.replace("Explanation: ", "");
+  const cleanResponse =
+    aiTruthy + ". " + aiExplanation.replace("Explanation: ", "");
 
   return { compliance, cleanResponse };
 };
