@@ -11,7 +11,7 @@ export default function Experts({ post }: any) {
   const { data: expertResponses, error } = useSWR(
     () =>
       post.singlePostData.id
-        ? `fischer.onrender.com/api/posts/${post.singlePostData.id}/experts`
+        ? `${process.env.NEXT_PUBLIC_HOST_NAME}/api/posts/${post.singlePostData.id}/experts`
         : null,
     fetcher,
     { revalidateOnFocus: false }
@@ -22,7 +22,7 @@ export default function Experts({ post }: any) {
   const handleDeleteExpertResponse = async (expertResponseId: number) => {
     try {
       const response = await fetch(
-        `fischer.onrender.com/api/expertresponses/${expertResponseId}`,
+        `${process.env.NEXT_PUBLIC_HOST_NAME}/api/expertresponses/${expertResponseId}`,
         {
           method: "DELETE",
         }
