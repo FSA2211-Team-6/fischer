@@ -5,8 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const fischerString: any = req.query.fischerId;
-  const fischerId: any = parseInt(fischerString);
+  const fischerId = parseInt(req.query.fischerId as string);
 
   try {
     if (fischerId === 0) {
@@ -24,7 +23,7 @@ export default async function handler(
           topic: true,
         },
       });
-      res.json(expertise);
+      res.status(200).json(expertise);
     } else {
       const expertise = await prisma.expert.findMany({
         where: {
