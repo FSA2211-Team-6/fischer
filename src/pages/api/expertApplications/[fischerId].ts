@@ -8,7 +8,7 @@ export default async function handler(
   const fischerId = parseInt(req.query.fischerId as string);
 
   try {
-    if (fischerId === 0) {
+    if (fischerId == 0) {
       const expertise = await prisma.expert.findMany({
         where: {
           approval: null,
@@ -23,7 +23,7 @@ export default async function handler(
           topic: true,
         },
       });
-      res.status(200).json(expertise);
+      res.json(expertise);
     } else {
       const expertise = await prisma.expert.findMany({
         where: {
@@ -35,5 +35,4 @@ export default async function handler(
   } catch (err) {
     console.log(err);
   }
-  res.status(200).send("success");
 }
