@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import ApproveExpertButton from "@/components/TopicComponents/ApproveExpertButton";
 import DenyExpertButton from "@/components/TopicComponents/DenyExpertButton";
 
 export default function ExpertApplications() {
-  const { data: session } = useSession();
   const [expertApplications, setExpertApplications] = useState([]);
 
   const getExpertApplications = async () => {

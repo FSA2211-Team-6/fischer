@@ -68,13 +68,11 @@ export default function MyAccount() {
               <p className="font-light text-gray-600 mt-3">
                 Fischer ID: {user.fischerId}
               </p>
-              <h1 className="mt-8 text-gray-500">
-                {user.isAdmin ? (
-                  <h1> Admin of Fischer </h1>
-                ) : (
-                  <h1> Member of Fischer</h1>
-                )}
-              </h1>
+              {user.isAdmin ? (
+                <h1 className="mt-8 text-gray-500"> Admin of Fischer </h1>
+              ) : (
+                <h1 className="mt-8 text-gray-500"> Member of Fischer</h1>
+              )}
             </div>
             <div className="mt-12 flex flex-col justify-center">
               <h1 className="text-white text-2xl font-medium text-center lg:px-22">
