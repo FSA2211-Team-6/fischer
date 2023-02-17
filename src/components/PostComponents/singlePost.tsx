@@ -190,7 +190,7 @@ export default function SinglePost({ post, currExpertId }: any) {
                               className="group-hover:opacity-100  transition-opacity bg-gray-800 px-2 py-1 text-xs text-gray-100 rounded-md absolute left-1/2 
                                       -translate-x-1/2 -translate-y-full mt-1 opacity-0 m-4 mx-auto w-max"
                             >
-                              You&#39;ve already voted.
+                              {`You've already voted.`}
                             </span>
                           </div>
                           <span
