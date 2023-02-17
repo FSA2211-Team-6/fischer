@@ -66,17 +66,34 @@ export default function SinglePostPage() {
   }, [userId]);
 
   //check to see if user is an expert of the current post's topic
+  //////V1
+  // useEffect(() => {
+  //   if (post) {
+  //     const expertData: any = expertiseArray.find((ele: any) => {
+  //       return ele.topicId === post.singlePostData.topicId;
+  //     });
+  //     if (expertData) {
+  //       setIsExpert(true);
+  //       setCurrExpertId(expertData.id);
+  //     }
+  //   }
+  // }, [expertiseArray, isExpert, post]);
+
+  ///////V2
   useEffect(() => {
     if (post) {
-      const expertData: any = expertiseArray.find(
-        (ele: any) => ele.topicId === post.singlePostData.topicId
-      );
+      const expertData: any = expertiseArray.find((ele: any) => {
+        return ele.topicId === post.singlePostData.topicId;
+      });
       if (expertData) {
         setIsExpert(true);
         setCurrExpertId(expertData.id);
+      } else {
+        setIsExpert(false);
+        setCurrExpertId(null);
       }
     }
-  }, [expertiseArray, isExpert, post]);
+  }, [expertiseArray, post]);
 
   return (
     <>
@@ -96,7 +113,7 @@ export default function SinglePostPage() {
           <div className="flex flex-col mb-4 justify-center ">
             <div className="w-full bg-gray-700 overflow-visible ">
               {/* Toggle only shows if u are an expert for the current post/topic */}
-              {isExpert ? (
+              {isExpert === true ? (
                 <div className="inline-flex">
                   <label className=" inline-flex items-center cursor-pointer pt-4 px-4 ">
                     <input

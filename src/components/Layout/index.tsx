@@ -8,7 +8,7 @@ export const Layout = ({ children }: any) => {
       <div className="flex items-start justify-between">
         <SideBar />
         {/* middle section*/}
-        <div className="flex flex-col w-full md:space-y-4">
+        <div className="flex flex-col w-full space-y-4">
           <Header />
           {/* middle section below header */}
           <div className="h-screen px-4 pb-24 overflow-auto md:px-6">
