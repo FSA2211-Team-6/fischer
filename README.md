@@ -1,4 +1,4 @@
-## <h1> <a href='https://faction-fischer.vercel.app/'>Fischer </a> <span>    <a href='https://www.youtube.com/watch?v=qNRTOJS4VqE'> Video Intro </a> </span> </h1>
+## <div> <h1><a href='https://faction-fischer.vercel.app/'>Fischer </a></h1> <span>    <a href='https://www.youtube.com/watch?v=qNRTOJS4VqE'> Video Intro </a> </span> </div>
   
 <p>     by <a href='linkedin.com/in/eddiefahrenheit'> Edmund He </a>, <a href='linkedin.com/in/derekmcenroe'> Derek McEnroe </a>, <a href='linkedin.com/in/samnting'> Sam Ting </a>, and <a href='linkedin.com/in/winter-hardcastle'> Winter Hardcastle </a> </p>
   
