@@ -5,9 +5,9 @@ Fischer is a Chrome extension that distinguishes fact from fiction across the in
 <img width="1005" alt="Screenshot 2023-02-16 at 11 03 44 PM" src="https://user-images.githubusercontent.com/114819096/219547220-4390cc6b-3cd8-4c8e-8bca-77d3ad1af932.png">
 
 Meet Team Faction on LinkedIn!
-<a href='linkedin.com/in/eddiefahrenheit'> Edmund He </a>
-<a href='linkedin.com/in/derekmcenroe'> Derek McEnroe </a>
-<a href='linkedin.com/in/samnting'> Sam Ting </a>
-<a href='linkedin.com/in/winter-hardcastle'> Winter Hardcastle </a>
+<p><a href='linkedin.com/in/eddiefahrenheit'> Edmund He </a></p>
+<p><a href='linkedin.com/in/derekmcenroe'> Derek McEnroe </a></p>
+<p><a href='linkedin.com/in/samnting'> Sam Ting </a></p>
+<p><a href='linkedin.com/in/winter-hardcastle'> Winter Hardcastle </a></p>
 
 <img width="3008" alt="Capstone BG" src="https://user-images.githubusercontent.com/114819096/219547245-fd9e9628-0ff2-4d09-84be-4056f36fa9a8.png">
